@@ -1,0 +1,23 @@
+#pagar {
+  height: 4vh;
+}
+.pay-button {
+  width: 12vh !important;
+}
+.container-title {
+  display: flex !important;
+  padding-left: 5px;
+}
+.form-detalle {
+  background-color: #e3e3e3;
+  padding: 20px;
+  margin: 10px 0;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.detalle {
+  background-color: aliceblue;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}

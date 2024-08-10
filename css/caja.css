@@ -1,0 +1,126 @@
+.body-container {
+  margin-top: 60px;
+}
+.form-conteiner-aling {
+  display: flex;
+  flex-direction: row;
+}
+.pos-system {
+  max-width: 800px;
+  margin: 20px auto;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.content {
+  display: flex;
+  justify-content: space-between;
+}
+
+.product-list {
+  flex: 1;
+  padding-right: 20px;
+}
+
+.product {
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  padding: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.product:hover {
+  background-color: #f0f0f0;
+}
+
+.cart {
+  flex: 1;
+  padding-left: 20px;
+}
+
+.cart-items {
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  padding: 10px;
+  height: 300px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+.cart-total {
+  text-align: right;
+  margin-bottom: 10px;
+}
+
+.checkout-btn {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.checkout-btn:hover {
+  background-color: #45a049;
+}
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Nuevo estilo para el input de búsqueda */
+#searchInput {
+  padding: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+.text-caja-black {
+  color: black !important;
+}
+
+.input-disabled {
+  display: none;
+}
+#product {
+  width: 40vh;
+}
+
+.option-efectivo {
+  color: blue;
+}
+
+.option-tarjeta {
+  color: green;
+}
+
+.option-fiar {
+  color: red;
+}
+
+#mensaje-caja {
+  width: auto !important;
+  background-color: #28a745;
+  color: #0c0c0d;
+  text-align: center;
+  border-radius: 10px;
+}
+
+#exito {
+  width: 30vh !important;
+}

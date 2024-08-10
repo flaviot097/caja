@@ -1,0 +1,62 @@
+.producto-stock {
+  background-color: #343a40; /* Gris oscuro */
+  color: #ffffff; /* Texto blanco */
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
+  padding: 6px;
+  margin: 20px auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 95%;
+  display: flex;
+  flex-direction: row;
+}
+.btn.btn-primary.btn-sm.d-inline-flex.align-items-center {
+  width: 100%;
+  justify-content: space-around;
+}
+.producto-stock h6 {
+  margin: 5px 0;
+}
+
+.producto-stock .cantidad-producto {
+  background-color: #ffc107; /* Amarillo */
+  color: #343a40; /* Texto gris oscuro */
+  padding: 5px;
+  border-radius: 3px;
+  display: inline-block;
+}
+.producto-stock a {
+  color: #ffffff;
+  text-decoration: none;
+}
+.producto-stock a:hover {
+  text-decoration: underline;
+}
+.eliminar-img {
+  width: 30px;
+  margin-top: 10px;
+}
+
+.eliminar-producto {
+  background-color: #dee2e6;
+}
+.eliminar-producto:hover {
+  background-color: #c02b10;
+}
+
+.cantidad-producto.green {
+  background-color: #226b33 !important;
+}
+.cantidad-producto.red {
+  background: #c02b10 !important;
+}
+
+.input-producto {
+  width: 55px !important;
+}
+.editar-producto {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}

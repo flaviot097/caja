@@ -1,0 +1,47 @@
+.container-cartas-fiado {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  color: #333 !important;
+}
+.text-fiado {
+  color: #333 !important;
+}
+.card-fiado {
+  background-color: #e3e3e3;
+  padding: 20px;
+  margin: 10px 0;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.card-fiado h2 {
+  margin: 0 0 10px 0;
+  color: #555 !important;
+}
+
+.card-fiado p {
+  margin: 0 0 20px 0;
+  color: #777;
+}
+
+.pay-button {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#agregar-producto {
+  margin-left: 30vh;
+}

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Lector de Código de Barras</title>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        document
+          .getElementById("codigo")
+          .addEventListener("keypress", function (e) {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              let codigo = document.getElementById("codigo").value;
+              let xhr = new XMLHttpRequest();
+              xhr.open("POST", "code-bar.php", true);
+              xhr.setRequestHeader(
+                "Content-Type",
+                "application/x-www-form-urlencoded"
+              );
+              xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                  document.getElementById("resultado").innerHTML =
+                    xhr.responseText;
+                  document.getElementById("codigo").value = "";
+                }
+              };
+              xhr.send("codigo=" + encodeURIComponent(codigo));
+            }
+          });
+      });
+    </script>
+  </head>
+  <body>
+    <form id="formulario">
+      <label for="codigo">Codigo de Barras:</label>
+      <input type="text" id="codigo" name="codigo" autofocus />
+    </form>
+    <div id="resultado"></div>
+  </body>
+</html>
