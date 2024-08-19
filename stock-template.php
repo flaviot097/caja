@@ -65,11 +65,15 @@ session_start();
             <label for="proveedor">Proveedor</label>
             <input type="text" id="proveedor" name="proveedor" class="form-control">
 
+            <label for="Codigo de barra">Codigo de Barra</label>
+            <input type="text" id="proveedor" name="codigo_barra" class="form-control">
+
             <button type="submit" class="btn btn-primary mt-3">Filtrar</button>
             <?php if ($_GET) {
-                ?><a href="stock-template.php" class="btn btn-primary mt-3">Eliminar filtros</a><?php }
-            ;
-            ?>
+            /*?><a href="stock-template.php" class="btn btn-primary mt-3">Eliminar filtros</a><?php*/
+        }
+        ;
+        ?>
         </form>
     </div>
     <!-- PROJECTS -->
@@ -99,8 +103,9 @@ session_start();
                         $nombre_producto = $_GET['nombre_producto'] ?? '';
                         $departamento = $_GET['departamento'] ?? '';
                         $proveedor = $_GET['proveedor'] ?? '';
+                        $code_bar_con = $_GET['codigo_barra'] ?? '';
 
-                        if ($nombre_producto === '' && $departamento === '' && $proveedor === '') {
+                        if ($nombre_producto === '' && $departamento === '' && $proveedor === '' && $code_bar_con === '') {
                             echo "Se debe completar al menos un campo para realizar la búsqueda.";
                             exit;
                         }
@@ -118,6 +123,10 @@ session_start();
                         if ($proveedor !== '') {
                             $query .= " AND proveedor LIKE :proveedor";
                         }
+                        if ($code_bar_con !== "") {
+                            $query .= " AND codigo_barra LIKE :codigo_barra";
+                        }
+
 
                         // Preparar la consulta con PDO
                         $stmt = $pdo->prepare($query);
@@ -131,6 +140,9 @@ session_start();
                         }
                         if ($proveedor !== '') {
                             $stmt->bindValue(':proveedor', '%' . $proveedor . '%', PDO::PARAM_STR);
+                        }
+                        if ($code_bar_con !== "") {
+                            $stmt->bindValue(':codigo_barra', '%' . $code_bar_con . '%', PDO::PARAM_STR);
                         }
 
                         // Ejecutar la consulta

@@ -23,7 +23,7 @@ if ($_POST["pago"] === "efectivo") {
             if ($value['codigo_barra'] !== "codigo de barra") {
                 $cod = $value['codigo_barra'];
                 $cantidad_prod_s = $value["cantidad"];
-                $consultar_stock = "SELECT stock FROM producto WHERE codigo_barra=:codigo_barra";
+                $consultar_stock = "SELECT stock FROM producto_reparto WHERE codigo_barra=:codigo_barra";
                 $stmtconsulta_s = $pdo->prepare($consultar_stock);
                 $stmtconsulta_s->bindParam(':codigo_barra', $cod, PDO::PARAM_STR);
                 $stmtconsulta_s->execute();
@@ -79,7 +79,7 @@ if ($_POST["pago"] === "trans") {
             if ($value['codigo_barra'] !== "codigo de barra") {
                 $cod = $value['codigo_barra'];
                 $cantidad_prod_s = $value["cantidad"];
-                $consultar_stock = "SELECT stock FROM producto WHERE codigo_barra=:codigo_barra";
+                $consultar_stock = "SELECT stock FROM producto_reparto WHERE codigo_barra=:codigo_barra";
                 $stmtconsulta_s = $pdo->prepare($consultar_stock);
                 $stmtconsulta_s->bindParam(':codigo_barra', $cod, PDO::PARAM_STR);
                 $stmtconsulta_s->execute();
@@ -140,7 +140,7 @@ if ($_POST["pago"] === "fiar") {
             if ($value['codigo_barra'] !== "codigo de barra") {
                 $cod = $value['codigo_barra'];
                 $cantidad_prod_s = $value["cantidad"];
-                $consultar_stock = "SELECT stock FROM producto WHERE codigo_barra=:codigo_barra";
+                $consultar_stock = "SELECT stock FROM producto_reparto WHERE codigo_barra=:codigo_barra";
                 $stmtconsulta_s = $pdo->prepare($consultar_stock);
                 $stmtconsulta_s->bindParam(':codigo_barra', $cod, PDO::PARAM_STR);
                 $stmtconsulta_s->execute();

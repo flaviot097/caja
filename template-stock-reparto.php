@@ -10,7 +10,7 @@ session_start();
     <meta name="description" content="" />
     <meta name="Flavio Trocello" content="" />
 
-    <title>Inicio</title>
+    <title>Reparto</title>
 
     <link rel="stylesheet" href="css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/unicons.css" />
@@ -63,15 +63,22 @@ session_start();
             <label for="proveedor">Proveedor</label>
             <input type="text" id="proveedor" name="proveedor" class="form-control">
 
+            <label for="Codigo de barra">Codigo de Barra</label>
+            <input type="text" id="proveedor" name="codigo_barra" class="form-control">
+
             <button type="submit" class="btn btn-primary mt-3">Filtrar</button>
             <?php if ($_GET) {
-                ?><a href="stock-template.php" class="btn btn-primary mt-3">Eliminar filtros</a><?php }
-            ;
-            ?>
+            /*?><a href="stock-template.php" class="btn btn-primary mt-3">Eliminar filtros</a><?php */
+        }
+        ;
+        ?>
         </form>
     </div>
     <!-- PROJECTS -->
+
     <section class="project py-5" id="project">
+        <div class="reparto-texto" style="font-weight: bold; width: 100%; text-align: center; font-size: larger; ">Stock
+            Reparto</div>
         <div class="container">
             <div class="row">
                 <a href="ordenar-stock-reparto.php" class="btn checkout-btn" id="btnFiltrar-menor">Ordenar por
@@ -97,8 +104,9 @@ session_start();
                         $nombre_producto = $_GET['nombre_producto'] ?? '';
                         $departamento = $_GET['departamento'] ?? '';
                         $proveedor = $_GET['proveedor'] ?? '';
+                        $code_bar_con = $_GET["codigo_barra"] ?? "";
 
-                        if ($nombre_producto === '' && $departamento === '' && $proveedor === '') {
+                        if ($nombre_producto === '' && $departamento === '' && $proveedor === '' && $code_bar_con === '') {
                             echo "Se debe completar al menos un campo para realizar la búsqueda.";
                             exit;
                         }
@@ -112,6 +120,9 @@ session_start();
                         if ($proveedor !== '') {
                             $query .= " AND proveedor LIKE :proveedor";
                         }
+                        if ($code_bar_con !== "") {
+                            $query .= " AND codigo_barra LIKE :codigo_barra";
+                        }
                         $stmt = $pdo->prepare($query);
 
                         if ($nombre_producto !== "") {
@@ -122,6 +133,9 @@ session_start();
                         }
                         if ($proveedor !== "") {
                             $stmt->bindValue(':proveedor', '%' . $proveedor . '%', PDO::PARAM_STR);
+                        }
+                        if ($code_bar_con !== "") {
+                            $stmt->bindValue(':codigo_barra', '%' . $code_bar_con . '%', PDO::PARAM_STR);
                         }
                         $stmt->execute();
                         $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);

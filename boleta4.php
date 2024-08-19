@@ -30,6 +30,8 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f4f4f4;
+    margin-bottom: -170px;
+    text-overflow: ellipsis;
 }
 
 .invoice-container {
@@ -39,11 +41,12 @@ body {
     margin: 10mm auto;
     background-color: #fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+    page-break-inside: avoid;
 }
 
 header {
     display: flex;
-    justify-content: space-between;
+
     align-items: center;
     margin-bottom: 20px;
 }
@@ -77,6 +80,7 @@ header .logo img {
 
 .invoice-details p {
     margin: 5px 0;
+    text-aling: center;
 }
 
 .client-details {
@@ -85,17 +89,20 @@ header .logo img {
 
 .client-details h3 {
     margin: 0 0 10px 0;
-    font-size: 20px;
+    font-size: 47px;
 }
 
 .client-details p {
     margin: 5px 0;
+    font-size: 34px
 }
 
 .invoice-items table {
-    width: 100%;
+    margin-left: -60px;
+    width: 90%;
     border-collapse: collapse;
     margin-bottom: 20px;
+    min-height: 200px;
 }
 
 .invoice-items th,
@@ -103,10 +110,15 @@ header .logo img {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
+    font-size: 47px;
 }
 
 .invoice-items th {
     background-color: #f4f4f4;
+}
+
+.desc {
+    width: 40%;
 }
 
 .invoice-items tfoot td {
@@ -115,12 +127,68 @@ header .logo img {
 
 footer {
     text-align: center;
-    margin-top: 20px;
+    margin-top: 30px;
+}
+
+.total-venta {
+    font-weight: bold;
+    font-size: 36px;
 }
 
 footer p {
     margin: 0;
-    font-size: 16px;
+    font-size: 36px;
+}
+
+.company-details {
+    font-size: 40px;
+}
+
+.texto-cliente {
+    font-size: 30px;
+}
+
+#fecha {
+    font-size: 40px;
+}
+
+.sub {
+    font-size: 25px !important;
+}
+
+.cu {
+    font-size: 25px !important;
+}
+
+.tr-cant {
+    border: black solid 0.3px;
+    width: 90% !important;
+    margin-left: -60px;
+    font-size: 47px;
+}
+
+.td-cant {
+    border: black solid 0.3px;
+    width: 50% !important;
+}
+
+.td-cant-prod {
+    border: black solid 0.3px;
+    width: 29%;
+}
+
+@page {
+    margin: 0;
+    size: auto 1500mm;
+}
+
+
+.tr-cant-total {
+    border: black solid 0.3px;
+    width: 90% !important;
+    margin-left: -60px;
+    font-size: 47px;
+    height: 60px;
 }
 </style>
 
@@ -128,7 +196,6 @@ footer p {
     <div class="invoice-container">
         <header>
             <div class="company-details">
-                <h1>Nombre de la Empresa</h1>
                 <p>Ruta 18- km26 - Espinillo Norte</p>
                 <p>Teléfono: 155439860</p>
             </div>
@@ -137,52 +204,61 @@ footer p {
             </div>
         </header>
 
-        <section class="invoice-details">
-            <h2>Factura</h2>
+        <section class="invoice-details" id="fecha">
             <p><strong>Fecha:</strong> <?php echo date("d-m-y") ?></p>
         </section>
 
         <section class="client-details">
-            <h3>Detalles del Cliente</h3>
-            <p><strong>Nombre:</strong><?php echo $nombre_apellido; ?></p>
-            <p><strong>Método de pago:</strong><?php echo $pago; ?></p>
+            <h3 class="texto-cliente">Cliente:</h3>
+            <p><strong><?php echo $nombre_apellido; ?></strong></p>
+            <p><strong><?php echo $pago; ?></strong></p>
         </section>
 
         <section class="invoice-items">
-            <table><?php foreach ($productos_caja as $value) {
-                $total += $value["total"];
-                if ($value["nombre_producto"] !== "Producto") {
-                    ?>
-                <thead>
-                    <tr>
-                        <th>Cantidad</th>
-                        <th>Procucto</th>
-                        <th>Precio C/U</th>
-                        <th>subtotal</th>
-                    </tr>
-                </thead>
+            <div class="tr-cant">
+                Cant..............| Prod...
+            </div>
+            <table>
+                <?php foreach ($productos_caja as $value) {
+                    $total += $value["total"];
+                    if ($value["nombre_producto"] !== "Producto") {
+                        ?>
+
                 <tbody>
                     <tr>
                         <td><?php echo $value["cantidad"]; ?></td>
-                        <td><?php echo $value["nombre_producto"]; ?></td>
+                        <td style="width: 40px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;"><?php echo $value["nombre_producto"]; ?></td>
+                    </tr>
+                    <tr>
+                        <td class="cu">Prec U</th>
+                        <td class="sub">sub</th>
+                    </tr>
+                    <tr>
                         <td>$<?php echo $value["precio"]; ?></td>
                         <td>$<?php echo ($value["precio"] * $value["cantidad"]); ?></td>
                     </tr>
                 </tbody>
                 <?php }
-            }
-            ; ?>
+                }
+                ; ?>
                 <tfoot>
+
+
                     <tr>
-                        <td colspan="3">Descuento</td>
+                        <td class="desc">Desc</td>
                         <td><?php echo $descuento; ?>%</td>
                     </tr>
-                    <tr>
-                        <td colspan="3"><strong>Total</strong></td>
-                        <td><strong>$<?php echo $total; ?></strong></td>
-                    </tr>
+
                 </tfoot>
+
             </table>
+            <div class="tr-cant-total">
+                Total..............| $<?php echo $total; ?>
+            </div>
+
         </section>
 
         <footer>
@@ -192,17 +268,18 @@ footer p {
 </body>
 
 </html>
-<?php echo $json[0];
+<?php
 
 $html = ob_get_clean();
 $options = new Options();
 $options->set('isHtml5ParserEnabled', true);
 $options->set('isRemoteEnabled', true);
+$options->set('isPhpEnabled', true);
 
 $dompdf = new Dompdf($options);
 
 $dompdf->loadHtml($html);
-$dompdf->setPaper("A4", 'portrait');
+$dompdf->setPaper('custom', 'portrait');
 setcookie("productos_caja", "", time() - 3600, "/");
 // Renderizar el PDF
 $dompdf->render();

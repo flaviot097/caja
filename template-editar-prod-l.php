@@ -69,8 +69,10 @@ session_start();
                 <p class="text-center"><strong>departamento</strong> <br><input name="departamento" type="text"></p>
                 <p class="text-center"><strong>proveedor</strong> <br><input type="text" name="proveedor"></p>
                 <p class="text-center"><strong>stock</strong> <br><input name="stock" type="number"></p>
-                <p class="text-center"><strong>costo</strong> <br>$<input name="costo" type="number"></p>
-                <p class="text-center"><strong>ganancia</strong><br><input name="ganancia" type="number">%</p>
+                <p class="text-center"><strong>costo</strong> <br>$<input id="costo" name="costo" type="number"></p>
+                <p class="text-center"><strong>ganancia</strong><br><input id="ganancia" name="ganancia" type="number">%
+                </p>
+                <p class="text-center"><strong>Precio final</strong><br>$<span id="precio-final">0.00</span></p>
                 <p class="text-center"><strong>Stock Minino</strong> <br><input name="num_stock" type="number"></p>
                 <button id="agregar-producto" class="pay-button" type="submit">agregar Producto</button>
             </form>
@@ -92,6 +94,23 @@ session_start();
             </div>
         </div>
     </footer>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const costoInput = document.getElementById('costo');
+        const gananciaInput = document.getElementById('ganancia');
+        const precioFinalSpan = document.getElementById('precio-final');
+
+        function calcularPrecioFinal() {
+            const costo = parseFloat(costoInput.value) || 0;
+            const ganancia = parseFloat(gananciaInput.value) || 0;
+            const precioFinal = costo + (costo * (ganancia / 100));
+            precioFinalSpan.textContent = precioFinal.toFixed(2);
+        }
+
+        costoInput.addEventListener('input', calcularPrecioFinal);
+        gananciaInput.addEventListener('input', calcularPrecioFinal);
+    });
+    </script>
 
     <script src="js/jquery-3.3.1.min.js"></script>
     <script src="js/popper.min.js"></script>

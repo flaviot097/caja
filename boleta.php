@@ -1,9 +1,20 @@
-<?php
-ob_start();
+<?php ob_start();
+
 require 'vendor/autoload.php';
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
+?>
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Factura</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<?php
 $cookie = $_COOKIE["imprimir"];
 $json = json_decode($cookie);
 $nombre_apellido = $json[0];
@@ -11,98 +22,147 @@ $pago = $json[1];
 $descuento = json_decode($_COOKIE["descuentos"], true) ?? 0;
 $total = 0;
 $productos_caja = json_decode($_COOKIE["productos_caja"], true);
-
-//Opciones para Dompdf
-
 ?>
 
-<!DOCTYPE html>
-<html lang='es'>
-
-<head>
-    <meta charset='UTF-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <title>Factura</title>
-</head>
 <style>
 body {
-    width: 80px;
-    height: 100%;
-    border: 0.2px solid black;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
 }
 
-.factura {
-    font-size: 3.5px
+.invoice-container {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 20mm;
+    margin: 10mm auto;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
 }
 
-.info {
-    margin-top: -1px;
-    margin-botton: -1px;
-    padding: -2px;
-}
-
-.encabezado {
+header {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
-.info-empresa,
-.info-cliente {
-    width: 95%;
+header .company-details {
+    text-align: left;
 }
 
-.img {
-    padding: 0.2px;
-    width: 60%;
+.invoice-items {
+    width: 80%
 }
 
+header .company-details h1 {
+    margin: 0;
+    font-size: 24px;
+}
 
-table {
+header .company-details p {
+    margin: 5px 0;
+}
+
+header .logo img {
+    max-width: 150px;
+}
+
+.invoice-details {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.invoice-details h2 {
+    margin: 0;
+    font-size: 28px;
+}
+
+.invoice-details p {
+    margin: 5px 0;
+}
+
+.client-details {
+    margin-bottom: 20px;
+}
+
+.client-details h3 {
+    margin: 0 0 10px 0;
+    font-size: 20px;
+}
+
+.client-details p {
+    margin: 5px 0;
+}
+
+.invoice-items table {
     width: 100%;
     border-collapse: collapse;
+    margin-bottom: 20px;
 }
 
-th,
-td {
-    border: 0.2px solid black;
-    padding: 0.2px;
+.invoice-items th,
+.invoice-items td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.invoice-items th {
+    background-color: #f4f4f4;
+}
+
+.invoice-items tfoot td {
+    font-weight: bold;
+}
+
+footer {
     text-align: center;
+    margin-top: 20px;
 }
 
-.totales {
-    text-align: right;
-}
-
-.detalle-factura {
-    margin-top: -2px;
+footer p {
+    margin: 0;
+    font-size: 16px;
 }
 </style>
 
 <body>
-    <div class='factura'>
-        <div class='encabezado'>
-            <img class='img' src='http://localhost/santiago_pagina/images/mc.png' alt='MC'>
-            <div class='info-empresa'>
-                <p class='info'>Ruta 18- km26 - Espinillo Norte</p>
-                <p class='info'>155439860</p>
+    <div class="invoice-container">
+        <header>
+            <div class="company-details">
+                <h1>Nombre de la Empresa</h1>
+                <p>Ruta 18- km26 - Espinillo Norte</p>
+                <p>Teléfono: 155439860</p>
             </div>
-            <div class='info-cliente'>
-                <p class='info'>Cliente: $nombre_apellido</p>
-                <p class='info'>Método de pago: <?php echo $pago ?></p>
+            <div class="logo">
+                <img src='http://localhost/santiago_pagina/images/mc.png' alt='MC'>
             </div>
-        </div>
-        <div class='detalle-factura'>
-            <table>
-                <?php foreach ($productos_caja as $value) {
-                    $total += $value["total"];
-                    if ($value["nombre_producto"] !== "Producto") {
-                        ?>
+        </header>
+
+        <section class="invoice-details">
+            <h2>Factura</h2>
+            <p><strong>Fecha:</strong> <?php echo date("d-m-y") ?></p>
+        </section>
+
+        <section class="client-details">
+            <h3>Detalles del Cliente</h3>
+            <p><strong>Nombre:</strong><?php echo $nombre_apellido; ?></p>
+            <p><strong>Método de pago:</strong><?php echo $pago; ?></p>
+        </section>
+
+        <section class="invoice-items">
+            <table><?php foreach ($productos_caja as $value) {
+                $total += $value["total"];
+                if ($value["nombre_producto"] !== "Producto") {
+                    ?>
                 <thead>
                     <tr>
                         <th>Cantidad</th>
-                        <th>Produto</th>
+                        <th>Procucto</th>
                         <th>Precio C/U</th>
-                        <th>Subtotal</th>
+                        <th>subtotal</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -112,10 +172,10 @@ td {
                         <td>$<?php echo $value["precio"]; ?></td>
                         <td>$<?php echo ($value["precio"] * $value["cantidad"]); ?></td>
                     </tr>
-
-                </tbody><?php }
-                }
-                ; ?>
+                </tbody>
+                <?php }
+            }
+            ; ?>
                 <tfoot>
                     <tr>
                         <td colspan="3">Descuento</td>
@@ -127,27 +187,26 @@ td {
                     </tr>
                 </tfoot>
             </table>
-        </div>
+        </section>
+
+        <footer>
+            <p>Gracias por su compra!</p>
+        </footer>
     </div>
 </body>
 
 </html>
+<?php echo $json[0];
 
-<?php
 $html = ob_get_clean();
 $options = new Options();
 $options->set('isHtml5ParserEnabled', true);
 $options->set('isRemoteEnabled', true);
-//$options->set('dpi', 300); // Ajuste de DPI para mejor calidad y precisión
 
 $dompdf = new Dompdf($options);
 
 $dompdf->loadHtml($html);
-
-// Configurar el tamaño del papel
-$width = 40 * 2.83465; // 1 mm = 2.83465 puntos
-$height = 57 * 2.83465;
-$dompdf->setPaper([0, 0, $width, $height], 'portrait');
+$dompdf->setPaper("A4", 'portrait');
 setcookie("productos_caja", "", time() - 3600, "/");
 // Renderizar el PDF
 $dompdf->render();
