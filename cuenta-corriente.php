@@ -61,7 +61,7 @@ setcookie("fiados_todos", $para_cookies, time() + 3600, "/");
                 <?php require_once "cabecera.php"; ?>
 
                 <ul class="navbar-nav ml-lg-auto">
-                    <div class="ml-lg-4">
+                    <div class="ml-lg-4" id="icono">
                         <div class="color-mode d-lg-flex justify-content-center align-items-center">
                             <i class="color-mode-icon"></i>
                         </div>
@@ -121,34 +121,34 @@ setcookie("fiados_todos", $para_cookies, time() + 3600, "/");
 
                     ?>
 
-                    <div class="detalle">
-                        <div class="container-title">
-                            <h2><?php echo $deuda["nombre_y_apellido"]; ?></h2>
-                            <form action="detalle-fiado.php" method="get" style="display: flex;
+            <div class="detalle">
+                <div class="container-title">
+                    <h2><?php echo $deuda["nombre_y_apellido"]; ?></h2>
+                    <form action="detalle-fiado.php" method="get" style="display: flex;
     align-content: space-around;
     flex-wrap: wrap; margin-left: 15px;">
-                                <input type="hidden" name="dni-validate" value="<?php echo $dni; ?>">
-                                <input type="submit" value="Detalle">
-                            </form>
-                        </div>
+                        <input type="hidden" name="dni-validate" value="<?php echo $dni; ?>">
+                        <input type="submit" value="Detalle">
+                    </form>
+                </div>
 
-                        <form class="form-detalle" action="fiado-actualizar.php" method="post" class="card-fiado">
-                            <p><strong>Deuda:</strong> $<?php echo $totalPersona; ?></p>
-                            <input type="number" value="<?php echo $totalPersona; ?>" name="pagar_total" style="display: none;">
-                            <input type="hidden" name="nombre_apellido" value="<?php echo $deuda["nombre_y_apellido"]; ?>">
-                            <input type="number" value="<?php echo $dni; ?>" name="dni" style="display: none;">
-                            <input type="text" value="<?php echo htmlspecialchars(json_encode($deuda["productos"])); ?>"
-                                name="cantidad_productos" style="display: none;">
-                            <p><strong>Entrega:</strong> $<input type="number" value="<?php echo $totalPersona; ?>"
-                                    name="entrega"></p>
-                            <select name="pagar" id="pagar">
-                                <option value="liquidar_total">Liquidar total de deuda</option>
-                                <option value="entregar">Entrega</option>
-                            </select>
-                            <button class="pay-button" type="submit">Pagar</button>
-                        </form>
-                    </div>
-                <?php }
+                <form class="form-detalle" action="fiado-actualizar.php" method="post" class="card-fiado">
+                    <p><strong>Deuda:</strong> $<?php echo $totalPersona; ?></p>
+                    <input type="number" value="<?php echo $totalPersona; ?>" name="pagar_total" style="display: none;">
+                    <input type="hidden" name="nombre_apellido" value="<?php echo $deuda["nombre_y_apellido"]; ?>">
+                    <input type="number" value="<?php echo $dni; ?>" name="dni" style="display: none;">
+                    <input type="text" value="<?php echo htmlspecialchars(json_encode($deuda["productos"])); ?>"
+                        name="cantidad_productos" style="display: none;">
+                    <p><strong>Entrega:</strong> $<input type="number" value="<?php echo $totalPersona; ?>"
+                            name="entrega"></p>
+                    <select name="pagar" id="pagar">
+                        <option value="liquidar_total">Liquidar total de deuda</option>
+                        <option value="entregar">Entrega</option>
+                    </select>
+                    <button class="pay-button" type="submit">Pagar</button>
+                </form>
+            </div>
+            <?php }
             }
             ?>
         </div>
@@ -177,6 +177,7 @@ setcookie("fiados_todos", $para_cookies, time() + 3600, "/");
     <script src="js/owl.carousel.min.js"></script>
     <script src="js/smoothscroll.js"></script>
     <script src="js/custom.js"></script>
+    <script src="js/dark-mode.js"></script>
 </body>
 
 </html>

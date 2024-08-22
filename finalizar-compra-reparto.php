@@ -15,6 +15,44 @@ try {
 } catch (PDOException $er) {
     echo $er->getMessage();
 }
+if ($_POST["pago"] == "entrega") {
+    echo $_POST["total"];
+    $total_con_entrega = $_POST["total"];
+    $restar_total = $_POST["entregar_plata"];
+    $tot = $total_con_entrega - $restar_total;
+    $local_reparto = "local";
+    $fecha = date("Y-m-d");
+    //subir a ventas
+    $entrega_pago_mitad = "INSERT INTO ventas (reparto_o_local, total, fecha, tipo) VALUES (:reparto_o_local, :total, :fecha, :tipo)";
+    $sql_entrega = "INSERT INTO fiado (dni,nombre_y_apellido,productos,saldo,cantidad,fecha) VALUES (:dni, :nombre_y_apellido, :productos ,:saldo,:cantidad,:fecha)";
+    $stmt = $pdo->prepare($entrega_pago_mitad);
+    $stmt->bindParam(':reparto_o_local', $local_reparto, PDO::PARAM_STR);
+    $stmt->bindParam(':total', $restar_total, PDO::PARAM_INT);
+    $stmt->bindParam(':fecha', $fecha, PDO::PARAM_STR);
+    $stmt->bindParam(':tipo', $_POST["pago"], PDO::PARAM_STR);
+    $stmt->execute();
+    //subir a fiado
+    $productos_no_actualizables = json_encode(array());
+    $cantidada_cero = "0";
+    $stmtlp = $pdo->prepare($sql_entrega);
+    $stmtlp->bindParam(':dni', $dni, PDO::PARAM_STR);
+    $stmtlp->bindParam(':nombre_y_apellido', $nombre, PDO::PARAM_STR);
+    $stmtlp->bindParam(':productos', $productos_no_actualizables, PDO::PARAM_STR);
+    $stmtlp->bindParam(':saldo', $tot, PDO::PARAM_INT);
+    $stmtlp->bindParam(':cantidad', $cantidada_cero, PDO::PARAM_STR);
+    $stmtlp->bindParam(':fecha', $fecha_date, PDO::PARAM_STR);
+    if ($stmtlp->execute()) {
+        //setcookie("productos_caja", "", time() - 3600, "/");
+        setcookie("mensaje", "exito", time() + 10, '/');
+        setcookie("imprimir", $imprimir, time() + 3600, "/");
+        header("location: caja.php");
+
+
+    } else {
+        setcookie("mensaje", "fallo", time() + 10, '/');
+        header("location: caja.php");
+    }
+}
 if ($_POST["pago"] === "efectivo") {
 
     if (isset($_COOKIE['productos_caja'])) {

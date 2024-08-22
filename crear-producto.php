@@ -44,7 +44,7 @@ session_start();
                 ?>
 
                 <ul class="navbar-nav ml-lg-auto">
-                    <div class="ml-lg-4">
+                    <div class="ml-lg-4" id="icono">
                         <div class="color-mode d-lg-flex justify-content-center align-items-center">
                             <i class="color-mode-icon"></i>
                         </div>
@@ -118,6 +118,7 @@ session_start();
     <script src="js/smoothscroll.js"></script>
     <script src="js/custom.js"></script>
     <script src="js/mensaje.js"></script>
+    <script src="js/dark-mode.js"></script>
 </body>
 
 </html>

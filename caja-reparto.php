@@ -190,7 +190,7 @@ if (isset($_COOKIE["productos_caja"])) {
                 ?>
 
                 <ul class="navbar-nav ml-lg-auto">
-                    <div class="ml-lg-4">
+                    <div class="ml-lg-4" id="icono">
                         <div class="color-mode d-lg-flex justify-content-center align-items-center">
                             <i class="color-mode-icon"></i>
                         </div>
@@ -287,10 +287,12 @@ if (isset($_COOKIE["productos_caja"])) {
                             <input type="text" id="searchInput" placeholder="nombre y apellido..."
                                 name="nombre_y_apelido" required>
                             <input type="text" id="searchInput" placeholder="DNI..." name="DNI" required>
+                            <input type="number" id="searchInput" placeholder="entrega..." name="entregar_plata">
                             <input type="hidden" id="searchInput" value="<?php echo $total_general; ?>" name="total">
                             <select name="pago" id="searchInput">
                                 <option value="efectivo" class="option-efectivo">💵 Efectivo</option>
                                 <option value="trans" class="option-tarjeta">💳 Tarjeta</option>
+                                <option value="entrega" class="option-fiar">Con entrega</option>
                                 <option value="fiar" class="option-fiar">📝 Fiar</option>
                             </select>
                             <button class="btn checkout-btn" type="submit" style="margin-top: 5px;">Finalizar
@@ -328,6 +330,7 @@ if (isset($_COOKIE["productos_caja"])) {
     <script src="js/smoothscroll.js"></script>
     <script src="js/custom.js"></script>
     <script src="js/mensaje-caja.js"></script>
+    <script src="js/dark-mode.js"></script>
 
 </body>
 

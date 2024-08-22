@@ -41,7 +41,7 @@ session_start();
                 ?>
 
                 <ul class="navbar-nav ml-lg-auto">
-                    <div class="ml-lg-4">
+                    <div class="ml-lg-4" id="icono">
                         <div class="color-mode d-lg-flex justify-content-center align-items-center">
                             <i class="color-mode-icon"></i>
                         </div>
@@ -77,7 +77,8 @@ session_start();
     <!-- PROJECTS -->
 
     <section class="project py-5" id="project">
-        <div class="reparto-texto" style="font-weight: bold; width: 100%; text-align: center; font-size: larger; ">Stock
+        <div class="reparto-texto"
+            style="font-weight: bold; width: 100%; text-align: center; font-size: larger; margin-top: -20px;">Stock
             Reparto</div>
         <div class="container">
             <div class="row">
@@ -85,6 +86,8 @@ session_start();
                     stock</a>
                 <a href="crear-producto-reparto.php" class="btn checkout-btn" id="btnFiltrar-menor"
                     style="cursor: pointer;">Agregar Producto</a>
+                <a href="editar-departamento.php" class="btn checkout-btn" id="btnFiltrar-menor"
+                    style="cursor: pointer;">Editar por Departamento</a>
                 <!-- CARDS DE PRODUCTOS -->
                 <div class="productos-stock">
                     <?php
@@ -112,16 +115,16 @@ session_start();
                         }
                         $query = "SELECT * FROM producto_reparto WHERE 1=1";
                         if ($nombre_producto !== '') {
-                            $query .= " AND nombre_producto LIKE :nombre_producto";
+                            $query .= " AND nombre_producto LIKE :nombre_producto ORDER BY stock ASC";
                         }
                         if ($departamento !== '') {
-                            $query .= " AND departamento LIKE :departamento";
+                            $query .= " AND departamento LIKE :departamento ORDER BY stock ASC";
                         }
                         if ($proveedor !== '') {
-                            $query .= " AND proveedor LIKE :proveedor";
+                            $query .= " AND proveedor LIKE :proveedor ORDER BY stock ASC";
                         }
                         if ($code_bar_con !== "") {
-                            $query .= " AND codigo_barra LIKE :codigo_barra";
+                            $query .= " AND codigo_barra LIKE :codigo_barra ORDER BY stock ASC";
                         }
                         $stmt = $pdo->prepare($query);
 
@@ -240,6 +243,7 @@ session_start();
     <script src="js/custom.js"></script>
     <script src="./js/cartas-prod-stock.js"></script>
     <script src="./js/stock.js"></script>
+    <script src="./js/dark-mode.js"></script>
 </body>
 
 </html>

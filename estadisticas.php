@@ -42,7 +42,7 @@ session_start();
                 <?php require_once "cabecera.php";
                 ?>
                 <ul class="navbar-nav ml-lg-auto">
-                    <div class="ml-lg-4">
+                    <div class="ml-lg-4" id="icono">
                         <div class="color-mode d-lg-flex justify-content-center align-items-center">
                             <i class="color-mode-icon"></i>
                         </div>
@@ -100,6 +100,7 @@ session_start();
     <script src="js/estadisticas-reparto.js"></script>
     <script src="js/estadisticas-dia-venta.js"></script>
     <script src="js/costos.js"></script>
+    <script src="js/dark-mode.js"></script>
 </body>
 
 </html>

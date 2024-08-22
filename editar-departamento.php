@@ -58,20 +58,14 @@ session_start();
     </div>
     <div class="body-container">
         <div class="container-cartas-fiado">
-            <form action="accion-crear-producto-reparto.php" class="card-fiado" method="post">
-                <h2 class="text-center">Ingrese el producto al reparto</h2>
-                <p class="text-center"><strong>Nombre producto</strong> <br><input type="text" name="nombre_producto">
-                </p>
-                <p class="text-center"><strong>Codigo de barra</strong> <br><input name="codigo_barra" type="text"></p>
-                <p class="text-center"><strong>departamento</strong> <br><input name="departamento" type="text"></p>
-                <p class="text-center"><strong>proveedor</strong> <br><input type="text" name="proveedor"></p>
-                <p class="text-center"><strong>stock</strong> <br><input name="stock" type="number"></p>
+            <form action="accion-editar-departamento.php" class="card-fiado" method="post">
+                <h2 class="text-center">Editar por departamento</h2>
+                <p class="text-center"><strong>departamento</strong> <br><input name="departamento_c" type="text"></p>
                 <p class="text-center"><strong>costo</strong> <br>$<input id="costo" name="costo" type="number"></p>
                 <p class="text-center"><strong>ganancia</strong><br><input id="ganancia" name="ganancia" type="number">%
                 </p>
                 <p class="text-center"><strong>Precio final</strong><br>$<span id="precio-final">0.00</span></p>
-                <p class="text-center"><strong>Stock Minino</strong> <br><input name="num_stock" type="number"></p>
-                <button id="agregar-producto" style="margin-left: 19vh;" class="pay-button" type="submit">agregar
+                <button id="agregar-producto" style="margin-left: 15vh;" class="pay-button" type="submit">Editar
                     Producto</button>
             </form>
         </div>

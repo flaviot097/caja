@@ -184,7 +184,7 @@ if (isset($_COOKIE["productos_caja"])) {
                 <?php require_once "cabecera.php"; ?>
 
                 <ul class="navbar-nav ml-lg-auto">
-                    <div class="ml-lg-4">
+                    <div class="ml-lg-4" id="icono">
                         <div class="color-mode d-lg-flex justify-content-center align-items-center">
                             <i class="color-mode-icon"></i>
                         </div>
@@ -226,33 +226,33 @@ if (isset($_COOKIE["productos_caja"])) {
                                 if ($clave['nombre_producto'] !== "Producto") {
                                     $total_general += $clave['total'];
                                     ?>
-                                    <div class="product">
-                                        <?php echo $clave['nombre_producto'] ?> |
-                                        <?php echo $clave['codigo_barra'] ?> | C/U $<?php echo $clave['precio'] ?> | Cantidad:
-                                        <?php echo $clave['cantidad'];
+                        <div class="product">
+                            <?php echo $clave['nombre_producto'] ?> |
+                            <?php echo $clave['codigo_barra'] ?> | C/U $<?php echo $clave['precio'] ?> | Cantidad:
+                            <?php echo $clave['cantidad'];
 
                                         ?>
-                                        <form action="" method="get">
-                                            <input type="hidden" name="eliminar" value="<?php echo $clave['codigo_barra']; ?>">
-                                            <input type="hidden" name="indice_cantidad" value="<?php echo $vuelta_cant;
+                            <form action="" method="get">
+                                <input type="hidden" name="eliminar" value="<?php echo $clave['codigo_barra']; ?>">
+                                <input type="hidden" name="indice_cantidad" value="<?php echo $vuelta_cant;
                                             $vuelta_cant++; ?>">
-                                            <button type="submit">❌</button>
-                                        </form>
-                                    </div>
-                                <?php } else {
+                                <button type="submit">❌</button>
+                            </form>
+                        </div>
+                        <?php } else {
                                     $total_general += $clave['total'];
                                     ?>
-                                    <div class="product">
-                                        <?php echo $clave['nombre_producto'] ?> |
-                                        <?php echo $clave['codigo_barra'] ?> | C/U $<?php echo $clave['precio'] ?> |
-                                        Cantidad:
-                                        <?php echo $clave['cantidad'] ?>
-                                        <form action="" method="get">
-                                            <input type="hidden" name="eliminar" value="<?php echo $clave['codigo_barra']; ?>">
-                                            <button type="submit" style="display: none;"></button>
-                                        </form>
-                                    </div>
-                                    <?php
+                        <div class="product">
+                            <?php echo $clave['nombre_producto'] ?> |
+                            <?php echo $clave['codigo_barra'] ?> | C/U $<?php echo $clave['precio'] ?> |
+                            Cantidad:
+                            <?php echo $clave['cantidad'] ?>
+                            <form action="" method="get">
+                                <input type="hidden" name="eliminar" value="<?php echo $clave['codigo_barra']; ?>">
+                                <button type="submit" style="display: none;"></button>
+                            </form>
+                        </div>
+                        <?php
                                 }
                             }
                         }
@@ -279,10 +279,12 @@ if (isset($_COOKIE["productos_caja"])) {
                             <input type="text" id="searchInput" placeholder="nombre y apellido..."
                                 name="nombre_y_apelido" required>
                             <input type="text" id="searchInput" placeholder="DNI..." name="DNI" required>
+                            <input type="number" id="searchInput" placeholder="entrega..." name="entregar_plata">
                             <input type="hidden" id="searchInput" value="<?php echo $total_general; ?>" name="total">
                             <select name="pago" id="searchInput">
                                 <option value="efectivo" class="option-efectivo">💵 Efectivo</option>
                                 <option value="trans" class="option-tarjeta">💳 Tarjeta</option>
+                                <option value="entrega" class="option-fiar">Con entrega</option>
                                 <option value="fiar" class="option-fiar">📝 Fiar</option>
                             </select>
                             <button class="btn checkout-btn" type="submit" style="margin-top: 5px;">Finalizar
@@ -320,6 +322,7 @@ if (isset($_COOKIE["productos_caja"])) {
     <script src="js/smoothscroll.js"></script>
     <script src="js/custom.js"></script>
     <script src="js/mensaje-caja.js"></script>
+    <script src="./js/dark-mode.js"></script>
 
 </body>
 
