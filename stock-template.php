@@ -86,6 +86,8 @@ session_start();
                     style="cursor: pointer;">Agregar Producto</a>
                 <a href="editar-departamento-local.php" class="btn checkout-btn" id="btnFiltrar-menor"
                     style="cursor: pointer;">Editar por Departamento</a>
+                <a href="template-backup.php" class="btn checkout-btn" id="btnFiltrar-menor"
+                    style="cursor: pointer;">Backup</a>
                 <div class="productos-stock">
                     <?php
                     if ($_GET) {
@@ -214,36 +216,36 @@ session_start();
     </footer>
     <script src="js/jquery-3.3.1.min.js"></script>
     <script>
-    $(document).ready(function() {
-        if ($(window).width() <= 768) {
-            $('#sidebar').addClass('collapse');
-        }
-
-        $(window).resize(function() {
+        $(document).ready(function () {
             if ($(window).width() <= 768) {
                 $('#sidebar').addClass('collapse');
-            } else {
-                $('#sidebar').removeClass('collapse');
             }
-        });
-    });
-    </script>
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Captura todos los elementos <p> con la clase 'eliminar'
-        const eliminarElements = document.querySelectorAll('.eliminar-prod');
 
-        eliminarElements.forEach(function(eliminarElement) {
-            eliminarElement.addEventListener('click', function() {
-                // Obtén el id del elemento clickeado
-                const codigoBarra = this.id;
-
-                // Redirige a eliminar-producto.php con el parámetro codigo_eliminar
-                window.location.href = 'eliminar-producto.php?codigo_eliminar=' +
-                    encodeURIComponent(codigoBarra);
+            $(window).resize(function () {
+                if ($(window).width() <= 768) {
+                    $('#sidebar').addClass('collapse');
+                } else {
+                    $('#sidebar').removeClass('collapse');
+                }
             });
         });
-    });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Captura todos los elementos <p> con la clase 'eliminar'
+            const eliminarElements = document.querySelectorAll('.eliminar-prod');
+
+            eliminarElements.forEach(function (eliminarElement) {
+                eliminarElement.addEventListener('click', function () {
+                    // Obtén el id del elemento clickeado
+                    const codigoBarra = this.id;
+
+                    // Redirige a eliminar-producto.php con el parámetro codigo_eliminar
+                    window.location.href = 'eliminar-producto.php?codigo_eliminar=' +
+                        encodeURIComponent(codigoBarra);
+                });
+            });
+        });
     </script>
 
 

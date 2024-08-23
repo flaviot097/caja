@@ -88,6 +88,8 @@ session_start();
                     style="cursor: pointer;">Agregar Producto</a>
                 <a href="editar-departamento.php" class="btn checkout-btn" id="btnFiltrar-menor"
                     style="cursor: pointer;">Editar por Departamento</a>
+                <a href="template-backup.php" class="btn checkout-btn" id="btnFiltrar-menor"
+                    style="cursor: pointer;">Backup</a>
                 <!-- CARDS DE PRODUCTOS -->
                 <div class="productos-stock">
                     <?php
