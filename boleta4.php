@@ -281,6 +281,7 @@ $dompdf = new Dompdf($options);
 $dompdf->loadHtml($html);
 $dompdf->setPaper('custom', 'portrait');
 setcookie("productos_caja", "", time() - 3600, "/");
+setcookie("cantidad_prod", "", time() - 3600, "/");
 // Renderizar el PDF
 $dompdf->render();
 

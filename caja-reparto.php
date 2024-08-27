@@ -210,7 +210,7 @@ if (isset($_COOKIE["productos_caja"])) {
                             style="margin-right: 5px;">
                         <input type="text" id="searchInput" placeholder="Buscar codigo..." name="codigo"
                             style="margin-right: 5px;">
-                        <input type="number" id="searchInput" placeholder="cantidad de productos..." name="cantidad"
+                        <input type="text" id="searchInput" placeholder="cantidad de productos..." name="cantidad"
                             value="1">
                         <input type="number" id="searchInput" placeholder="descuento..." name="descuento">
                     </div>

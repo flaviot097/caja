@@ -22,6 +22,15 @@ session_start();
     <!-- MAIN STYLE -->
     <link rel="stylesheet" href="css/tooplate-style.css" />
 </head>
+<style>
+.contador-container {
+    font-weight: bold;
+    font-size: 1rem;
+    margin-left: 5vh;
+    color: gray;
+    text-decoration: underline;
+}
+</style>
 
 <body>
     <!-- MENU -->
@@ -90,9 +99,14 @@ session_start();
                     style="cursor: pointer;">Editar por Departamento</a>
                 <a href="template-backup.php" class="btn checkout-btn" id="btnFiltrar-menor"
                     style="cursor: pointer;">Backup</a>
+                <a href="generar-code-bar.php" class="btn checkout-btn" id="btnFiltrar-menor"
+                    style="cursor: pointer;">Crear C.Barra</a>
                 <!-- CARDS DE PRODUCTOS -->
                 <div class="productos-stock">
                     <?php
+
+                    $count_vuelta = 0;
+
                     if ($_GET) {
 
                         require_once "conecion.php";
@@ -147,6 +161,7 @@ session_start();
 
                         if ($resultados) {
                             foreach ($resultados as $item) {
+                                $count_vuelta = $count_vuelta + $item["stock"];
                                 $color = "";
                                 if (intval($item["stock"]) > $item["num_stock"] && intval($item["stock"]) > ($item["num_stock"] + 6)) {
                                     $color = "green";
@@ -175,6 +190,7 @@ session_start();
 <button class='productos-editar' type='submit'>Producto</button></form></div>
 </div> ";
                             }
+                            echo "<br><div class='contador-container'> Total stock: $count_vuelta productos</div><br>";
                         } else {
                             echo "<p>No se encontraron resultados.</p>";
                         }

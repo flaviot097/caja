@@ -177,13 +177,13 @@ if ($_POST["pago"] === "fiar") {
         foreach ($productos_caja as $value) {
             if ($value['codigo_barra'] !== "codigo de barra") {
                 $cod = $value['codigo_barra'];
-                $cantidad_prod_s = $value["cantidad"];
+                $cantidad_prod_s = floatval($value["cantidad"]);
                 $consultar_stock = "SELECT stock FROM producto WHERE codigo_barra=:codigo_barra";
                 $stmtconsulta_s = $pdo->prepare($consultar_stock);
                 $stmtconsulta_s->bindParam(':codigo_barra', $cod, PDO::PARAM_STR);
                 $stmtconsulta_s->execute();
                 $existente1 = ($stmtconsulta_s->fetchAll())[0]["stock"];
-                $stock_nue = intval($existente1) - intval($cantidad_prod_s);
+                $stock_nue = intval($existente1) - $cantidad_prod_s;
                 $update_stock = "UPDATE producto SET stock=:stock WHERE codigo_barra=:codigo_barra";
                 $stmtupdate_s = $pdo->prepare($update_stock);
                 $stmtupdate_s->bindParam(':codigo_barra', $cod, PDO::PARAM_STR);

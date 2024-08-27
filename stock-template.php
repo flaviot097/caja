@@ -23,7 +23,15 @@ session_start();
     <!-- MAIN STYLE -->
     <link rel="stylesheet" href="css/tooplate-style.css" />
 </head>
-
+<style>
+.contador-container {
+    font-weight: bold;
+    font-size: 1rem;
+    margin-left: 5vh;
+    color: gray;
+    text-decoration: underline;
+}
+</style>
 
 <body>
     <!-- MENU -->
@@ -88,9 +96,13 @@ session_start();
                     style="cursor: pointer;">Editar por Departamento</a>
                 <a href="template-backup.php" class="btn checkout-btn" id="btnFiltrar-menor"
                     style="cursor: pointer;">Backup</a>
+                <a href="generar-code-bar.php" class="btn checkout-btn" id="btnFiltrar-menor"
+                    style="cursor: pointer;">Crear C.Barra</a>
                 <div class="productos-stock">
                     <?php
                     if ($_GET) {
+
+                        $count_vuelta = 0;
 
                         require_once "conecion.php";
 
@@ -158,6 +170,7 @@ session_start();
                         // Mostrar los resultados
                         if ($resultados) {
                             foreach ($resultados as $item) {
+                                $count_vuelta = $count_vuelta + $item["stock"];
                                 $color = "";
                                 if (intval($item["stock"]) > $item["num_stock"] && intval($item["stock"]) > ($item["num_stock"] + 6)) {
                                     $color = "green";
@@ -186,6 +199,7 @@ session_start();
 <button class='productos-editar' type='submit'>Producto</button></form></div>
 </div> ";
                             }
+                            echo "<br><div class='contador-container'> Total stock: $count_vuelta productos</div><br>";
                         } else {
                             echo "<p>No se encontraron resultados.</p>";
                         }
@@ -216,36 +230,36 @@ session_start();
     </footer>
     <script src="js/jquery-3.3.1.min.js"></script>
     <script>
-        $(document).ready(function () {
+    $(document).ready(function() {
+        if ($(window).width() <= 768) {
+            $('#sidebar').addClass('collapse');
+        }
+
+        $(window).resize(function() {
             if ($(window).width() <= 768) {
                 $('#sidebar').addClass('collapse');
+            } else {
+                $('#sidebar').removeClass('collapse');
             }
-
-            $(window).resize(function () {
-                if ($(window).width() <= 768) {
-                    $('#sidebar').addClass('collapse');
-                } else {
-                    $('#sidebar').removeClass('collapse');
-                }
-            });
         });
+    });
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Captura todos los elementos <p> con la clase 'eliminar'
-            const eliminarElements = document.querySelectorAll('.eliminar-prod');
+    document.addEventListener('DOMContentLoaded', function() {
+        // Captura todos los elementos <p> con la clase 'eliminar'
+        const eliminarElements = document.querySelectorAll('.eliminar-prod');
 
-            eliminarElements.forEach(function (eliminarElement) {
-                eliminarElement.addEventListener('click', function () {
-                    // Obtén el id del elemento clickeado
-                    const codigoBarra = this.id;
+        eliminarElements.forEach(function(eliminarElement) {
+            eliminarElement.addEventListener('click', function() {
+                // Obtén el id del elemento clickeado
+                const codigoBarra = this.id;
 
-                    // Redirige a eliminar-producto.php con el parámetro codigo_eliminar
-                    window.location.href = 'eliminar-producto.php?codigo_eliminar=' +
-                        encodeURIComponent(codigoBarra);
-                });
+                // Redirige a eliminar-producto.php con el parámetro codigo_eliminar
+                window.location.href = 'eliminar-producto.php?codigo_eliminar=' +
+                    encodeURIComponent(codigoBarra);
             });
         });
+    });
     </script>
 
 

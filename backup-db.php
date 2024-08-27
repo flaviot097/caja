@@ -40,6 +40,6 @@ try {
 } catch (PDOException $e) {
     echo "Error: " . $e->getMessage();
 }
-header("location: caja.php") // Esto imprimirá los datos en la pantalla para verificación.
+header("location: caja.php")
 
     ?>
