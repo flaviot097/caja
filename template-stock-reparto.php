@@ -64,7 +64,7 @@ session_start();
         <h2 class="text-filter">Filtrar Productos</h2>
         <form action="" method="get" class="form-filtro">
             <label for="nombre">Nombre del Producto</label>
-            <input type="text" id="nombre" name="nombre" class="form-control">
+            <input type="text" id="nombre" name="nombre_producto" class="form-control">
 
             <label for="departamento">Departamento</label>
             <input type="text" id="departamento" name="departamento" class="form-control">
@@ -163,9 +163,9 @@ session_start();
                             foreach ($resultados as $item) {
                                 $count_vuelta = $count_vuelta + $item["stock"];
                                 $color = "";
-                                if (intval($item["stock"]) > $item["num_stock"] && intval($item["stock"]) > ($item["num_stock"] + 6)) {
+                                if (floatval($item["stock"]) > $item["num_stock"] && floatval($item["stock"]) > ($item["num_stock"] + 6)) {
                                     $color = "green";
-                                } elseif (intval($item["stock"]) < $item["num_stock"]) {
+                                } elseif (floatval($item["stock"]) < $item["num_stock"]) {
                                     $color = "red";
                                 }
                                 ;

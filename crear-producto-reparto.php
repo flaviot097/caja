@@ -65,7 +65,7 @@ session_start();
                 <p class="text-center"><strong>Codigo de barra</strong> <br><input name="codigo_barra" type="text"></p>
                 <p class="text-center"><strong>departamento</strong> <br><input name="departamento" type="text"></p>
                 <p class="text-center"><strong>proveedor</strong> <br><input type="text" name="proveedor"></p>
-                <p class="text-center"><strong>stock</strong> <br><input name="stock" type="number"></p>
+                <p class="text-center"><strong>stock</strong> <br><input name="stock" type="text"></p>
                 <p class="text-center"><strong>costo</strong> <br>$<input id="costo" name="costo" type="number"></p>
                 <p class="text-center"><strong>ganancia</strong><br><input id="ganancia" name="ganancia" type="number">%
                 </p>
@@ -93,21 +93,21 @@ session_start();
         </div>
     </footer>
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const costoInput = document.getElementById('costo');
-        const gananciaInput = document.getElementById('ganancia');
-        const precioFinalSpan = document.getElementById('precio-final');
+        document.addEventListener('DOMContentLoaded', function () {
+            const costoInput = document.getElementById('costo');
+            const gananciaInput = document.getElementById('ganancia');
+            const precioFinalSpan = document.getElementById('precio-final');
 
-        function calcularPrecioFinal() {
-            const costo = parseFloat(costoInput.value) || 0;
-            const ganancia = parseFloat(gananciaInput.value) || 0;
-            const precioFinal = costo + (costo * (ganancia / 100));
-            precioFinalSpan.textContent = precioFinal.toFixed(2);
-        }
+            function calcularPrecioFinal() {
+                const costo = parseFloat(costoInput.value) || 0;
+                const ganancia = parseFloat(gananciaInput.value) || 0;
+                const precioFinal = costo + (costo * (ganancia / 100));
+                precioFinalSpan.textContent = precioFinal.toFixed(2);
+            }
 
-        costoInput.addEventListener('input', calcularPrecioFinal);
-        gananciaInput.addEventListener('input', calcularPrecioFinal);
-    });
+            costoInput.addEventListener('input', calcularPrecioFinal);
+            gananciaInput.addEventListener('input', calcularPrecioFinal);
+        });
     </script>
 
     <script src="js/jquery-3.3.1.min.js"></script>

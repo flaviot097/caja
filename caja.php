@@ -110,7 +110,7 @@ if ($_GET) {
             'precio' => $results[0]['precio'],
             'codigo_barra' => $results[0]['codigo_barra'],
             'cantidad' => $cantidad,
-            'total' => $results[0]['precio'] * $cantidad
+            'total' => floatval($results[0]['precio']) * $cantidad
         ];
 
         if (isset($_COOKIE["productos_caja"])) {
@@ -202,18 +202,18 @@ if (isset($_COOKIE["productos_caja"])) {
                     <div class="input-foms-caja">
                         <input type="text" id="searchInput" placeholder="Buscar producto..." name="producto"
                             style="margin-right: 5px;">
+                        <input type="text" id="searchInput" placeholder="cantidad de productos..." name="cantidad"
+                            value="1" autofocus>
                         <input type="text" id="searchInput" placeholder="Buscar codigo..." name="codigo"
                             style="margin-right: 5px;">
-                        <input type="text" id="searchInput" placeholder="cantidad de productos..." name="cantidad"
-                            value="1">
                         <input type="number" id="searchInput" placeholder="descuento..." name="descuento">
                     </div>
 
                     <button class="btn checkout-btn" type="submit">Agregar</button>
                 </form>
             </div>
-            <div class="form-conteiner-aling">
-                <form class="content">
+            <div class="form-conteiner-aling" style="flex-direction: column;">
+                <form class="content" style="width: 100%;">
                     <div class="product-list">
                         <?php
                         $total_general = 0;
@@ -226,42 +226,59 @@ if (isset($_COOKIE["productos_caja"])) {
                                 if ($clave['nombre_producto'] !== "Producto") {
                                     $total_general += $clave['total'];
                                     ?>
-                        <div class="product">
-                            <?php echo $clave['nombre_producto'] ?> |
-                            <?php echo $clave['codigo_barra'] ?> | C/U $<?php echo $clave['precio'] ?> | Cantidad:
-                            <?php echo $clave['cantidad'];
+                                    <div class="product">
+                                        <div class="container-data-product" style="display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 91%;
+    justify-content: space-around;">
+                                            <div><?php echo $clave['nombre_producto'] ?> |</div>
+                                            <div><?php echo $clave['codigo_barra'] ?> </div>| <div> C/U
+                                                <?php echo $clave['precio'] ?> |
+                                            </div>
+                                            Cantidad:
+                                            <?php echo $clave['cantidad'];
 
-                                        ?>
-                            <form action="" method="get">
-                                <input type="hidden" name="eliminar" value="<?php echo $clave['codigo_barra']; ?>">
-                                <input type="hidden" name="indice_cantidad" value="<?php echo $vuelta_cant;
+                                            ?>
+                                        </div>
+                                        <form action="" method="get">
+                                            <input type="hidden" name="eliminar" value="<?php echo $clave['codigo_barra']; ?>">
+                                            <input type="hidden" name="indice_cantidad" value="<?php echo $vuelta_cant;
                                             $vuelta_cant++; ?>">
-                                <button type="submit">❌</button>
-                            </form>
-                        </div>
-                        <?php } else {
+                                            <button type="submit">❌</button>
+                                        </form>
+                                    </div>
+                                <?php } else {
                                     $total_general += $clave['total'];
                                     ?>
-                        <div class="product">
-                            <?php echo $clave['nombre_producto'] ?> |
-                            <?php echo $clave['codigo_barra'] ?> | C/U $<?php echo $clave['precio'] ?> |
-                            Cantidad:
-                            <?php echo $clave['cantidad'] ?>
-                            <form action="" method="get">
-                                <input type="hidden" name="eliminar" value="<?php echo $clave['codigo_barra']; ?>">
-                                <button type="submit" style="display: none;"></button>
-                            </form>
-                        </div>
-                        <?php
+                                    <div class="product ">
+                                        <div class="container-data-product" style="display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 91%;
+    justify-content: space-around;font-weight: bold;">
+                                            <div style="font-weight: bold;"><?php echo $clave['nombre_producto'] ?> |</div>
+                                            <div style="font-weight: bold;"><?php echo $clave['codigo_barra'] ?> </div>| <div> C/U
+                                                <?php $clave['precio'] ?> |
+                                            </div>
+                                            Cantidad:
+                                            <?php echo $clave['cantidad'];
+
+                                            ?>
+                                        </div>
+                                        <form action="" method="get">
+                                            <input type="hidden" name="eliminar" value="<?php echo $clave['codigo_barra']; ?>">
+                                            <button type="submit" style="display: none;"></button>
+                                        </form>
+                                    </div>
+                                    <?php
                                 }
                             }
                         }
                         ?>
                     </div>
                     <div class="cart">
-                        <h2 class="text-caja-black">Carrito de Compras</h2>
-                        <div class="cart-items">
-                        </div>
+
                         <div class="cart-total">
                             <p>Total General: $<?php
                             if (isset($_COOKIE["descuentos"])) {

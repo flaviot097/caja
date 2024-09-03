@@ -24,13 +24,13 @@ session_start();
     <link rel="stylesheet" href="css/tooplate-style.css" />
 </head>
 <style>
-.contador-container {
-    font-weight: bold;
-    font-size: 1rem;
-    margin-left: 5vh;
-    color: gray;
-    text-decoration: underline;
-}
+    .contador-container {
+        font-weight: bold;
+        font-size: 1rem;
+        margin-left: 5vh;
+        color: gray;
+        text-decoration: underline;
+    }
 </style>
 
 <body>
@@ -172,9 +172,9 @@ session_start();
                             foreach ($resultados as $item) {
                                 $count_vuelta = $count_vuelta + $item["stock"];
                                 $color = "";
-                                if (intval($item["stock"]) > $item["num_stock"] && intval($item["stock"]) > ($item["num_stock"] + 6)) {
+                                if (floatval($item["stock"]) > $item["num_stock"] && floatval($item["stock"]) > ($item["num_stock"] + 6)) {
                                     $color = "green";
-                                } elseif (intval($item["stock"]) < $item["num_stock"]) {
+                                } elseif (floatval($item["stock"]) < $item["num_stock"]) {
                                     $color = "red";
                                 }
                                 ;
@@ -230,36 +230,36 @@ session_start();
     </footer>
     <script src="js/jquery-3.3.1.min.js"></script>
     <script>
-    $(document).ready(function() {
-        if ($(window).width() <= 768) {
-            $('#sidebar').addClass('collapse');
-        }
-
-        $(window).resize(function() {
+        $(document).ready(function () {
             if ($(window).width() <= 768) {
                 $('#sidebar').addClass('collapse');
-            } else {
-                $('#sidebar').removeClass('collapse');
             }
-        });
-    });
-    </script>
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Captura todos los elementos <p> con la clase 'eliminar'
-        const eliminarElements = document.querySelectorAll('.eliminar-prod');
 
-        eliminarElements.forEach(function(eliminarElement) {
-            eliminarElement.addEventListener('click', function() {
-                // Obtén el id del elemento clickeado
-                const codigoBarra = this.id;
-
-                // Redirige a eliminar-producto.php con el parámetro codigo_eliminar
-                window.location.href = 'eliminar-producto.php?codigo_eliminar=' +
-                    encodeURIComponent(codigoBarra);
+            $(window).resize(function () {
+                if ($(window).width() <= 768) {
+                    $('#sidebar').addClass('collapse');
+                } else {
+                    $('#sidebar').removeClass('collapse');
+                }
             });
         });
-    });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Captura todos los elementos <p> con la clase 'eliminar'
+            const eliminarElements = document.querySelectorAll('.eliminar-prod');
+
+            eliminarElements.forEach(function (eliminarElement) {
+                eliminarElement.addEventListener('click', function () {
+                    // Obtén el id del elemento clickeado
+                    const codigoBarra = this.id;
+
+                    // Redirige a eliminar-producto.php con el parámetro codigo_eliminar
+                    window.location.href = 'eliminar-producto.php?codigo_eliminar=' +
+                        encodeURIComponent(codigoBarra);
+                });
+            });
+        });
     </script>
 
 

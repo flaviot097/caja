@@ -13,9 +13,9 @@ $contrasenoa = $_SESSION["password"];
 if ($result->num_rows > 0) {
     while ($item = $result->fetch_assoc()) {
         $color = "";
-        if (intval($item["stock"]) > $item["num_stock"] && intval($item["stock"]) > ($item["num_stock"] + 6)) {
+        if (floatval($item["stock"]) > $item["num_stock"] && floatval($item["stock"]) > ($item["num_stock"] + 6)) {
             $color = "green";
-        } elseif (intval($item["stock"]) < $item["num_stock"]) {
+        } elseif (floatval($item["stock"]) < $item["num_stock"]) {
             $color = "red";
         }
         ;
