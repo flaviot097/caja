@@ -24,13 +24,13 @@ session_start();
     <link rel="stylesheet" href="css/tooplate-style.css" />
 </head>
 <style>
-    .contador-container {
-        font-weight: bold;
-        font-size: 1rem;
-        margin-left: 5vh;
-        color: gray;
-        text-decoration: underline;
-    }
+.contador-container {
+    font-weight: bold;
+    font-size: 1rem;
+    margin-left: 5vh;
+    color: gray;
+    text-decoration: underline;
+}
 </style>
 
 <body>
@@ -131,18 +131,20 @@ session_start();
 
                         // Preparar la consulta según los campos proporcionados
                         if ($nombre_producto !== '') {
-                            $query .= " AND nombre_producto LIKE :nombre_producto ORDER BY stock ASC";
+                            $query .= " AND nombre_producto LIKE :nombre_producto";
                         }
                         if ($departamento !== '') {
-                            $query .= " AND departamento LIKE :departamento ORDER BY stock ASC";
+                            $query .= " AND departamento LIKE :departamento";
                         }
                         if ($proveedor !== '') {
-                            $query .= " AND proveedor LIKE :proveedor ORDER BY stock ASC";
+                            $query .= " AND proveedor LIKE :proveedor";
                         }
                         if ($code_bar_con !== "") {
-                            $query .= " AND codigo_barra LIKE :codigo_barra ORDER BY stock ASC";
+                            $query .= " AND codigo_barra LIKE :codigo_barra";
                         }
 
+                        // Añadir el ORDER BY una sola vez al final
+                        $query .= " ORDER BY stock ASC";
 
                         // Preparar la consulta con PDO
                         $stmt = $pdo->prepare($query);
@@ -160,6 +162,7 @@ session_start();
                         if ($code_bar_con !== "") {
                             $stmt->bindValue(':codigo_barra', '%' . $code_bar_con . '%', PDO::PARAM_STR);
                         }
+
 
                         // Ejecutar la consulta
                         $stmt->execute();
@@ -192,7 +195,7 @@ session_start();
 <div class='contenedor-formularios'><form  method='Post' class='editar-producto' id=" . $item["codigo_barra"] . " action='editar-p_l.php'><label for='ingrese stock a editar' class='label-producto' >Editar</label>
 <input type='hidden' name='codigo_B' value=" . $item["codigo_barra"] . ">
 <input type='hidden' name='stock' value=" . $item["stock"] . ">
-<input class='input-producto' type='number' value=" . $item["stock"] . " name='editar_stock_prod'><button class='btm-submit' type='submit'>Stock</button>
+<input class='input-producto' type='text' value=" . $item["stock"] . " name='editar_stock_prod'><button class='btm-submit' type='submit'>Stock</button>
 </form>
 <form class='editar-producto' action='template-editar-prod-l.php' method='post'>
 <input type='hidden' name='codigo_B' value=" . $item["codigo_barra"] . ">
@@ -230,36 +233,36 @@ session_start();
     </footer>
     <script src="js/jquery-3.3.1.min.js"></script>
     <script>
-        $(document).ready(function () {
+    $(document).ready(function() {
+        if ($(window).width() <= 768) {
+            $('#sidebar').addClass('collapse');
+        }
+
+        $(window).resize(function() {
             if ($(window).width() <= 768) {
                 $('#sidebar').addClass('collapse');
+            } else {
+                $('#sidebar').removeClass('collapse');
             }
-
-            $(window).resize(function () {
-                if ($(window).width() <= 768) {
-                    $('#sidebar').addClass('collapse');
-                } else {
-                    $('#sidebar').removeClass('collapse');
-                }
-            });
         });
+    });
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Captura todos los elementos <p> con la clase 'eliminar'
-            const eliminarElements = document.querySelectorAll('.eliminar-prod');
+    document.addEventListener('DOMContentLoaded', function() {
+        // Captura todos los elementos <p> con la clase 'eliminar'
+        const eliminarElements = document.querySelectorAll('.eliminar-prod');
 
-            eliminarElements.forEach(function (eliminarElement) {
-                eliminarElement.addEventListener('click', function () {
-                    // Obtén el id del elemento clickeado
-                    const codigoBarra = this.id;
+        eliminarElements.forEach(function(eliminarElement) {
+            eliminarElement.addEventListener('click', function() {
+                // Obtén el id del elemento clickeado
+                const codigoBarra = this.id;
 
-                    // Redirige a eliminar-producto.php con el parámetro codigo_eliminar
-                    window.location.href = 'eliminar-producto.php?codigo_eliminar=' +
-                        encodeURIComponent(codigoBarra);
-                });
+                // Redirige a eliminar-producto.php con el parámetro codigo_eliminar
+                window.location.href = 'eliminar-producto.php?codigo_eliminar=' +
+                    encodeURIComponent(codigoBarra);
             });
         });
+    });
     </script>
 
 

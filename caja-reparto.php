@@ -5,6 +5,14 @@ require_once "conecion.php";
 require_once "delete-element.php";
 //require_once "cargar_cookie.php";
 
+if (!empty($_COOKIE["fiados_todos"])) {
+    setcookie("fiados_todos", "", time() - 3600, "/");
+}
+if (!empty($_COOKIE["imprimir"])) {
+    setcookie("imprimir", "", time() - 3600, "/");
+}
+
+
 $dsn = "mysql:host=localhost:3307;dbname=code_bar;";
 try {
     $pdo = new PDO($dsn, $usuario, $contrasena);
@@ -167,9 +175,9 @@ if (isset($_COOKIE["productos_caja"])) {
     <link rel="stylesheet" href="css/tooplate-style.css" />
 </head>
 <style>
-.pos-system {
-    background-color: #5894bfed !important;
-}
+    .pos-system {
+        background-color: #5894bfed !important;
+    }
 </style>
 
 <body>
@@ -232,35 +240,35 @@ if (isset($_COOKIE["productos_caja"])) {
                                 if ($clave['nombre_producto'] !== "Producto") {
                                     $total_general += $clave['total'];
                                     ?>
-                        <div class="product">
-                            <?php echo $clave['nombre_producto'] ?> |
-                            <?php echo $clave['codigo_barra'] ?> | C/U $<?php echo $clave['precio'] ?> | Cantidad:
-                            <?php echo $clave['cantidad'];
+                                    <div class="product">
+                                        <?php echo $clave['nombre_producto'] ?> |
+                                        <?php echo $clave['codigo_barra'] ?> | C/U $<?php echo $clave['precio'] ?> | Cantidad:
+                                        <?php echo $clave['cantidad'];
 
                                         ?>
-                            <form action="" method="get">
-                                <input type="hidden" name="eliminar" value="<?php echo $clave['codigo_barra']; ?>">
-                                <input type="hidden" name="indice_cantidad" value="<?php echo $vuelta_cant;
+                                        <form action="" method="get">
+                                            <input type="hidden" name="eliminar" value="<?php echo $clave['codigo_barra']; ?>">
+                                            <input type="hidden" name="indice_cantidad" value="<?php echo $vuelta_cant;
                                             $vuelta_cant++;
 
                                             ?>">
-                                <button type="submit">❌</button>
-                            </form>
-                        </div>
-                        <?php } else {
+                                            <button type="submit">❌</button>
+                                        </form>
+                                    </div>
+                                <?php } else {
                                     $total_general += $clave['total'];
                                     ?>
-                        <div class="product">
-                            <?php echo $clave['nombre_producto'] ?> |
-                            <?php echo $clave['codigo_barra'] ?> | C/U $<?php echo $clave['precio'] ?> |
-                            Cantidad:
-                            <?php echo $clave['cantidad'] ?>
-                            <form action="" method="get">
-                                <input type="hidden" name="eliminar" value="<?php echo $clave['codigo_barra']; ?>">
-                                <button type="submit" style="display: none;"></button>
-                            </form>
-                        </div>
-                        <?php
+                                    <div class="product">
+                                        <?php echo $clave['nombre_producto'] ?> |
+                                        <?php echo $clave['codigo_barra'] ?> | C/U $<?php echo $clave['precio'] ?> |
+                                        Cantidad:
+                                        <?php echo $clave['cantidad'] ?>
+                                        <form action="" method="get">
+                                            <input type="hidden" name="eliminar" value="<?php echo $clave['codigo_barra']; ?>">
+                                            <button type="submit" style="display: none;"></button>
+                                        </form>
+                                    </div>
+                                    <?php
                                 }
                             }
                         }

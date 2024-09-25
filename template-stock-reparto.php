@@ -129,33 +129,42 @@ session_start();
                             echo "Se debe completar al menos un campo para realizar la búsqueda.";
                             exit;
                         }
-                        $query = "SELECT * FROM producto_reparto WHERE 1=1";
+                        $query = "SELECT * FROM producto WHERE 1=1";
+
+                        // Preparar la consulta según los campos proporcionados
                         if ($nombre_producto !== '') {
-                            $query .= " AND nombre_producto LIKE :nombre_producto ORDER BY stock ASC";
+                            $query .= " AND nombre_producto LIKE :nombre_producto";
                         }
                         if ($departamento !== '') {
-                            $query .= " AND departamento LIKE :departamento ORDER BY stock ASC";
+                            $query .= " AND departamento LIKE :departamento";
                         }
                         if ($proveedor !== '') {
-                            $query .= " AND proveedor LIKE :proveedor ORDER BY stock ASC";
+                            $query .= " AND proveedor LIKE :proveedor";
                         }
                         if ($code_bar_con !== "") {
-                            $query .= " AND codigo_barra LIKE :codigo_barra ORDER BY stock ASC";
+                            $query .= " AND codigo_barra LIKE :codigo_barra";
                         }
+
+                        // Añadir el ORDER BY una sola vez al final
+                        $query .= " ORDER BY stock ASC";
+
+                        // Preparar la consulta con PDO
                         $stmt = $pdo->prepare($query);
 
-                        if ($nombre_producto !== "") {
+                        // Vincular los parámetros según corresponda
+                        if ($nombre_producto !== '') {
                             $stmt->bindValue(':nombre_producto', '%' . $nombre_producto . '%', PDO::PARAM_STR);
                         }
-                        if ($departamento !== "") {
+                        if ($departamento !== '') {
                             $stmt->bindValue(':departamento', '%' . $departamento . '%', PDO::PARAM_STR);
                         }
-                        if ($proveedor !== "") {
+                        if ($proveedor !== '') {
                             $stmt->bindValue(':proveedor', '%' . $proveedor . '%', PDO::PARAM_STR);
                         }
                         if ($code_bar_con !== "") {
                             $stmt->bindValue(':codigo_barra', '%' . $code_bar_con . '%', PDO::PARAM_STR);
                         }
+
                         $stmt->execute();
                         $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

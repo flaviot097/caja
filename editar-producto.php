@@ -1,7 +1,7 @@
 <?php
-$stock_editar = intval($_POST["editar_stock_prod"]);
+$stock_editar = floatval($_POST["editar_stock_prod"]);
 $product = $_POST["codigo_B"];
-$stock = intval($_POST["stock"]);
+$stock = floatval($_POST["stock"]);
 
 $dif_stock = $stock_editar - $stock;
 require_once "conecion.php";
@@ -23,7 +23,7 @@ $nueva_dif = $stock_product_get - $dif_stock;
 $query = "UPDATE producto  SET stock = :nuevo_stock WHERE codigo_barra = :codigo_barra";
 $stmt = $pdo->prepare($query);
 $stmt->bindParam(':codigo_barra', $product, PDO::PARAM_STR);
-$stmt->bindParam(':nuevo_stock', $nueva_dif, PDO::PARAM_INT);
+$stmt->bindParam(':nuevo_stock', $nueva_dif, PDO::PARAM_STR);
 if ($stmt->execute()) {
     $query2 = "UPDATE producto_reparto  SET stock = :nuevo_stock WHERE codigo_barra = :codigo_barra";
     $stmt2 = $pdo->prepare($query2);

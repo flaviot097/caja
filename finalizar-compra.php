@@ -65,6 +65,10 @@ if ($_POST["pago"] == "entrega") {
     $stmtlp->bindParam(':fecha', $fecha_date, PDO::PARAM_STR);
     if ($stmtlp->execute()) {
         //setcookie("productos_caja", "", time() - 3600, "/");
+        //elimino cookies y genero mensaje
+
+        setcookie("productos_caja", "", time() - 3600, "/");
+        setcookie("cantidad_prod", "", time() - 3600, "/");
         setcookie("mensaje", "exito", time() + 10, '/');
         setcookie("imprimir", $imprimir, time() + 3600, "/");
         header("location: caja.php");
@@ -116,6 +120,10 @@ if ($_POST["pago"] === "efectivo") {
                     $imprimir = json_encode([$_POST["nombre_y_apelido"], "efectivo", $value['total']]);
                     $productos_caja[] = $list;
                     $productos_caja_json = json_encode($productos_caja);
+
+                    //elimino cookies
+
+                    setcookie("cantidad_prod", "", time() - 3600, "/");
                     setcookie("productos_caja", $productos_caja_json, time() + 3600, "/");
                     //setcookie("productos_caja", "", time() - 3600, "/");
                     setcookie("mensaje", "exito", time() + 10, '/');
@@ -171,6 +179,11 @@ if ($_POST["pago"] === "trans") {
                     $imprimir = json_encode([$_POST["nombre_y_apelido"], "Transferencia", $value['total']]);
                     $productos_caja[] = $list;
                     $productos_caja_json = json_encode($productos_caja);
+
+                    ///elimino cookies
+
+                    setcookie("productos_caja", "", time() - 3600, "/");
+                    setcookie("cantidad_prod", "", time() - 3600, "/");
                     setcookie("productos_caja", $productos_caja_json, time() + 3600, "/");
                     setcookie("mensaje", "exito", time() + 10, '/');
                     //setcookie("productos_caja", "", time() - 3600, "/");
@@ -252,7 +265,8 @@ if ($_POST["pago"] === "fiar") {
         $stmt->bindParam(':cantidad', $cant_fiado_json_str, PDO::PARAM_STR);
         $stmt->bindParam(':fecha', $fecha_date, PDO::PARAM_STR);
         if ($stmt->execute()) {
-            //setcookie("productos_caja", "", time() - 3600, "/");
+            setcookie("productos_caja", "", time() - 3600, "/");
+            setcookie("cantidad_prod", "", time() - 3600, "/");
             setcookie("mensaje", "exito", time() + 10, '/');
             setcookie("imprimir", $imprimir, time() + 3600, "/");
             header("location: factura-crear.php");

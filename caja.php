@@ -5,6 +5,14 @@ require_once "conecion.php";
 require_once "delete-element.php";
 //require_once "cargar_cookie.php";
 
+if (!empty($_COOKIE["fiados_todos"])) {
+    setcookie("fiados_todos", "", time() - 3600, "/");
+}
+if (!empty($_COOKIE["imprimir"])) {
+    setcookie("imprimir", "", time() - 3600, "/");
+}
+
+
 $dsn = "mysql:host=localhost:3307;dbname=code_bar;";
 try {
     $pdo = new PDO($dsn, $usuario, $contrasena);
@@ -166,6 +174,81 @@ if (isset($_COOKIE["productos_caja"])) {
     <!-- MAIN STYLE -->
     <link rel="stylesheet" href="css/tooplate-style.css" />
 </head>
+<style>
+    .body-container {
+        background-color: #333333;
+        /* Color oscuro de fondo */
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .btn.checkout-btn {
+        background-color: #FF5722;
+        /* Un color naranja para el botón */
+        color: #FFFFFF;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .btn.checkout-btn:hover {
+        background-color: #E64A19;
+        /* Un tono más oscuro al hacer hover */
+    }
+
+    #searchInput {
+        background-color: #444444;
+        color: #FFFFFF;
+        border: 1px solid #555555;
+        border-radius: 5px;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+
+    .product-list .product {
+        background-color: #3E3E3E;
+        /* Fondo más oscuro para los productos */
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        color: #FFFFFF;
+    }
+
+    .container-data-product div {
+        margin-right: 10px;
+        font-weight: bold;
+    }
+
+    #searchInput::placeholder {
+        color: #AAAAAA;
+        /* Color más claro para los placeholders */
+    }
+
+    .footer {
+        background-color: #2B2B2B;
+        color: #CCCCCC;
+        padding: 20px 0;
+        text-align: center;
+        font-size: 14px;
+    }
+
+    .footer a {
+        color: #FF5722;
+        text-decoration: none;
+    }
+
+    .footer a:hover {
+        text-decoration: underline;
+    }
+
+    .div-de-prod {
+        width: 12%;
+    }
+</style>
 
 <body>
     <!-- MENU -->
@@ -231,10 +314,11 @@ if (isset($_COOKIE["productos_caja"])) {
     flex-direction: row;
     flex-wrap: wrap;
     width: 91%;
-    justify-content: space-around;">
-                                            <div><?php echo $clave['nombre_producto'] ?> |</div>
-                                            <div><?php echo $clave['codigo_barra'] ?> </div>| <div> C/U
-                                                <?php echo $clave['precio'] ?> |
+    justify-content: space-between;">
+                                            <div class="div-de-prod"><?php echo $clave['nombre_producto'] ?> </div>
+                                            <div class="div-de-prod"><?php echo $clave['codigo_barra'] ?> </div>
+                                            <div style="width: 2%;" class="div-de-prod"> C/U
+                                                $<?php echo $clave['precio'] ?>
                                             </div>
                                             Cantidad:
                                             <?php echo $clave['cantidad'];
@@ -256,10 +340,11 @@ if (isset($_COOKIE["productos_caja"])) {
     flex-direction: row;
     flex-wrap: wrap;
     width: 91%;
-    justify-content: space-around;font-weight: bold;">
-                                            <div style="font-weight: bold;"><?php echo $clave['nombre_producto'] ?> |</div>
-                                            <div style="font-weight: bold;"><?php echo $clave['codigo_barra'] ?> </div>| <div> C/U
-                                                <?php $clave['precio'] ?> |
+    justify-content: space-between;font-weight: bold;">
+                                            <div style="font-weight: bold;"><?php echo $clave['nombre_producto'] ?> </div>
+                                            <div style="font-weight: bold;"><?php echo $clave['codigo_barra'] ?> </div>
+                                            <div> C/U
+                                                <?php $clave['precio'] ?>
                                             </div>
                                             Cantidad:
                                             <?php echo $clave['cantidad'];
@@ -292,7 +377,7 @@ if (isset($_COOKIE["productos_caja"])) {
                             ?>
                             </p>
                         </div>
-                        <form action="finalizar-compra.php" method="post">
+                        <form action="finalizar-compra.php" method="post" style="margin-left: -3%;">
                             <input type="text" id="searchInput" placeholder="nombre y apellido..."
                                 name="nombre_y_apelido" required>
                             <input type="text" id="searchInput" placeholder="DNI..." name="DNI" required>
