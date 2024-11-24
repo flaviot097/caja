@@ -101,6 +101,8 @@ session_start();
                     style="cursor: pointer;">Backup</a>
                 <a href="generar-code-bar.php" class="btn checkout-btn" id="btnFiltrar-menor"
                     style="cursor: pointer;">Crear C.Barra</a>
+                <a href="pasar-stock-reparto.php" class="btn checkout-btn" id="btnFiltrar-menor"
+                    style="cursor: pointer; margin-top: 2.3px;">Cargar de Locar a Reparto</a>
                 <!-- CARDS DE PRODUCTOS -->
                 <div class="productos-stock">
                     <?php
