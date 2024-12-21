@@ -25,107 +25,107 @@ $productos_caja = json_decode($_COOKIE["productos_caja"], true);
 ?>
 
 <style>
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-}
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+    }
 
-.invoice-container {
-    width: 210mm;
-    min-height: 297mm;
-    padding: 20mm;
-    margin: 10mm auto;
-    background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
-}
+    .invoice-container {
+        width: 210mm;
+        min-height: 297mm;
+        padding: 20mm;
+        margin: 10mm auto;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+    }
 
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
 
-header .company-details {
-    text-align: left;
-}
+    header .company-details {
+        text-align: left;
+    }
 
-.invoice-items {
-    width: 80%
-}
+    .invoice-items {
+        width: 80%
+    }
 
-header .company-details h1 {
-    margin: 0;
-    font-size: 24px;
-}
+    header .company-details h1 {
+        margin: 0;
+        font-size: 24px;
+    }
 
-header .company-details p {
-    margin: 5px 0;
-}
+    header .company-details p {
+        margin: 5px 0;
+    }
 
-header .logo img {
-    max-width: 150px;
-}
+    header .logo img {
+        max-width: 150px;
+    }
 
-.invoice-details {
-    text-align: center;
-    margin-bottom: 20px;
-}
+    .invoice-details {
+        text-align: center;
+        margin-bottom: 20px;
+    }
 
-.invoice-details h2 {
-    margin: 0;
-    font-size: 28px;
-}
+    .invoice-details h2 {
+        margin: 0;
+        font-size: 28px;
+    }
 
-.invoice-details p {
-    margin: 5px 0;
-}
+    .invoice-details p {
+        margin: 5px 0;
+    }
 
-.client-details {
-    margin-bottom: 20px;
-}
+    .client-details {
+        margin-bottom: 20px;
+    }
 
-.client-details h3 {
-    margin: 0 0 10px 0;
-    font-size: 20px;
-}
+    .client-details h3 {
+        margin: 0 0 10px 0;
+        font-size: 20px;
+    }
 
-.client-details p {
-    margin: 5px 0;
-}
+    .client-details p {
+        margin: 5px 0;
+    }
 
-.invoice-items table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-}
+    .invoice-items table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
 
-.invoice-items th,
-.invoice-items td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-}
+    .invoice-items th,
+    .invoice-items td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
 
-.invoice-items th {
-    background-color: #f4f4f4;
-}
+    .invoice-items th {
+        background-color: #f4f4f4;
+    }
 
-.invoice-items tfoot td {
-    font-weight: bold;
-}
+    .invoice-items tfoot td {
+        font-weight: bold;
+    }
 
-footer {
-    text-align: center;
-    margin-top: 20px;
-}
+    footer {
+        text-align: center;
+        margin-top: 20px;
+    }
 
-footer p {
-    margin: 0;
-    font-size: 16px;
-}
+    footer p {
+        margin: 0;
+        font-size: 16px;
+    }
 </style>
 
 <body>
@@ -157,23 +157,23 @@ footer p {
                 $total += $value["total"];
                 if ($value["nombre_producto"] !== "Producto") {
                     ?>
-                <thead>
-                    <tr>
-                        <th>Cantidad</th>
-                        <th>Procucto</th>
-                        <th>Precio C/U</th>
-                        <th>subtotal</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><?php echo $value["cantidad"]; ?></td>
-                        <td><?php echo $value["nombre_producto"]; ?></td>
-                        <td>$<?php echo $value["precio"]; ?></td>
-                        <td>$<?php echo ($value["precio"] * $value["cantidad"]); ?></td>
-                    </tr>
-                </tbody>
-                <?php }
+                        <thead>
+                            <tr>
+                                <th>Cantidad</th>
+                                <th>Procucto</th>
+                                <th>Precio C/U</th>
+                                <th>subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><?php echo $value["cantidad"]; ?></td>
+                                <td><?php echo $value["nombre_producto"]; ?></td>
+                                <td>$<?php echo $value["precio"]; ?></td>
+                                <td>$<?php echo ($value["precio"] * $value["cantidad"]); ?></td>
+                            </tr>
+                        </tbody>
+                    <?php }
             }
             ; ?>
                 <tfoot>
@@ -196,7 +196,7 @@ footer p {
 </body>
 
 </html>
-<?php echo $json[0];
+<?php
 
 $html = ob_get_clean();
 $options = new Options();

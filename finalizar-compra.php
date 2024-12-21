@@ -265,8 +265,8 @@ if ($_POST["pago"] === "fiar") {
         $stmt->bindParam(':cantidad', $cant_fiado_json_str, PDO::PARAM_STR);
         $stmt->bindParam(':fecha', $fecha_date, PDO::PARAM_STR);
         if ($stmt->execute()) {
-            setcookie("productos_caja", "", time() - 3600, "/");
-            setcookie("cantidad_prod", "", time() - 3600, "/");
+            //setcookie("productos_caja", "", time() - 3600, "/");
+            //setcookie("cantidad_prod", "", time() - 3600, "/");
             setcookie("mensaje", "exito", time() + 10, '/');
             setcookie("imprimir", $imprimir, time() + 3600, "/");
             header("location: factura-crear.php");
