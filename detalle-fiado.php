@@ -162,7 +162,8 @@ footer p {
 
         <section class="client-details">
             <h3>Detalles del Cliente</h3>
-            <p><strong>Nombre:</strong><?php echo $dni; ?></p>
+            <p><strong>Nombre:</strong><?php echo ($todosFiados[0]["nombre_y_apellido"]); ?></p>
+            <p><strong>DNI:</strong><?php echo $dni; ?></p>
         </section>
 
         <section class="invoice-items">
@@ -174,6 +175,7 @@ footer p {
                 //var_dump($json_productos);
                 //echo $json_productos[0];
                 echo "<br>";
+
 
                 foreach ($json_productos as $product) {
 
@@ -192,7 +194,7 @@ footer p {
                     //echo $fiados["saldo"];
                     $cantidad_productos_codigo = json_decode($fiados["cantidad"])[$vuelta];
                     //echo $todosFiados1[0]["precio"];
-                    ?>
+                    if ($cantidad_productos_codigo !== 0) { ?>
                 <thead>
                     <tr>
                         <th>Cantidad</th>
@@ -208,12 +210,13 @@ footer p {
                         <td><?php echo $nonmbre_p_fiado[0]["nombre_producto"]; ?></td>
                         <td>$<?php echo $todosFiados1[0]["precio"]; ?></td>
                         <td><?php echo ($fiados["fecha"]); ?></td>
-                        <td>$<?php echo ($todosFiados1[0]["precio"] * $cantidad_productos_codigo);
-                                $total += $todosFiados1[0]["precio"] * $cantidad_productos_codigo ?>
+                        <td>$<?php echo ($todosFiados1[0]["precio"] * floatval($cantidad_productos_codigo));
+                                    $total += $todosFiados1[0]["precio"] * floatval($cantidad_productos_codigo) ?>
                         </td>
                     </tr>
                 </tbody>
                 <?php $vuelta++;
+                    }
                 }
             }
             ; ?>
