@@ -178,6 +178,27 @@ if (isset($_COOKIE["productos_caja"])) {
 .pos-system {
     background-color: #5894bfed !important;
 }
+
+.reportes {
+
+    text-decoration: none;
+    margin-top: 3vh !important;
+    margin-bottom: -4vh;
+    text-align: center;
+}
+
+.atexto {
+    color: grey;
+    background-color: rgba(88, 191, 119, 0.93) !important;
+    border-radius: 10px;
+    display: inline-table;
+    width: 14vh;
+}
+
+.atexto:hover {
+    color: grey !important;
+    background-color: rgba(59, 158, 88, 0.93) !important;
+}
 </style>
 
 <body>
@@ -208,6 +229,7 @@ if (isset($_COOKIE["productos_caja"])) {
         </div>
     </nav>
 
+    <div class="reportes"><a class="atexto" href="reportes-reparto.php">Reportes</a></div>
     <div class="body-container">
         <div class="pos-system">
             <div class="header">

@@ -3,6 +3,9 @@
 //echo $_POST["nombre_y_apelido"];
 //echo $_POST["DNI"];
 //echo $_POST["pago"];
+
+use Svg\Gradient\Stop;
+
 $dni = $_POST["DNI"];
 $nombre = $_POST["nombre_y_apelido"];
 $fecha_date = date("Y-m-d");
@@ -15,6 +18,37 @@ try {
 } catch (PDOException $er) {
     echo $er->getMessage();
 }
+
+function tablaRepartos($codigoproducto, $cantidad_producto, $conneccion)
+{
+    $dateTime = date("Y-m-d");
+    $hora = date("H:i:s");
+    var_dump($hora);
+
+    try {
+
+        $sql = "INSERT INTO reparto_reporte(fecha, codigoBarra, cantidad, hora) VALUES ('$dateTime', '$codigoproducto', '$cantidad_producto', '$hora')";
+        $stmt = $conneccion->prepare($sql);
+        $stmt->execute();
+    } catch (PDOException $e) {
+        $sqlcreatetable = "CREATE TABLE reparto_reporte (
+            fecha DATE, 
+            codigoBarra VARCHAR(50), 
+            cantidad FLOAT, 
+            hora TIME
+        )";
+        $stmt = $conneccion->prepare($sqlcreatetable);
+        $stmt->execute();
+
+
+        $sql2 = "INSERT INTO reparto_reporte(fecha, codigoBarra, cantidad, hora) VALUES ('$dateTime', '$codigoproducto', '$cantidad_producto', '$hora')";
+        $stmt2 = $conneccion->prepare($sql2);
+        $stmt2->execute();
+    }
+}
+
+
+
 if ($_POST["pago"] == "entrega") {
     echo $_POST["total"];
     $total_con_entrega = $_POST["total"];
@@ -41,6 +75,7 @@ if ($_POST["pago"] == "entrega") {
             $stmtupdate_s->bindParam(':codigo_barra', $cod, PDO::PARAM_STR);
             $stmtupdate_s->bindParam(':stock', $stock_nue, PDO::PARAM_STR);
             $stmtupdate_s->execute();
+            tablaRepartos($cod, $cantidad_prod_s, $pdo);
         }
     }
 
@@ -98,6 +133,7 @@ if ($_POST["pago"] === "efectivo") {
                 $stmtupdate_s->bindParam(':codigo_barra', $cod, PDO::PARAM_STR);
                 $stmtupdate_s->bindParam(':stock', $stock_nue, PDO::PARAM_STR);
                 $stmtupdate_s->execute();
+                tablaRepartos($cod, $cantidad_prod_s, $pdo);
             }
             if ($value['nombre_producto'] !== "Producto") {
                 $local = "local";
@@ -132,7 +168,7 @@ if ($_POST["pago"] === "efectivo") {
 
                 } else {
                     setcookie("mensaje", "fallo", time() + 10, '/');
-                    header("location: caja-reparto.php");
+                    //header("location: caja-reparto.php");
                 }
             }
         }
@@ -157,6 +193,7 @@ if ($_POST["pago"] === "trans") {
                 $stmtupdate_s->bindParam(':codigo_barra', $cod, PDO::PARAM_STR);
                 $stmtupdate_s->bindParam(':stock', $stock_nue, PDO::PARAM_STR);
                 $stmtupdate_s->execute();
+                tablaRepartos($cod, $cantidad_prod_s, $pdo);
             }
             if ($value['nombre_producto'] !== "Producto") {
                 $local = "local";
@@ -222,6 +259,7 @@ if ($_POST["pago"] === "fiar") {
                 $stmtupdate_s->bindParam(':codigo_barra', $cod, PDO::PARAM_STR);
                 $stmtupdate_s->bindParam(':stock', $stock_nue, PDO::PARAM_STR);
                 $stmtupdate_s->execute();
+                tablaRepartos($cod, $cantidad_prod_s, $pdo);
             }
             if ($value['nombre_producto'] !== "Producto") {
 
