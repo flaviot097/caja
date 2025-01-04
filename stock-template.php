@@ -31,6 +31,57 @@ session_start();
     color: gray;
     text-decoration: underline;
 }
+
+.modal {
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    /* Stay in place */
+    z-index: 1;
+    /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    overflow: auto;
+    /* Enable scroll if needed */
+    background-color: rgba(0, 0, 0, 0.4);
+    /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.4);
+    /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#button-modal {
+    background-color: #4CAF50;
+}
 </style>
 
 <body>
@@ -216,7 +267,13 @@ session_start();
             </div>
         </div>
     </section>
-
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>¿Quiere eliminar este articulo del stock?.</p>
+            <button class="eliminar-btn-modals" id="button-modal">Eliminar</button>
+        </div>
+    </div>
     <footer class="footer py-5">
         <div class="container">
             <div class="row">
@@ -252,17 +309,46 @@ session_start();
         // Captura todos los elementos <p> con la clase 'eliminar'
         const eliminarElements = document.querySelectorAll('.eliminar-prod');
 
+
         eliminarElements.forEach(function(eliminarElement) {
             eliminarElement.addEventListener('click', function() {
                 // Obtén el id del elemento clickeado
                 const codigoBarra = this.id;
+                var modal = document.getElementById("myModal");
+                var span = document.getElementsByClassName("close")[0];
 
+                modal.style.display = "block";
+                // Cuando se hace clic en <span> (x), se cierra el modal
+                span.onclick = function() {
+                    modal.style.display = "none";
+                }
+                // Cuando se hace clic fuera del modal, se cierra
+                window.onclick = function(event) {
+                    if (event.target == modal) {
+                        modal.style.display = "none";
+                    }
+                }
+                Escucharbtneliminar(codigoBarra)
                 // Redirige a eliminar-producto.php con el parámetro codigo_eliminar
-                window.location.href = 'eliminar-producto.php?codigo_eliminar=' +
-                    encodeURIComponent(codigoBarra);
+                /*window.location.href = 'eliminar-producto-reparto.php?codigo_eliminar=' +
+                    encodeURIComponent(codigoBarra);*/
             });
         });
     });
+
+
+
+
+    function Escucharbtneliminar(id) {
+        const btn_eliminar = document.getElementById("button-modal")
+        btn_eliminar.addEventListener("click", function() {
+            if (btn_eliminar) {
+                window.location.href = 'eliminar-producto.php?codigo_eliminar=' +
+                    encodeURIComponent(id);
+            }
+        })
+
+    }
     </script>
 
 
