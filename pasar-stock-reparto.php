@@ -279,7 +279,7 @@ if (isset($_COOKIE["productos_stock"])) {
 
 <body>
     <!-- MENU -->
-    <nav class="navbar navbar-expand-sm navbar-light backgraund-header">
+    <nav class="navbar navbar-expand-sm navbar-light backgraund-header" style="min-width: 1200px !important;">
         <div class="container">
             <a class="navbar-brand" href="index.php"><i class="uil uil-user"></i></a>
 
@@ -418,7 +418,7 @@ if (isset($_COOKIE["productos_stock"])) {
     <?php
 
     ?>
-    <footer class="footer py-5">
+    <footer class="footer py-5" style="min-width: 1200px !important;">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 col-12">

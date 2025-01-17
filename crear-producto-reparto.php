@@ -28,7 +28,7 @@ session_start();
 
 <body>
     <!-- MENU -->
-    <nav class="navbar navbar-expand-sm navbar-light backgraund-header">
+    <nav class="navbar navbar-expand-sm navbar-light backgraund-header" style="min-width: 1200px !important;">
         <div class="container">
             <a class="navbar-brand" href="index.php"><i class="uil uil-user"></i></a>
 
@@ -78,7 +78,7 @@ session_start();
     </div>
 
 
-    <footer class="footer py-5">
+    <footer class="footer py-5" style="min-width: 1200px !important;">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 col-12">
@@ -93,21 +93,21 @@ session_start();
         </div>
     </footer>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const costoInput = document.getElementById('costo');
-            const gananciaInput = document.getElementById('ganancia');
-            const precioFinalSpan = document.getElementById('precio-final');
+    document.addEventListener('DOMContentLoaded', function() {
+        const costoInput = document.getElementById('costo');
+        const gananciaInput = document.getElementById('ganancia');
+        const precioFinalSpan = document.getElementById('precio-final');
 
-            function calcularPrecioFinal() {
-                const costo = parseFloat(costoInput.value) || 0;
-                const ganancia = parseFloat(gananciaInput.value) || 0;
-                const precioFinal = costo + (costo * (ganancia / 100));
-                precioFinalSpan.textContent = precioFinal.toFixed(2);
-            }
+        function calcularPrecioFinal() {
+            const costo = parseFloat(costoInput.value) || 0;
+            const ganancia = parseFloat(gananciaInput.value) || 0;
+            const precioFinal = costo + (costo * (ganancia / 100));
+            precioFinalSpan.textContent = precioFinal.toFixed(2);
+        }
 
-            costoInput.addEventListener('input', calcularPrecioFinal);
-            gananciaInput.addEventListener('input', calcularPrecioFinal);
-        });
+        costoInput.addEventListener('input', calcularPrecioFinal);
+        gananciaInput.addEventListener('input', calcularPrecioFinal);
+    });
     </script>
 
     <script src="js/jquery-3.3.1.min.js"></script>

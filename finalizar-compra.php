@@ -3,6 +3,7 @@
 //echo $_POST["nombre_y_apelido"];
 //echo $_POST["DNI"];
 //echo $_POST["pago"];
+date_default_timezone_set('America/Buenos_Aires');
 $dni = $_POST["DNI"];
 $nombre = $_POST["nombre_y_apelido"];
 $fecha_date = date("Y-m-d");
@@ -71,7 +72,7 @@ if ($_POST["pago"] == "entrega") {
         setcookie("cantidad_prod", "", time() - 3600, "/");
         setcookie("mensaje", "exito", time() + 10, '/');
         setcookie("imprimir", $imprimir, time() + 3600, "/");
-        header("location: caja.php");
+        header("location: factura-crear.php");
 
 
     } else {

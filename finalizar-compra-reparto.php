@@ -3,7 +3,7 @@
 //echo $_POST["nombre_y_apelido"];
 //echo $_POST["DNI"];
 //echo $_POST["pago"];
-
+date_default_timezone_set('America/Buenos_Aires');
 use Svg\Gradient\Stop;
 
 $dni = $_POST["DNI"];
@@ -105,12 +105,12 @@ if ($_POST["pago"] == "entrega") {
         setcookie("cantidad_prod", "", time() - 3600, "/");
         setcookie("mensaje", "exito", time() + 10, '/');
         setcookie("imprimir", $imprimir, time() + 3600, "/");
-        header("location: caja.php");
+        header("location: factura-crear.php");
 
 
     } else {
         setcookie("mensaje", "fallo", time() + 10, '/');
-        header("location: caja.php");
+        header("location: caja-reparto.php");
     }
 }
 if ($_POST["pago"] === "efectivo") {
@@ -229,7 +229,7 @@ if ($_POST["pago"] === "trans") {
 
                 } else {
                     setcookie("mensaje", "fallo", time() + 10, '/');
-                    header("location: caja.php");
+                    header("location: caja-reparto");
                 }
             }
         }

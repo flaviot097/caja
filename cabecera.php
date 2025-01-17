@@ -1,3 +1,23 @@
+<style>
+    body {
+        min-width: 1100px;
+    }
+
+    .headroom--not-bottom {
+        min-width: 100vw !important;
+        display: flex;
+        justify-content: center;
+    }
+
+    .navbar {
+        position: absolute;
+    }
+
+    .container {
+
+        margin: 0px;
+    }
+</style>
 <ul class="navbar-nav mx-auto">
     <li class="nav-item">
         <a href="session-close.php" class="nav-link"><?php if ($_SESSION["usuario"]) {

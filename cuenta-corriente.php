@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <?php
 session_start();
-
+date_default_timezone_set('America/Buenos_Aires');
 require_once "conecion.php";
 $dsn = "mysql:host=localhost:3307;dbname=code_bar;";
 try {
@@ -46,7 +46,7 @@ setcookie("fiados_todos", $para_cookies, time() + 3600, "/");
 
 <body>
     <!-- MENU -->
-    <nav class="navbar navbar-expand-sm navbar-light backgraund-header">
+    <nav class="navbar navbar-expand-sm navbar-light backgraund-header" style="min-width: 1200px !important;">
         <div class="container">
             <a class="navbar-brand" href="index.php"><i class="uil uil-user"></i></a>
 
@@ -154,7 +154,7 @@ setcookie("fiados_todos", $para_cookies, time() + 3600, "/");
         </div>
     </div>
 
-    <footer class="footer py-5">
+    <footer class="footer py-5" style="min-width: 1200px !important;">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 col-12">

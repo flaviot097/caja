@@ -26,7 +26,7 @@ session_start();
 
 <body>
     <!-- MENU -->
-    <nav class="navbar navbar-expand-sm navbar-light backgraund-header">
+    <nav class="navbar navbar-expand-sm navbar-light backgraund-header" style="min-width: 1200px !important;">
         <div class="container">
             <a class="navbar-brand" href="index.php"><i class="uil uil-user"></i></a>
 
@@ -178,7 +178,7 @@ session_start();
         </div>
     </section>
 
-    <footer class="footer py-5">
+    <footer class="footer py-5" style="min-width: 1200px !important;">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 col-12">
@@ -195,19 +195,19 @@ session_start();
 
     <script src="js/jquery-3.3.1.min.js"></script>
     <script>
-        $(document).ready(function () {
+    $(document).ready(function() {
+        if ($(window).width() <= 768) {
+            $('#sidebar').addClass('collapse');
+        }
+
+        $(window).resize(function() {
             if ($(window).width() <= 768) {
                 $('#sidebar').addClass('collapse');
+            } else {
+                $('#sidebar').removeClass('collapse');
             }
-
-            $(window).resize(function () {
-                if ($(window).width() <= 768) {
-                    $('#sidebar').addClass('collapse');
-                } else {
-                    $('#sidebar').removeClass('collapse');
-                }
-            });
         });
+    });
     </script>
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>

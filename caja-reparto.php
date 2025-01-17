@@ -170,6 +170,8 @@ if (isset($_COOKIE["productos_caja"])) {
     <link rel="stylesheet" href="css/target.css">
     <link rel="stylesheet" href="css/sidebar.css">
     <link rel="stylesheet" href="css/caja.css">
+    <link rel="stylesheet" href="css/estadisticas.css">
+    <link rel="stylesheet" href="css/graficas.css">
 
     <!-- MAIN STYLE -->
     <link rel="stylesheet" href="css/tooplate-style.css" />
@@ -203,7 +205,7 @@ if (isset($_COOKIE["productos_caja"])) {
 
 <body>
     <!-- MENU -->
-    <nav class="navbar navbar-expand-sm navbar-light backgraund-header">
+    <nav class="navbar navbar-expand-sm navbar-light backgraund-header" style="min-width: 1200px !important;">
         <div class="container">
             <a class="navbar-brand" href="index.php"><i class="uil uil-user"></i></a>
 

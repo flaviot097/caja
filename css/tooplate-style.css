@@ -631,14 +631,14 @@ footer {
 }
 
 /* Ajustes generales para dispositivos pequeños */
-@media only screen and (max-width: 767px) {
-  /* Ajuste general del body */
+/* @media only screen and (max-width: 767px) {
+  
   body {
     padding: 10px;
     font-size: 14px;
   }
 
-  /* Navbar */
+ 
   .navbar-brand {
     font-size: 24px;
   }
@@ -658,7 +658,7 @@ footer {
     text-align: center;
   }
 
-  /* Sidebar */
+ 
   .sidebar {
     width: 100%;
     margin-bottom: 20px;
@@ -682,13 +682,13 @@ footer {
     font-size: 12px;
   }
 
-  /* Botones de filtro */
+  
   #btnFiltrar-menor {
     width: 100%;
     margin: 5px 0;
   }
 
-  /* Productos */
+
   .productos-stock {
     display: flex;
     flex-direction: column;
@@ -711,7 +711,7 @@ footer {
     text-align: right;
   }
 
-  /* Footer */
+  
   .footer {
     text-align: center;
     padding: 20px 0;
@@ -720,7 +720,7 @@ footer {
   .footer p {
     font-size: 14px;
   }
-}
+} */
 
 /* Estilos generales */
 .sidebar {
@@ -955,13 +955,13 @@ footer p {
   opacity: 1;
 }
 
-/* Responsividad */
+/* Responsividad 
 @media (max-width: 768px) {
   .navbar-nav {
     flex-direction: column;
     align-items: flex-start;
     width: 100%;
-    background-color: #fff; /* Fondo de la barra en móviles */
+    background-color: #fff; 
     padding: 10px;
     border-top: 1px solid #ddd;
   }
@@ -980,9 +980,10 @@ footer p {
   }
 
   .nav-link:hover {
-    background-color: #f8f8f8; /* Fondo de hover en móviles */
+    background-color: #f8f8f8; 
   }
   .footer.py-5 {
-    width: 144vh;
+    width: 1100px;
   }
 }
+*/

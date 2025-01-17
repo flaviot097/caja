@@ -3,7 +3,7 @@
 require 'vendor/autoload.php';
 use Dompdf\Dompdf;
 use Dompdf\Options;
-
+date_default_timezone_set('America/Buenos_Aires');
 ?>
 <!DOCTYPE html>
 <html lang="es">

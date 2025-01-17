@@ -28,7 +28,7 @@ session_start();
 
 <body>
     <!-- MENU -->
-    <nav class="navbar navbar-expand-sm navbar-light backgraund-header">
+    <nav class="navbar navbar-expand-sm navbar-light backgraund-header" style="min-width: 1200px !important;">
         <div class="container">
             <a class="navbar-brand" href="index.php"><i class="uil uil-user"></i></a>
 
@@ -57,7 +57,7 @@ session_start();
 
     </div>
     <div class="body-container">
-        <div class="container-cartas-fiado">
+        <div class="container-cartas-fiado" style="min-width: 1200px !important;">
             <form action="accion-editar-departamento.php" class="card-fiado" method="post">
                 <h2 class="text-center">Editar por departamento</h2>
                 <p class="text-center"><strong>departamento</strong> <br><input name="departamento_c" type="text"></p>

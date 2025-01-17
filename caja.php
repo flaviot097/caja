@@ -170,89 +170,95 @@ if (isset($_COOKIE["productos_caja"])) {
     <link rel="stylesheet" href="css/target.css">
     <link rel="stylesheet" href="css/sidebar.css">
     <link rel="stylesheet" href="css/caja.css">
+    <link rel="stylesheet" href="css/estadisticas.css">
+    <link rel="stylesheet" href="css/graficas.css">
 
     <!-- MAIN STYLE -->
     <link rel="stylesheet" href="css/tooplate-style.css" />
 </head>
 <style>
-    .body-container {
-        background-color: #333333;
-        /* Color oscuro de fondo */
-        border-radius: 10px;
-        padding: 20px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        max-width: 800px;
-        margin: 0 auto;
-    }
+.body-container {
+    background-color: #333333;
+    /* Color oscuro de fondo */
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    max-width: 800px;
+    margin: 34px auto;
+}
 
-    .btn.checkout-btn {
-        background-color: #FF5722;
-        /* Un color naranja para el botón */
-        color: #FFFFFF;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 5px;
-        cursor: pointer;
-    }
+.btn.checkout-btn {
+    background-color: #FF5722;
+    /* Un color naranja para el botón */
+    color: #FFFFFF;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
 
-    .btn.checkout-btn:hover {
-        background-color: #E64A19;
-        /* Un tono más oscuro al hacer hover */
-    }
+.btn.checkout-btn:hover {
+    background-color: #E64A19;
+    /* Un tono más oscuro al hacer hover */
+}
 
-    #searchInput {
-        background-color: #444444;
-        color: #FFFFFF;
-        border: 1px solid #555555;
-        border-radius: 5px;
-        padding: 10px;
-        margin-bottom: 10px;
-    }
+#searchInput {
+    background-color: #444444;
+    color: #FFFFFF;
+    border: 1px solid #555555;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
 
-    .product-list .product {
-        background-color: #3E3E3E;
-        /* Fondo más oscuro para los productos */
-        padding: 15px;
-        border-radius: 5px;
-        margin-bottom: 10px;
-        color: #FFFFFF;
-    }
+.product-list .product {
+    background-color: #3E3E3E;
+    /* Fondo más oscuro para los productos */
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    color: #FFFFFF;
+}
 
-    .container-data-product div {
-        margin-right: 10px;
-        font-weight: bold;
-    }
+.container-data-product div {
+    margin-right: 10px;
+    font-weight: bold;
+}
 
-    #searchInput::placeholder {
-        color: #AAAAAA;
-        /* Color más claro para los placeholders */
-    }
+#searchInput::placeholder {
+    color: #AAAAAA;
+    /* Color más claro para los placeholders */
+}
 
-    .footer {
-        background-color: #2B2B2B;
-        color: #CCCCCC;
-        padding: 20px 0;
-        text-align: center;
-        font-size: 14px;
-    }
+.footer {
+    background-color: #2B2B2B;
+    color: #CCCCCC;
+    padding: 20px 0;
+    text-align: center;
+    font-size: 14px;
+}
 
-    .footer a {
-        color: #FF5722;
-        text-decoration: none;
-    }
+.footer a {
+    color: #FF5722;
+    text-decoration: none;
+}
 
-    .footer a:hover {
-        text-decoration: underline;
-    }
+.footer a:hover {
+    text-decoration: underline;
+}
 
-    .div-de-prod {
-        width: 12%;
-    }
+.div-de-prod {
+    width: 12%;
+}
+
+.headroom--not-bottom {
+    min-width: 1100px !important;
+}
 </style>
 
 <body>
     <!-- MENU -->
-    <nav class="navbar navbar-expand-sm navbar-light backgraund-header">
+    <nav class="navbar navbar-expand-sm navbar-light backgraund-header" style="min-width: 1200px !important;">
         <div class="container">
             <a class="navbar-brand" href="index.php"><i class="uil uil-user"></i></a>
 
@@ -309,54 +315,54 @@ if (isset($_COOKIE["productos_caja"])) {
                                 if ($clave['nombre_producto'] !== "Producto") {
                                     $total_general += $clave['total'];
                                     ?>
-                                    <div class="product">
-                                        <div class="container-data-product" style="display: flex;
+                        <div class="product">
+                            <div class="container-data-product" style="display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     width: 91%;
     justify-content: space-between;">
-                                            <div class="div-de-prod"><?php echo $clave['nombre_producto'] ?> </div>
-                                            <div class="div-de-prod"><?php echo $clave['codigo_barra'] ?> </div>
-                                            <div style="width: 2%;" class="div-de-prod"> C/U
-                                                $<?php echo $clave['precio'] ?>
-                                            </div>
-                                            Cantidad:
-                                            <?php echo $clave['cantidad'];
+                                <div class="div-de-prod"><?php echo $clave['nombre_producto'] ?> </div>
+                                <div class="div-de-prod"><?php echo $clave['codigo_barra'] ?> </div>
+                                <div style="width: 2%;" class="div-de-prod"> C/U
+                                    $<?php echo $clave['precio'] ?>
+                                </div>
+                                Cantidad:
+                                <?php echo $clave['cantidad'];
 
                                             ?>
-                                        </div>
-                                        <form action="" method="get">
-                                            <input type="hidden" name="eliminar" value="<?php echo $clave['codigo_barra']; ?>">
-                                            <input type="hidden" name="indice_cantidad" value="<?php echo $vuelta_cant;
+                            </div>
+                            <form action="" method="get">
+                                <input type="hidden" name="eliminar" value="<?php echo $clave['codigo_barra']; ?>">
+                                <input type="hidden" name="indice_cantidad" value="<?php echo $vuelta_cant;
                                             $vuelta_cant++; ?>">
-                                            <button type="submit">❌</button>
-                                        </form>
-                                    </div>
-                                <?php } else {
+                                <button type="submit">❌</button>
+                            </form>
+                        </div>
+                        <?php } else {
                                     $total_general += $clave['total'];
                                     ?>
-                                    <div class="product ">
-                                        <div class="container-data-product" style="display: flex;
+                        <div class="product ">
+                            <div class="container-data-product" style="display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     width: 91%;
     justify-content: space-between;font-weight: bold;">
-                                            <div style="font-weight: bold;"><?php echo $clave['nombre_producto'] ?> </div>
-                                            <div style="font-weight: bold;"><?php echo $clave['codigo_barra'] ?> </div>
-                                            <div> C/U
-                                                <?php $clave['precio'] ?>
-                                            </div>
-                                            Cantidad:
-                                            <?php echo $clave['cantidad'];
+                                <div style="font-weight: bold;"><?php echo $clave['nombre_producto'] ?> </div>
+                                <div style="font-weight: bold;"><?php echo $clave['codigo_barra'] ?> </div>
+                                <div> C/U
+                                    <?php $clave['precio'] ?>
+                                </div>
+                                Cantidad:
+                                <?php echo $clave['cantidad'];
 
                                             ?>
-                                        </div>
-                                        <form action="" method="get">
-                                            <input type="hidden" name="eliminar" value="<?php echo $clave['codigo_barra']; ?>">
-                                            <button type="submit" style="display: none;"></button>
-                                        </form>
-                                    </div>
-                                    <?php
+                            </div>
+                            <form action="" method="get">
+                                <input type="hidden" name="eliminar" value="<?php echo $clave['codigo_barra']; ?>">
+                                <button type="submit" style="display: none;"></button>
+                            </form>
+                        </div>
+                        <?php
                                 }
                             }
                         }
@@ -401,7 +407,7 @@ if (isset($_COOKIE["productos_caja"])) {
     <?php
 
     ?>
-    <footer class="footer py-5">
+    <footer class="footer py-5" style="min-width: 1200px !important;">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 col-12">

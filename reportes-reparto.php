@@ -23,28 +23,28 @@ session_start();
     <link rel="stylesheet" href="css/tooplate-style.css" />
 </head>
 <style>
-.container-back {
-    margin-top: 12%;
-    margin-left: 41%;
-}
+    .container-back {
+        margin-top: 12%;
+        margin-left: 41%;
+    }
 
-.contenedor-principal {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 42rem;
-}
+    .contenedor-principal {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 42rem;
+    }
 
-.buscar {
-    background-color: rgba(59, 158, 88, 0.93);
-    border-color: rgba(59, 158, 88, 0.93);
-}
+    .buscar {
+        background-color: rgba(59, 158, 88, 0.93);
+        border-color: rgba(59, 158, 88, 0.93);
+    }
 
-.buscar:hover {
-    background-color: rgba(46, 136, 73, 0.93);
-    border-color: rgba(59, 158, 88, 0.93);
-    color: #343a40;
-}
+    .buscar:hover {
+        background-color: rgba(46, 136, 73, 0.93);
+        border-color: rgba(59, 158, 88, 0.93);
+        color: #343a40;
+    }
 </style>
 
 <body>
@@ -76,8 +76,8 @@ session_start();
     </nav>
     <div class="contenedor-principal">
         <form action="reporte-dia-reparto.php" method="get" class="form-center-report">
-            <input type="date" name="datetime">
-            <select name="turno" id="turno">
+            <input type="date" name="datetime" required>
+            <select name="turno" id="turno" required>
                 <option value="">Seleccione franja horario</option>
                 <option value="manana">Mañana</option>
                 <option value="tarde">Tarde</option>
@@ -101,19 +101,19 @@ session_start();
     </footer>
 
     <script>
-    $(document).ready(function() {
-        if ($(window).width() <= 768) {
-            $('#sidebar').addClass('collapse');
-        }
-
-        $(window).resize(function() {
+        $(document).ready(function () {
             if ($(window).width() <= 768) {
                 $('#sidebar').addClass('collapse');
-            } else {
-                $('#sidebar').removeClass('collapse');
             }
+
+            $(window).resize(function () {
+                if ($(window).width() <= 768) {
+                    $('#sidebar').addClass('collapse');
+                } else {
+                    $('#sidebar').removeClass('collapse');
+                }
+            });
         });
-    });
     </script>
     <script src="js/jquery-3.3.1.min.js"></script>
     <script src="js/popper.min.js"></script>

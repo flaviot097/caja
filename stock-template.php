@@ -24,64 +24,64 @@ session_start();
     <link rel="stylesheet" href="css/tooplate-style.css" />
 </head>
 <style>
-.contador-container {
-    font-weight: bold;
-    font-size: 1rem;
-    margin-left: 5vh;
-    color: gray;
-    text-decoration: underline;
-}
+    .contador-container {
+        font-weight: bold;
+        font-size: 1rem;
+        margin-left: 5vh;
+        color: gray;
+        text-decoration: underline;
+    }
 
-.modal {
-    display: none;
-    /* Hidden by default */
-    position: fixed;
-    /* Stay in place */
-    z-index: 1;
-    /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%;
-    /* Full width */
-    height: 100%;
-    /* Full height */
-    overflow: auto;
-    /* Enable scroll if needed */
-    background-color: rgba(0, 0, 0, 0.4);
-    /* Fallback color */
-    background-color: rgba(0, 0, 0, 0.4);
-    /* Black w/ opacity */
-}
+    .modal {
+        display: none;
+        /* Hidden by default */
+        position: fixed;
+        /* Stay in place */
+        z-index: 1;
+        /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%;
+        /* Full width */
+        height: 100%;
+        /* Full height */
+        overflow: auto;
+        /* Enable scroll if needed */
+        background-color: rgba(0, 0, 0, 0.4);
+        /* Fallback color */
+        background-color: rgba(0, 0, 0, 0.4);
+        /* Black w/ opacity */
+    }
 
-/* Modal Content */
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    /* 15% from the top and centered */
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    /* Could be more or less, depending on screen size */
-}
+    /* Modal Content */
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        /* 15% from the top and centered */
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        /* Could be more or less, depending on screen size */
+    }
 
-/* The Close Button */
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
+    /* The Close Button */
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
 
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
 
-#button-modal {
-    background-color: #4CAF50;
-}
+    #button-modal {
+        background-color: #4CAF50;
+    }
 </style>
 
 <body>
@@ -98,8 +98,38 @@ session_start();
             </button>
 
             <div class="collapse navbar-collapse" id="navbarNav">
-                <?php require_once "cabecera.php";
-                ?>
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a href="session-close.php" class="nav-link"><?php if ($_SESSION["usuario"]) {
+                            echo "Salir";
+                        } else {
+                            echo "Iniciar Sesión";
+                        } ?></span>
+                        </a>
+
+                    </li>
+                    <li class="nav-item">
+                        <a href="stock-template.php" class="nav-link">Stock</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="template-stock-reparto.php" class="nav-link">Reparto</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="estadisticas.php" class="nav-link">Estadisticas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="caja.php" class="nav-link">Caja</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="caja-reparto.php" class="nav-link">Caja Reparto</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="cuenta-corriente.php" class="nav-link">Fiado</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="egresos.php" class="nav-link">Egresos</a>
+                    </li>
+                </ul>
 
                 <ul class="navbar-nav ml-lg-auto">
                     <div class="ml-lg-4" id="icono">
@@ -290,65 +320,65 @@ session_start();
     </footer>
     <script src="js/jquery-3.3.1.min.js"></script>
     <script>
-    $(document).ready(function() {
-        if ($(window).width() <= 768) {
-            $('#sidebar').addClass('collapse');
-        }
-
-        $(window).resize(function() {
+        $(document).ready(function () {
             if ($(window).width() <= 768) {
                 $('#sidebar').addClass('collapse');
-            } else {
-                $('#sidebar').removeClass('collapse');
             }
-        });
-    });
-    </script>
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Captura todos los elementos <p> con la clase 'eliminar'
-        const eliminarElements = document.querySelectorAll('.eliminar-prod');
 
-
-        eliminarElements.forEach(function(eliminarElement) {
-            eliminarElement.addEventListener('click', function() {
-                // Obtén el id del elemento clickeado
-                const codigoBarra = this.id;
-                var modal = document.getElementById("myModal");
-                var span = document.getElementsByClassName("close")[0];
-
-                modal.style.display = "block";
-                // Cuando se hace clic en <span> (x), se cierra el modal
-                span.onclick = function() {
-                    modal.style.display = "none";
+            $(window).resize(function () {
+                if ($(window).width() <= 768) {
+                    $('#sidebar').addClass('collapse');
+                } else {
+                    $('#sidebar').removeClass('collapse');
                 }
-                // Cuando se hace clic fuera del modal, se cierra
-                window.onclick = function(event) {
-                    if (event.target == modal) {
-                        modal.style.display = "none";
-                    }
-                }
-                Escucharbtneliminar(codigoBarra)
-                // Redirige a eliminar-producto.php con el parámetro codigo_eliminar
-                /*window.location.href = 'eliminar-producto-reparto.php?codigo_eliminar=' +
-                    encodeURIComponent(codigoBarra);*/
             });
         });
-    });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Captura todos los elementos <p> con la clase 'eliminar'
+            const eliminarElements = document.querySelectorAll('.eliminar-prod');
+
+
+            eliminarElements.forEach(function (eliminarElement) {
+                eliminarElement.addEventListener('click', function () {
+                    // Obtén el id del elemento clickeado
+                    const codigoBarra = this.id;
+                    var modal = document.getElementById("myModal");
+                    var span = document.getElementsByClassName("close")[0];
+
+                    modal.style.display = "block";
+                    // Cuando se hace clic en <span> (x), se cierra el modal
+                    span.onclick = function () {
+                        modal.style.display = "none";
+                    }
+                    // Cuando se hace clic fuera del modal, se cierra
+                    window.onclick = function (event) {
+                        if (event.target == modal) {
+                            modal.style.display = "none";
+                        }
+                    }
+                    Escucharbtneliminar(codigoBarra)
+                    // Redirige a eliminar-producto.php con el parámetro codigo_eliminar
+                    /*window.location.href = 'eliminar-producto-reparto.php?codigo_eliminar=' +
+                        encodeURIComponent(codigoBarra);*/
+                });
+            });
+        });
 
 
 
 
-    function Escucharbtneliminar(id) {
-        const btn_eliminar = document.getElementById("button-modal")
-        btn_eliminar.addEventListener("click", function() {
-            if (btn_eliminar) {
-                window.location.href = 'eliminar-producto.php?codigo_eliminar=' +
-                    encodeURIComponent(id);
-            }
-        })
+        function Escucharbtneliminar(id) {
+            const btn_eliminar = document.getElementById("button-modal")
+            btn_eliminar.addEventListener("click", function () {
+                if (btn_eliminar) {
+                    window.location.href = 'eliminar-producto.php?codigo_eliminar=' +
+                        encodeURIComponent(id);
+                }
+            })
 
-    }
+        }
     </script>
 
 

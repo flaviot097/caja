@@ -4,7 +4,7 @@ ob_start();
 require 'vendor/autoload.php';
 use Dompdf\Dompdf;
 use Dompdf\Options;
-
+date_default_timezone_set('America/Buenos_Aires');
 $dni = $_GET["dni-validate"];
 
 require_once "conecion.php";
@@ -35,111 +35,111 @@ $total = 0;
     <link rel="stylesheet" href="styles.css">
 </head>
 <style>
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-}
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+    }
 
-.invoice-container {
-    width: 210mm;
-    min-height: 297mm;
-    padding: 20mm;
-    margin: 10mm auto;
-    background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
-}
+    .invoice-container {
+        width: 210mm;
+        min-height: 297mm;
+        padding: 20mm;
+        margin: 10mm auto;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+    }
 
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
 
-header .company-details {
-    text-align: left;
-}
+    header .company-details {
+        text-align: left;
+    }
 
-header .company-details h1 {
-    margin: 0;
-    font-size: 24px;
-}
+    header .company-details h1 {
+        margin: 0;
+        font-size: 24px;
+    }
 
-header .company-details p {
-    margin: 5px 0;
-}
+    header .company-details p {
+        margin: 5px 0;
+    }
 
-header .logo img {
-    max-width: 150px;
-}
+    header .logo img {
+        max-width: 150px;
+    }
 
-.invoice-details {
-    text-align: center;
-    margin-bottom: 20px;
-}
+    .invoice-details {
+        text-align: center;
+        margin-bottom: 20px;
+    }
 
-.invoice-details h2 {
-    margin: 0;
-    font-size: 28px;
-}
+    .invoice-details h2 {
+        margin: 0;
+        font-size: 28px;
+    }
 
-.invoice-details p {
-    margin: 5px 0;
-}
+    .invoice-details p {
+        margin: 5px 0;
+    }
 
-.client-details {
-    margin-bottom: 20px;
-}
+    .client-details {
+        margin-bottom: 20px;
+    }
 
-.client-details h3 {
-    margin: 0 0 10px 0;
-    font-size: 20px;
-}
+    .client-details h3 {
+        margin: 0 0 10px 0;
+        font-size: 20px;
+    }
 
-.client-details p {
-    margin: 5px 0;
-}
+    .client-details p {
+        margin: 5px 0;
+    }
 
-.invoice-items table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-}
+    .invoice-items table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
 
-.invoice-items th,
-.invoice-items td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-}
+    .invoice-items th,
+    .invoice-items td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
 
-.invoice-items th {
-    background-color: #f4f4f4;
-}
+    .invoice-items th {
+        background-color: #f4f4f4;
+    }
 
-.invoice-items tfoot td {
-    font-weight: bold;
-}
+    .invoice-items tfoot td {
+        font-weight: bold;
+    }
 
-footer {
-    text-align: center;
-    margin-top: 20px;
-}
+    footer {
+        text-align: center;
+        margin-top: 20px;
+    }
 
-footer p {
-    margin: 0;
-    font-size: 16px;
-}
+    footer p {
+        margin: 0;
+        font-size: 16px;
+    }
 
-.invoice-items {
-    width: 70% !important;
-}
+    .invoice-items {
+        width: 70% !important;
+    }
 
-.title-detalle {
-    width: 70%;
-}
+    .title-detalle {
+        width: 70%;
+    }
 </style>
 
 <body>
@@ -195,27 +195,27 @@ footer p {
                     $cantidad_productos_codigo = json_decode($fiados["cantidad"])[$vuelta];
                     //echo $todosFiados1[0]["precio"];
                     if ($cantidad_productos_codigo !== 0) { ?>
-                <thead>
-                    <tr>
-                        <th>Cantidad</th>
-                        <th>Procucto</th>
-                        <th>Precio C/U</th>
-                        <th>fecha</th>
-                        <th>subtotal</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><?php echo $cantidad_productos_codigo; ?></td>
-                        <td><?php echo $nonmbre_p_fiado[0]["nombre_producto"]; ?></td>
-                        <td>$<?php echo $todosFiados1[0]["precio"]; ?></td>
-                        <td><?php echo ($fiados["fecha"]); ?></td>
-                        <td>$<?php echo ($todosFiados1[0]["precio"] * floatval($cantidad_productos_codigo));
+                            <thead>
+                                <tr>
+                                    <th>Cantidad</th>
+                                    <th>Procucto</th>
+                                    <th>Precio C/U</th>
+                                    <th>fecha</th>
+                                    <th>subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><?php echo $cantidad_productos_codigo; ?></td>
+                                    <td><?php echo $nonmbre_p_fiado[0]["nombre_producto"]; ?></td>
+                                    <td>$<?php echo $todosFiados1[0]["precio"]; ?></td>
+                                    <td><?php echo ($fiados["fecha"]); ?></td>
+                                    <td>$<?php echo ($todosFiados1[0]["precio"] * floatval($cantidad_productos_codigo));
                                     $total += $todosFiados1[0]["precio"] * floatval($cantidad_productos_codigo) ?>
-                        </td>
-                    </tr>
-                </tbody>
-                <?php $vuelta++;
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <?php $vuelta++;
                     }
                 }
             }

@@ -46,84 +46,85 @@ if ($metodo == "liquidar_total") {
     $stmtC->execute();
     echo "se elimina el producto";
     header("location:cuenta-corriente.php");
-}
+} else {
 
 
-foreach ($todosFiados1 as $fiadodia) {
-    $vuelta = 0;
-    $productos_list = json_decode($fiadodia["productos"]);
-    $cantidad_list = json_decode($fiadodia["cantidad"]);
-    foreach ($productos_list as $producto_unidad) {
-        $prod_code = $productos_list[$vuelta];
-        $unidades_prod = $cantidad_list[$vuelta];
 
-        // consulta precio
+    foreach ($todosFiados1 as $fiadodia) {
+        $vuelta = 0;
+        $productos_list = json_decode($fiadodia["productos"]);
+        $cantidad_list = json_decode($fiadodia["cantidad"]);
+        foreach ($productos_list as $producto_unidad) {
+            $prod_code = $productos_list[$vuelta];
+            $unidades_prod = $cantidad_list[$vuelta];
 
-        $queryP = "SELECT precio FROM producto WHERE codigo_barra = :codigo_barra";
-        $stmtP = $pdo->prepare($queryP);
-        $stmtP->bindParam(':codigo_barra', $prod_code, PDO::PARAM_STR);
-        $stmtP->execute();
-        $f = $stmtP->fetch(PDO::FETCH_ASSOC);
-        $precioUnitario = $f["precio"];
-        $total = $total + ($precioUnitario * $unidades_prod);
-        if ($entrega_total >= $total) {
-            //echo "entro";
-            $pagar = "eliminar";
+            // consulta precio
 
-        } else {
-            //echo "no alcansa";
-            //se resta si no se elacanza a cubrir el producto y se agrega un saldo
-            $se_debe = $total - $entrega_total;
-            if ($se_debe > $precioUnitario) {
-                //echo "**  saldo es mayor a precio de prod **";
-                array_push($lista_nuevos_productos, $prod_code);
-                array_push($list_nuevos_cantidades, $unidades_prod);
-                $se_debe = $se_debe - $precioUnitario;
+            $queryP = "SELECT precio FROM producto WHERE codigo_barra = :codigo_barra";
+            $stmtP = $pdo->prepare($queryP);
+            $stmtP->bindParam(':codigo_barra', $prod_code, PDO::PARAM_STR);
+            $stmtP->execute();
+            $f = $stmtP->fetch(PDO::FETCH_ASSOC);
+            $precioUnitario = $f["precio"];
+            $total = $total + ($precioUnitario * $unidades_prod);
+            if ($entrega_total >= $total) {
+                //echo "entro";
+                $pagar = "eliminar";
+
             } else {
-                //echo "##  saldo es menor a precio  ##";
+                //echo "no alcansa";
+                //se resta si no se elacanza a cubrir el producto y se agrega un saldo
+                $se_debe = $total - $entrega_total;
+                if ($se_debe > $precioUnitario) {
+                    //echo "**  saldo es mayor a precio de prod **";
+                    array_push($lista_nuevos_productos, $prod_code);
+                    array_push($list_nuevos_cantidades, $unidades_prod);
+                    $se_debe = $se_debe - $precioUnitario;
+                } else {
+                    //echo "##  saldo es menor a precio  ##";
+                }
+                $pagar = "actualizar";
             }
-            $pagar = "actualizar";
-        }
-        //
+            //
 
-        //$total = $total + $suma_total;
-        $vuelta++;
+            //$total = $total + $suma_total;
+            $vuelta++;
+        }
+
+        // echo "-----";
+
     }
 
-    echo "-----";
-
-}
-
-$guarda_p = json_encode($lista_nuevos_productos);
-$guarda_c = json_encode($list_nuevos_cantidades);
-if ($pagar === "eliminar") {
-    $consultadelete = "DELETE FROM fiado WHERE dni=:dni";
-    $stmtC = $pdo->prepare($consultadelete);
-    $stmtC->bindParam(":dni", $dni, PDO::PARAM_INT);
-    $stmtC->execute();
-    echo "se elimina el producto";
-    header("location:cuenta-corriente.php");
-} else {
-    $consultadelete = "DELETE FROM fiado WHERE dni=:dni";
-    $stmtC = $pdo->prepare($consultadelete);
-    $stmtC->bindParam(":dni", $dni, PDO::PARAM_INT);
-    $stmtC->execute();
-    $crear_fiado = "INSERT INTO fiado (dni,nombre_y_apellido,productos,saldo,cantidad,fecha) 
+    $guarda_p = json_encode($lista_nuevos_productos);
+    $guarda_c = json_encode($list_nuevos_cantidades);
+    if ($pagar === "eliminar") {
+        $consultadelete = "DELETE FROM fiado WHERE dni=:dni";
+        $stmtC = $pdo->prepare($consultadelete);
+        $stmtC->bindParam(":dni", $dni, PDO::PARAM_INT);
+        $stmtC->execute();
+        echo "se elimina el producto";
+        header("location:cuenta-corriente.php");
+    } else {
+        $consultadelete = "DELETE FROM fiado WHERE dni=:dni";
+        $stmtC = $pdo->prepare($consultadelete);
+        $stmtC->bindParam(":dni", $dni, PDO::PARAM_INT);
+        $stmtC->execute();
+        $crear_fiado = "INSERT INTO fiado (dni,nombre_y_apellido,productos,saldo,cantidad,fecha) 
               VALUES (:dni,:nombre_y_apellido,:productos,:saldo,:cantidad,:fecha)";
-    $stmtD = $pdo->prepare($crear_fiado);
-    $stmtD->bindParam(":dni", $dni, PDO::PARAM_INT);
-    $stmtD->bindParam(":nombre_y_apellido", $nombre_apellido, PDO::PARAM_STR);
-    $stmtD->bindParam(":productos", $guarda_p, PDO::PARAM_STR);
-    $stmtD->bindParam(":saldo", $se_debe, PDO::PARAM_INT);
-    $stmtD->bindParam(":cantidad", $guarda_c, PDO::PARAM_STR);
-    $stmtD->bindParam(":fecha", $fecha_date, PDO::PARAM_STR);
-    $stmtD->execute();
-    echo "se actualiza el fiado";
-    echo $se_debe;
-    header("location:cuenta-corriente.php");
+        $stmtD = $pdo->prepare($crear_fiado);
+        $stmtD->bindParam(":dni", $dni, PDO::PARAM_INT);
+        $stmtD->bindParam(":nombre_y_apellido", $nombre_apellido, PDO::PARAM_STR);
+        $stmtD->bindParam(":productos", $guarda_p, PDO::PARAM_STR);
+        $stmtD->bindParam(":saldo", $se_debe, PDO::PARAM_INT);
+        $stmtD->bindParam(":cantidad", $guarda_c, PDO::PARAM_STR);
+        $stmtD->bindParam(":fecha", $fecha_date, PDO::PARAM_STR);
+        $stmtD->execute();
+        echo "se actualiza el fiado";
+        echo $se_debe;
+        header("location:cuenta-corriente.php");
+    }
+
 }
-
-
 
 
 /*$resta = intval($_POST["pagar_total"]) - intval($_POST["entrega"]);
