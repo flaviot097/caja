@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <?php
 session_start();
-
-if (empty($_SESSION["usuario"])) {
-    header("location: index.php");
-}
 ?>
 <html lang="en">
 
@@ -14,14 +10,15 @@ if (empty($_SESSION["usuario"])) {
     <meta name="description" content="" />
     <meta name="Flavio Trocello" content="" />
 
-    <title>Reparto</title>
+    <title>Inicio</title>
 
     <link rel="stylesheet" href="css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/unicons.css" />
     <link rel="stylesheet" href="css/owl.carousel.min.css" />
     <link rel="stylesheet" href="css/owl.theme.default.min.css" />
     <link rel="stylesheet" href="css/target.css">
-    <link rel="stylesheet" href="css/sidebar.css"> <!-- Estilos adicionales para la barra lateral -->
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/stock-template.css">
 
     <!-- MAIN STYLE -->
     <link rel="stylesheet" href="css/tooplate-style.css" />
@@ -35,40 +32,39 @@ if (empty($_SESSION["usuario"])) {
     text-decoration: underline;
 }
 
-
 .modal {
     display: none;
-
+    /* Hidden by default */
     position: fixed;
-
+    /* Stay in place */
     z-index: 1;
-
+    /* Sit on top */
     left: 0;
     top: 0;
     width: 100%;
-
+    /* Full width */
     height: 100%;
-
+    /* Full height */
     overflow: auto;
-
+    /* Enable scroll if needed */
     background-color: rgba(0, 0, 0, 0.4);
-
+    /* Fallback color */
     background-color: rgba(0, 0, 0, 0.4);
-
+    /* Black w/ opacity */
 }
 
-
+/* Modal Content */
 .modal-content {
     background-color: #fefefe;
     margin: 15% auto;
-
+    /* 15% from the top and centered */
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
-    /
+    /* Could be more or less, depending on screen size */
 }
 
-
+/* The Close Button */
 .close {
     color: #aaa;
     float: right;
@@ -148,7 +144,7 @@ if (empty($_SESSION["usuario"])) {
     <!-- BARRA LATERAL -->
     <div class="sidebar">
         <h2 class="text-filter">Filtrar Productos</h2>
-        <form action="filter-product-stock-reparto.php" method="get" class="form-filtro">
+        <form action="filter-products-stock.php" method="get" class="form-filtro">
             <label for="nombre">Nombre del Producto</label>
             <input type="text" id="nombre" name="nombre_producto" class="form-control">
 
@@ -163,43 +159,33 @@ if (empty($_SESSION["usuario"])) {
 
             <button type="submit" class="btn btn-primary mt-3">Filtrar</button>
             <?php if ($_GET) {
-            /*?><a href="stock-template.php" class="btn btn-primary mt-3">Eliminar filtros</a><?php */
+            /*?><a href="stock-template.php" class="btn btn-primary mt-3">Eliminar filtros</a><?php*/
         }
         ;
         ?>
         </form>
     </div>
     <!-- PROJECTS -->
-
     <section class="project py-5" id="project">
-        <div class="reparto-texto"
-            style="font-weight: bold; width: 100%; text-align: center; font-size: larger; margin-top: -20px;">Stock
-            Reparto</div>
         <div class="container">
             <div class="row">
-                <div class="container-btn-actions"><a href="ordenar-stock-reparto.php" class="btn checkout-btn"
+                <div class="container-btn-actions"><a href="ordenar-stock-local.php" class="btn checkout-btn"
                         id="btnFiltrar-menor">Ordenar por
                         stock</a>
-                    <a href="crear-producto-reparto.php" class="btn checkout-btn" id="btnFiltrar-menor"
+                    <a href="crear-producto.php" class="btn checkout-btn" id="btnFiltrar-menor"
                         style="cursor: pointer;">Agregar Producto</a>
-                    <a href="editar-departamento.php" class="btn checkout-btn" id="btnFiltrar-menor"
+                    <a href="editar-departamento-local.php" class="btn checkout-btn" id="btnFiltrar-menor"
                         style="cursor: pointer;">Editar por Departamento</a>
                     <a href="template-backup.php" class="btn checkout-btn" id="btnFiltrar-menor"
                         style="cursor: pointer;">Backup</a>
                     <a href="generar-code-bar.php" class="btn checkout-btn" id="btnFiltrar-menor"
                         style="cursor: pointer;">Crear C.Barra</a>
-                    <a href="pasar-stock-reparto.php" class="btn checkout-btn" id="btnFiltrar-menor"
-                        style="cursor: pointer; margin-top: 2.3px;">Cargar de Locar a Reparto</a>
-                    <a href="bajar_de_reparto_a_local.php" class="btn checkout-btn" id="btnFiltrar-menor"
-                        style="cursor: pointer; margin-top: 2.3px">Devolver a local</a>
                 </div>
-                <!-- CARDS DE PRODUCTOS -->
                 <div class="productos-stock">
                     <?php
-
-                    $count_vuelta = 0;
-
                     if ($_GET) {
+
+                        $count_vuelta = 0;
 
                         require_once "conecion.php";
 
@@ -212,29 +198,47 @@ if (empty($_SESSION["usuario"])) {
                             exit;
                         }
 
+                        // Obtener valores de los parámetros GET
                         $nombre_producto = $_GET['nombre_producto'] ?? '';
                         $departamento = $_GET['departamento'] ?? '';
                         $proveedor = $_GET['proveedor'] ?? '';
-                        $code_bar_con = $_GET["codigo_barra"] ?? "";
+                        $code_bar_con = $_GET['codigo_barra'] ?? '';
 
                         if ($nombre_producto === '' && $departamento === '' && $proveedor === '' && $code_bar_con === '') {
                             echo "Se debe completar al menos un campo para realizar la búsqueda.";
                             exit;
                         }
-                        $query = "SELECT * FROM producto WHERE 1=1";
+
+                        // Construir la consulta base
+                        $query;
 
                         // Preparar la consulta según los campos proporcionados
-                        if ($nombre_producto !== '') {
-                            $query .= " AND nombre_producto LIKE :nombre_producto";
+                        if ($nombre_producto !== '' && $departamento === '' && $proveedor === '' && $code_bar_con === '') {
+                            $query = "SELECT * FROM producto WHERE nombre_producto LIKE :nombre_producto";
                         }
-                        if ($departamento !== '') {
-                            $query .= " AND departamento LIKE :departamento";
+                        if ($departamento !== ' ' && $nombre_producto === '' && $proveedor === '' && $code_bar_con === '') {
+                            $query = "SELECT * FROM producto WHERE departamento LIKE :departamento";
                         }
-                        if ($proveedor !== '') {
-                            $query .= " AND proveedor LIKE :proveedor";
+                        if ($proveedor !== '' && $departamento === '' && $nombre_producto === '' && $code_bar_con === '') {
+                            $query = "SELECT * FROM producto WHERE proveedor LIKE :proveedor";
                         }
-                        if ($code_bar_con !== "") {
-                            $query .= " AND codigo_barra LIKE :codigo_barra";
+                        if ($code_bar_con !== "" && $departamento === '' && $proveedor === '' && $nombre_producto === '') {
+                            $query = "SELECT * FROM producto WHERE codigo_barra LIKE :codigo_barra";
+                        }
+
+
+                        //peoveedor y departamento
+                        if ($code_bar_con === "" && $departamento !== '' && $proveedor !== '' && $nombre_producto === '') {
+                            $query = "SELECT * FROM producto WHERE departamento LIKE :departamento AND proveedor LIKE :proveedor";
+                        }
+                        //nombre y departamento
+                        if ($code_bar_con === "" && $departamento !== '' && $proveedor === '' && $nombre_producto !== '') {
+                            $query = "SELECT * FROM producto WHERE departamento LIKE :departamento AND nombre_producto LIKE :nombre_producto";
+                        }
+
+                        if ($code_bar_con === "" && $departamento === '' && $proveedor !== '' && $nombre_producto !== '') {
+                            $query = "SELECT * FROM producto WHERE proveedor LIKE :proveedor AND nombre_producto LIKE :nombre_producto";
+
                         }
 
                         // Añadir el ORDER BY una sola vez al final
@@ -245,21 +249,27 @@ if (empty($_SESSION["usuario"])) {
 
                         // Vincular los parámetros según corresponda
                         if ($nombre_producto !== '') {
-                            $stmt->bindValue(':nombre_producto', '%' . $nombre_producto . '%', PDO::PARAM_STR);
+                            $stmt->bindValue(':nombre_producto', $nombre_producto, PDO::PARAM_STR);
                         }
                         if ($departamento !== '') {
-                            $stmt->bindValue(':departamento', '%' . $departamento . '%', PDO::PARAM_STR);
+                            $stmt->bindValue(':departamento', $departamento, PDO::PARAM_STR);
                         }
                         if ($proveedor !== '') {
-                            $stmt->bindValue(':proveedor', '%' . $proveedor . '%', PDO::PARAM_STR);
+                            $stmt->bindValue(':proveedor', $proveedor, PDO::PARAM_STR);
                         }
                         if ($code_bar_con !== "") {
-                            $stmt->bindValue(':codigo_barra', '%' . $code_bar_con . '%', PDO::PARAM_STR);
+                            $stmt->bindValue(':codigo_barra', $code_bar_con, PDO::PARAM_STR);
                         }
 
+
+
+                        // Ejecutar la consulta
                         $stmt->execute();
+
+                        // Obtener los resultados si los hay
                         $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+                        // Mostrar los resultados
                         if ($resultados) {
                             foreach ($resultados as $item) {
                                 $count_vuelta = $count_vuelta + $item["stock"];
@@ -270,6 +280,7 @@ if (empty($_SESSION["usuario"])) {
                                     $color = "red";
                                 }
                                 ;
+
                                 echo "<div class='producto-stock' id=" . $item["codigo_barra"] . ">
 <a href='#' class='btn btn-primary btn-sm d-inline-flex align-items-center'>" . $item["nombre_producto"] . "<h6
         class='codigo-producto' id='codigo-producto'>codigo de producto: " . $item["codigo_barra"] . "</h6>
@@ -280,11 +291,11 @@ if (empty($_SESSION["usuario"])) {
     <h6 class='codigo-producto' id='costo-producto' name='costo'>costo: $" . $item["costo"] . "</h6>
     <h6 class='codigo-producto' id='ganancia-producto' name='ganancia'>ganancia: " . $item["ganancia"] . "%</h6>
     <h6 class='codigo-producto' id='precio-producto' name='precio'>Precio final: $" . $item["precio"] . "</h6>
-</a><div class='eliminar-producto' ><p class='eliminar-prod' id=" . $item["codigo_barra"] . "><img class='eliminar-img' src='images/eliminar.png' alt='eliminar'></p></div>
+</a><div class='eliminar-producto eliminar-prod' ><p class='eliminar-prod' id=" . $item["codigo_barra"] . "><img class='eliminar-img' src='images/eliminar.png' alt='eliminar' style='margin-top: 34px;'></p></div>
 <div class='contenedor-formularios'><form  method='Post' class='editar-producto' id=" . $item["codigo_barra"] . " action='editar-p_l.php'><label for='ingrese stock a editar' class='label-producto' >Editar</label>
 <input type='hidden' name='codigo_B' value=" . $item["codigo_barra"] . ">
 <input type='hidden' name='stock' value=" . $item["stock"] . ">
-<input class='input-producto' type='number' value=" . $item["stock"] . " name='editar_stock_prod'><button class='btm-submit' type='submit'>Stock</button>
+<input class='input-producto' type='text' value=" . $item["stock"] . " name='editar_stock_prod'><button class='btm-submit' type='submit'>Stock</button>
 </form>
 <form class='editar-producto' action='template-editar-prod-l.php' method='post'>
 <input type='hidden' name='codigo_B' value=" . $item["codigo_barra"] . ">
@@ -296,10 +307,11 @@ if (empty($_SESSION["usuario"])) {
                             echo "<p>No se encontraron resultados.</p>";
                         }
                     } else {
-                        require_once "funcion-estadisticas-reparto.php";
+                        require_once "funcion-estadisticas.php";
                     }
 
                     ?>
+
                 </div>
             </div>
         </div>
@@ -311,8 +323,7 @@ if (empty($_SESSION["usuario"])) {
             <button class="eliminar-btn-modals" id="button-modal">Eliminar</button>
         </div>
     </div>
-
-    <footer class=" footer py-5" style="min-width: 1200px !important;display: flex ;justify-content: space-around;">
+    <footer class="footer py-5">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 col-12">
@@ -326,7 +337,7 @@ if (empty($_SESSION["usuario"])) {
             </div>
         </div>
     </footer>
-
+    <script src="js/jquery-3.3.1.min.js"></script>
     <script>
     $(document).ready(function() {
         if ($(window).width() <= 768) {
@@ -381,13 +392,15 @@ if (empty($_SESSION["usuario"])) {
         const btn_eliminar = document.getElementById("button-modal")
         btn_eliminar.addEventListener("click", function() {
             if (btn_eliminar) {
-                window.location.href = 'eliminar-producto-reparto.php?codigo_eliminar=' +
+                window.location.href = 'eliminar-producto.php?codigo_eliminar=' +
                     encodeURIComponent(id);
             }
         })
 
     }
     </script>
+
+
     <script src="js/jquery-3.3.1.min.js"></script>
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>

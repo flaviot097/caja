@@ -12,116 +12,173 @@ echo $_POST["pagar_total"];
 echo $_POST["pagar"];
 echo $_POST["entrega"];*/
 $metodo = $_POST["pagar"];
-$entrega_total = $_POST["entrega"];
+
 $dni = $_POST["dni"];
+$entrega_total = $_POST["entrega"];
+date_default_timezone_set('America/Buenos_Aires');
+
 $fecha_date = date("Y-m-d");
 $nombre_apellido = $_POST["nombre_apellido"];
-
-
-$pagar = "";
-$select = "SELECT * FROM fiado WHERE dni=:dni";
-$statement1 = $pdo->prepare($select);
-$statement1->bindParam(":dni", $dni, PDO::PARAM_INT);
-$statement1->execute();
-$todosFiados1 = $statement1->fetchAll(PDO::FETCH_ASSOC);
-$saldo = $todosFiados1[0]["saldo"];
-
-$total = 0;
-$lista_nuevos_productos = [];
-$list_nuevos_cantidades = [];
-$se_debe = 0;
-if ($saldo === 0 && $todosFiados1[0]["productos"] === "[]") {
-    $consultadeleteO = "DELETE FROM `fiado` WHERE dni=:dni";
-    $stmtA = $pdo->prepare($consultadeleteO);
-    $stmtA->bindParam(":dni", $dni, PDO::PARAM_INT);
-    $stmtA->execute();
-    echo "se elimina el producto";
-    header("location:cuenta-corriente.php");
-}
+$total_dueda = $_POST["cantidad_productos"];
 
 if ($metodo == "liquidar_total") {
     $consultadelete = "DELETE FROM fiado WHERE dni=:dni";
     $stmtC = $pdo->prepare($consultadelete);
     $stmtC->bindParam(":dni", $dni, PDO::PARAM_INT);
     $stmtC->execute();
+    $consultadeleteSaldo = "DELETE FROM saldos WHERE dni=:dni";
+    $stmts = $pdo->prepare($consultadeleteSaldo);
+    $stmts->bindParam(":dni", $dni, PDO::PARAM_INT);
+    $stmts->execute();
+
     echo "se elimina el producto";
     header("location:cuenta-corriente.php");
 } else {
 
+    if ($total_dueda !== $entrega_total) {
+        $select = "SELECT * FROM fiado WHERE dni=:dni";
+        $statement1 = $pdo->prepare($select);
+        $statement1->bindParam(":dni", $dni, PDO::PARAM_INT);
+        $statement1->execute();
+        $todosFiados1 = $statement1->fetchAll(PDO::FETCH_ASSOC);
 
+        $solamente_saldo = "";
 
-    foreach ($todosFiados1 as $fiadodia) {
-        $vuelta = 0;
-        $productos_list = json_decode($fiadodia["productos"]);
-        $cantidad_list = json_decode($fiadodia["cantidad"]);
-        foreach ($productos_list as $producto_unidad) {
-            $prod_code = $productos_list[$vuelta];
-            $unidades_prod = $cantidad_list[$vuelta];
-
-            // consulta precio
-
-            $queryP = "SELECT precio FROM producto WHERE codigo_barra = :codigo_barra";
-            $stmtP = $pdo->prepare($queryP);
-            $stmtP->bindParam(':codigo_barra', $prod_code, PDO::PARAM_STR);
-            $stmtP->execute();
-            $f = $stmtP->fetch(PDO::FETCH_ASSOC);
-            $precioUnitario = $f["precio"];
-            $total = $total + ($precioUnitario * $unidades_prod);
-            if ($entrega_total >= $total) {
-                //echo "entro";
-                $pagar = "eliminar";
-
-            } else {
-                //echo "no alcansa";
-                //se resta si no se elacanza a cubrir el producto y se agrega un saldo
-                $se_debe = $total - $entrega_total;
-                if ($se_debe > $precioUnitario) {
-                    //echo "**  saldo es mayor a precio de prod **";
-                    array_push($lista_nuevos_productos, $prod_code);
-                    array_push($list_nuevos_cantidades, $unidades_prod);
-                    $se_debe = $se_debe - $precioUnitario;
-                } else {
-                    //echo "##  saldo es menor a precio  ##";
-                }
-                $pagar = "actualizar";
-            }
-            //
-
-            //$total = $total + $suma_total;
-            $vuelta++;
+        if (count($todosFiados1) == 0) {
+            $solamente_saldo = "solamente saldo";
         }
 
-        // echo "-----";
+        $saldo_total = 0;
+        $entrega_cliente = intval($_POST["entrega"]);
+        $paso_una_vez = 0;
 
-    }
+        $consulta_saldo = "SELECT nombre_y_apellido, fecha, dni, SUM(saldo) AS saldo FROM saldos WHERE dni = :dni GROUP BY dni";
+        $statement_saldo = $pdo->prepare($consulta_saldo);
+        $statement_saldo->bindParam(":dni", $dni, PDO::PARAM_INT);
+        $statement_saldo->execute();
+        $saldo_consul = $statement_saldo->fetchAll(PDO::FETCH_ASSOC);
 
-    $guarda_p = json_encode($lista_nuevos_productos);
-    $guarda_c = json_encode($list_nuevos_cantidades);
-    if ($pagar === "eliminar") {
-        $consultadelete = "DELETE FROM fiado WHERE dni=:dni";
-        $stmtC = $pdo->prepare($consultadelete);
-        $stmtC->bindParam(":dni", $dni, PDO::PARAM_INT);
-        $stmtC->execute();
-        echo "se elimina el producto";
-        header("location:cuenta-corriente.php");
-    } else {
-        $consultadelete = "DELETE FROM fiado WHERE dni=:dni";
-        $stmtC = $pdo->prepare($consultadelete);
-        $stmtC->bindParam(":dni", $dni, PDO::PARAM_INT);
-        $stmtC->execute();
-        $crear_fiado = "INSERT INTO fiado (dni,nombre_y_apellido,productos,saldo,cantidad,fecha) 
-              VALUES (:dni,:nombre_y_apellido,:productos,:saldo,:cantidad,:fecha)";
-        $stmtD = $pdo->prepare($crear_fiado);
-        $stmtD->bindParam(":dni", $dni, PDO::PARAM_INT);
-        $stmtD->bindParam(":nombre_y_apellido", $nombre_apellido, PDO::PARAM_STR);
-        $stmtD->bindParam(":productos", $guarda_p, PDO::PARAM_STR);
-        $stmtD->bindParam(":saldo", $se_debe, PDO::PARAM_INT);
-        $stmtD->bindParam(":cantidad", $guarda_c, PDO::PARAM_STR);
-        $stmtD->bindParam(":fecha", $fecha_date, PDO::PARAM_STR);
-        $stmtD->execute();
-        echo "se actualiza el fiado";
-        echo $se_debe;
-        header("location:cuenta-corriente.php");
+        $hay_saldo = "";
+        $dni_saldo_elimintate;
+        $nombre_saldo_elimintate = "";
+        $fecha_saldo_elimintate = "";
+        $saldo_total;
+
+        if (count($saldo_consul) !== 0) {
+            $hay_saldo = "hay";
+            $dni_saldo_elimintate = $saldo_consul[0]["dni"];
+            $saldo_total = $saldo_consul[0]["saldo"];
+            $nombre_saldo_elimintate = $saldo_consul[0]["nombre_y_apellido"];
+            $fecha_saldo_elimintate = $saldo_consul[0]["fecha"];
+        }
+
+        $entrega_cliente = $entrega_cliente - $saldo_total;
+
+
+
+        if ($entrega_cliente > 0) {
+            $consulta_saldo_delete = "DELETE FROM saldos WHERE dni=:dni";
+            $statement_saldo = $pdo->prepare($consulta_saldo_delete);
+            $statement_saldo->bindParam(":dni", $dni_saldo_elimintate, PDO::PARAM_INT);
+            $statement_saldo->execute();
+
+            //subir a ventas
+            $local_o_reparto = "local";
+            $cuenta_corriente_pago = "cuenta corriente";
+
+            $entrega_pago_mitad = "INSERT INTO ventas (reparto_o_local, total, fecha, tipo, usuario) VALUES (:reparto_o_local, :total, :fecha, :tipo, :usuario)";
+            $stmt = $pdo->prepare($entrega_pago_mitad);
+            $stmt->bindParam(':reparto_o_local', $local_o_reparto, PDO::PARAM_STR);
+            $stmt->bindParam(':total', $saldo_total, PDO::PARAM_INT);
+            $stmt->bindParam(':fecha', $fecha_date, PDO::PARAM_STR);
+            $stmt->bindParam(':usuario', $_COOKIE["usuario_caja"], PDO::PARAM_STR);
+            $stmt->bindParam(':tipo', $cuenta_corriente_pago, PDO::PARAM_STR);
+            $stmt->execute();
+            ///
+
+        } elseif ($hay_saldo == "hay") {
+            var_dump($entrega_cliente);
+            $consulta_saldo_delete = "DELETE FROM saldos WHERE dni=:dni";
+            $statement_saldo = $pdo->prepare($consulta_saldo_delete);
+            $statement_saldo->bindParam(":dni", $dni_saldo_elimintate, PDO::PARAM_INT);
+            $statement_saldo->execute();
+
+            $saldo_a_guardar = abs($entrega_cliente);
+            $consulta_saldo_create = "INSERT INTO saldos (fecha, dni, saldo, nombre_y_apellido) VALUES (:fecha, :dni, :saldo, :nombre_y_apellido)";
+            $statement_saldo = $pdo->prepare($consulta_saldo_create);
+            $statement_saldo->bindParam(":fecha", $fecha_saldo_elimintate, PDO::PARAM_INT);
+            $statement_saldo->bindParam(":dni", $dni_saldo_elimintate, PDO::PARAM_INT);
+            $statement_saldo->bindParam(":saldo", $saldo_a_guardar, PDO::PARAM_INT);
+            $statement_saldo->bindParam(":nombre_y_apellido", $nombre_saldo_elimintate, PDO::PARAM_INT);
+            $statement_saldo->execute();
+        }
+
+        if ($solamente_saldo !== "solamente saldo") {
+            $vuelta_unica = 0;
+
+            foreach ($todosFiados1 as $product) {
+                $codigo_barra = $product["productos"];
+                $fecha_fiado = $product["fecha"];
+                $dni_saldo_elimintate = $product["dni"];
+                $cantidad_productos = floatval($product["cantidad"]);
+                $consultar_stock = "SELECT precio , nombre_producto FROM producto WHERE codigo_barra = :codigo_barra";
+                $stmtconsulta_s = $pdo->prepare($consultar_stock);
+                $stmtconsulta_s->bindParam(':codigo_barra', $codigo_barra, PDO::PARAM_STR);
+                $stmtconsulta_s->execute();
+                $resultado_productos = $stmtconsulta_s->fetchAll(PDO::FETCH_ASSOC);
+                $precio2 = floatval($resultado_productos[0]["precio"]);
+                $nombre_producto = $resultado_productos[0]["nombre_producto"];
+                $subtotal = $precio2 * $cantidad_productos;
+
+                $resto = $entrega_cliente - $subtotal;
+
+                if ($resto > 0) {
+                    $entrega_cliente = $entrega_cliente - $subtotal;
+                    $sql_delete_fiado = "DELETE FROM fiado WHERE dni=:dni AND fecha=:fecha AND productos=:codigo_barra";
+                    $stmtupdate_f = $pdo->prepare($sql_delete_fiado);
+                    $stmtupdate_f->bindParam(':dni', $dni_saldo_elimintate, PDO::PARAM_STR);
+                    $stmtupdate_f->bindParam(':codigo_barra', $codigo_barra, PDO::PARAM_STR);
+                    $stmtupdate_f->bindParam(':fecha', $fecha_fiado, PDO::PARAM_STR);
+                    $stmtupdate_f->execute();
+                    echo "se pado el total :" . $codigo_barra;
+                    echo "<br>";
+
+
+                }
+                if (0 > $resto) {
+                    $vuelta_unica = 1;
+                    $puedo_pagar = $entrega_cliente / $precio2;
+                    $cantidad_a_guardar = $cantidad_productos - $puedo_pagar;
+                    $entrega_cliente = 0;//esto es para que no se repita el ciclo
+                    echo "cantidad a guardar :" . $cantidad_a_guardar;
+                    echo " ## codigo :" . $codigo_barra;
+                    echo "<br>";
+
+                    $sql_actualizar_fiado = "UPDATE fiado SET cantidad = :cantidad WHERE productos = :codigo_barra AND fecha = :fecha";
+                    $stmtupdate_f = $pdo->prepare($sql_actualizar_fiado);
+                    $stmtupdate_f->bindParam(':cantidad', $cantidad_a_guardar, PDO::PARAM_STR);
+                    $stmtupdate_f->bindParam(':codigo_barra', $codigo_barra, PDO::PARAM_STR);
+                    $stmtupdate_f->bindParam(':fecha', $fecha_fiado, PDO::PARAM_STR);
+                    $stmtupdate_f->execute();
+
+                    //     echo "- queda saldo- ";
+                    // } else {
+                    //     $sql_fiado = "INSERT INTO fiado (dni,nombre_y_apellido,productos,cantidad,fecha) VALUES (:dni, :nombre_y_apellido, :productos ,:cantidad,:fecha)";
+                    //     //subir a fiado
+                    //     $stmt2 = $pdo->prepare($sql_fiado);
+                    //     $stmt2->bindParam(':dni', $dni, PDO::PARAM_STR);
+                    //     $stmt2->bindParam(':nombre_y_apellido', $nombre, PDO::PARAM_STR);
+                    //     $stmt2->bindParam(':productos', $cdb, PDO::PARAM_STR);
+                    //     $stmt2->bindParam(':cantidad', $cantidad_productos, PDO::PARAM_STR);
+                    //     $stmt2->bindParam(':fecha', $fecha, PDO::PARAM_STR);
+                    //     $stmt2->execute();
+                    //     echo "se debe fiar";
+                }
+
+            }
+
+        }
+
     }
 
 }

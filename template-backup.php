@@ -27,6 +27,11 @@ session_start();
     margin-top: 12%;
     margin-left: 41%;
 }
+
+.navbar.navbar-expand-sm.navbar-light.backgraund-header.headroom.headroom--top.headroom--bottom {
+    display: flex;
+    justify-content: space-around;
+}
 </style>
 
 <body>

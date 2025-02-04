@@ -1,4 +1,6 @@
 <?php
+
+date_default_timezone_set('America/Buenos_Aires');
 require_once "conecion.php";
 $dsn = "mysql:host=localhost:3307;dbname=code_bar;";
 try {

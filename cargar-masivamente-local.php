@@ -26,6 +26,8 @@ try {
 if (isset($_GET["cantidad-reparto"]) && isset($_COOKIE["productos_stock"])) {
     $codigo_actualizar = $_GET["actualizar"];
     $cantidad_reparto = $_GET["cantidad-reparto"];
+    $ganacia_actualizada = $_GET["ganancia"];
+    $costo_actualizado = $_GET["costo"];
     $productos_stock = json_decode($_COOKIE["productos_stock"], true);
 
     $productos_actualizados = [];
@@ -38,6 +40,8 @@ if (isset($_GET["cantidad-reparto"]) && isset($_COOKIE["productos_stock"])) {
                 'stock' => $producto['stock'],
                 'codigo_barra' => $producto['codigo_barra'],
                 'cantidad' => $cantidad_reparto,
+                'costo' => $costo_actualizado,
+                'ganancia' => $ganacia_actualizada,
                 'total' => floatval($results[0]['precio']) * $cantidad
             ];
         }
@@ -91,12 +95,10 @@ if ($_GET) {
     $codigo = $_GET['codigo'] ?? '';
     $cantidad = $_GET['cantidad'] ?? 1;
     $descuento = $_GET["descuento"] ?? 0;
+    $costo = $_GET["costo"] ?? 0;
+    $ganancia = $_GET["ganancia"] ?? 0;
 
-    //descuento
-    if ($descuento !== 0) {
-        $N_desc = "0." . $descuento;
-        setcookie("descuentos", $N_desc, time() + 3600, "/");
-    }
+
 
     // Verificar si la cookie "cantidad_prod" existe
     if (!isset($_COOKIE["cantidad_prod"])) {
@@ -121,11 +123,11 @@ if ($_GET) {
 
 
     if ($producto !== '') {
-        $query = "SELECT nombre_producto, stock, codigo_barra FROM producto_reparto WHERE nombre_producto = :producto";
+        $query = "SELECT nombre_producto, stock, costo, ganancia, codigo_barra  FROM producto WHERE nombre_producto = :producto";
         $stmt = $pdo->prepare($query);
         $stmt->bindValue(":producto", $producto, PDO::PARAM_STR);
     } elseif ($codigo !== '') {
-        $query = "SELECT nombre_producto, stock, codigo_barra FROM producto_reparto WHERE codigo_barra = :codigo";
+        $query = "SELECT nombre_producto, stock, costo, ganancia, codigo_barra FROM producto WHERE codigo_barra = :codigo";
         $stmt = $pdo->prepare($query);
         $stmt->bindValue(":codigo", $codigo, PDO::PARAM_STR);
     } else {
@@ -145,6 +147,8 @@ if ($_GET) {
             'stock' => $results[0]['stock'],
             'codigo_barra' => $results[0]['codigo_barra'],
             'cantidad' => $cantidad,
+            'costo' => $results[0]['costo'],
+            'ganancia' => $results[0]['ganancia'],
             'total' => floatval($results[0]['precio']) * $cantidad
         ];
 
@@ -276,6 +280,44 @@ if (isset($_COOKIE["productos_stock"])) {
     width: 12%;
 }
 
+.input-cantidad {
+    width: 40px;
+    background-color: #444444;
+    color: #FFFFFF;
+    border: 1px solid #555555;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.input-costo {
+    width: 80px;
+    background-color: #444444;
+    color: #FFFFFF;
+    border: 1px solid #555555;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.input-ganancia {
+    width: 66px;
+    background-color: #444444;
+    color: #FFFFFF;
+    border: 1px solid #555555;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.contenedor-name-stock {
+    display: flex;
+    width: 100%;
+    align-content: space-between;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
 .navbar.navbar-expand-sm.navbar-light.backgraund-header.headroom.headroom--top.headroom--bottom {
     display: flex;
     justify-content: space-around;
@@ -312,7 +354,7 @@ if (isset($_COOKIE["productos_stock"])) {
     <div class="body-container">
         <div class="pos-system">
             <div class="header">
-                <h2 class="text-caja-black">Agregar Stock a Reparto</h2>
+                <h2 class="text-caja-black">Agregar Stock a Local</h2>
                 <form action="" method="get">
                     <div class="input-foms-caja">
                         <input type="text" id="searchInput" placeholder="Buscar producto..." name="producto"
@@ -347,14 +389,26 @@ if (isset($_COOKIE["productos_stock"])) {
     flex-wrap: wrap;
     width: 91%;
     justify-content: space-between;">
-                                <div class="div-de-prod"><?php echo $clave['nombre_producto'] ?> </div>
-                                <div class="div-de-prod"><?php echo $clave['codigo_barra'] ?> </div>
-                                <div style="width: 2%;" class="div-de-prod"> U
-                                    <?php echo $clave['stock'] ?>
+                                <div class="contenedor-name-stock">
+                                    <div class="div-de-prod" style="color:peru;"><?php echo $clave['nombre_producto'] ?>
+                                    </div>
+                                    <div class="div-de-prod" style="width: 30%; ">Codigo barra:
+                                        <?php echo $clave['codigo_barra'] ?>
+                                    </div>
+                                    <div style="width: 49%; padding-left: 10px;" class="div-de-prod"> Exitencias:
+                                        <?php echo " " . $clave['stock'] ?>
+                                    </div>
                                 </div>
-                                <form action="">
-                                    Agregar: <br />
-                                    <input type="text" name="cantidad-reparto"
+                                <form action="" class="contenedor-name-stock">
+                                    <label for="costo">costo:</label>
+                                    <input type="number" class="input-costo" placeholder="Costo" name="costo"
+                                        value="<?php echo $clave['costo']; ?>">
+                                    <label for="costo">ganancia:</label>
+                                    <input type="number" class="input-ganancia" placeholder="Ganancia" name="ganancia"
+                                        value="<?php echo $clave['ganancia']; ?>">
+                                    <p>%</p>
+                                    <label for="costo">Cantidad:</label>
+                                    <input class="input-cantidad" type="text" name="cantidad-reparto"
                                         placeholder="<?php echo $clave['cantidad']; ?>">
                                     <input type="hidden" name="actualizar"
                                         value="<?php echo $clave['codigo_barra']; ?>">
@@ -410,9 +464,9 @@ if (isset($_COOKIE["productos_stock"])) {
                     </div>
                     <div class="cart">
 
-                        <form action="actualizar-stock-masivo.php" method="post" style="margin-left: -3%;">
+                        <form action="actualizar-local-masivo.php" method="post" style="margin-left: -3%;">
                             <button class="btn checkout-btn" type="submit" style="margin-top: 5px;">Actualizar
-                                Stock Reparto</button>
+                                Stock</button>
                         </form>
                         <div id="mensaje-caja"></div>
                     </div>

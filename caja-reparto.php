@@ -1,10 +1,14 @@
 <?php
 session_start();
 
+if (empty($_SESSION["usuario"])) {
+    header("location: index.php");
+}
+
 require_once "conecion.php";
 require_once "delete-element.php";
 //require_once "cargar_cookie.php";
-
+$url = $_SERVER['REQUEST_URI'];
 if (!empty($_COOKIE["fiados_todos"])) {
     setcookie("fiados_todos", "", time() - 3600, "/");
 }
@@ -118,7 +122,7 @@ if ($_GET) {
             'precio' => $results[0]['precio'],
             'codigo_barra' => $results[0]['codigo_barra'],
             'cantidad' => $cantidad,
-            'total' => $results[0]['precio'] * $cantidad
+            'total' => floatval($results[0]['precio']) * $cantidad
         ];
 
         if (isset($_COOKIE["productos_caja"])) {
@@ -159,7 +163,7 @@ if (isset($_COOKIE["productos_caja"])) {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
-    <meta name="caja reparto" content="" />
+    <meta name="Flavio Trocello" content="" />
 
     <title>Caja Registradora</title>
 
@@ -177,15 +181,113 @@ if (isset($_COOKIE["productos_caja"])) {
     <link rel="stylesheet" href="css/tooplate-style.css" />
 </head>
 <style>
-.pos-system {
-    background-color: #5894bfed !important;
+.body-container {
+    background-color: #333333;
+    /* Color oscuro de fondo */
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    max-width: 800px;
+    margin: 34px auto;
+}
+
+.btn.checkout-btn {
+    background-color: #FF5722;
+    /* Un color naranja para el botón */
+    color: #FFFFFF;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn.checkout-btn:hover {
+    background-color: #E64A19;
+    /* Un tono más oscuro al hacer hover */
+}
+
+#searchInput,
+#cantidad_input {
+    background-color: #444444;
+    color: #FFFFFF;
+    border: 1px solid #555555;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+#cantidad_input::placeholder {
+    color: #AAAAAA;
+}
+
+.product-list .product {
+    background-color: #3E3E3E;
+    /* Fondo más oscuro para los productos */
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    color: #FFFFFF;
+}
+
+.container-data-product div {
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+#searchInput::placeholder {
+    color: #AAAAAA;
+    /* Color más claro para los placeholders */
+}
+
+.footer {
+    background-color: #2B2B2B;
+    color: #CCCCCC;
+    padding: 20px 0;
+    text-align: center;
+    font-size: 14px;
+}
+
+.footer a {
+    color: #FF5722;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+.div-de-prod {
+    width: 12%;
+}
+
+.headroom--not-bottom {
+    min-width: 1100px !important;
+}
+
+.numero_total {
+    font-size: 27px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: black;
+    background-color: #e9c192 !important;
+    width: min-content;
+}
+
+.contenedor-total-divs {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.total_general {
+    color: black;
+    font-size: x-large;
 }
 
 .reportes {
 
     text-decoration: none;
     margin-top: 3vh !important;
-    margin-bottom: -4vh;
+    margin-bottom: -2vh;
     text-align: center;
 }
 
@@ -201,13 +303,49 @@ if (isset($_COOKIE["productos_caja"])) {
     color: grey !important;
     background-color: rgba(59, 158, 88, 0.93) !important;
 }
+
+.text-caja-black {
+    color: #FF5722 !important;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: #2c2c2c;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.modal button {
+    margin: 10px;
+}
+
+.cancel-btn {
+    background: #dc3545;
+}
+
+.cancel-btn:hover {
+    background: #a71d2a;
+}
+</style>
 </style>
 
 <body>
     <!-- MENU -->
     <nav class="navbar navbar-expand-sm navbar-light backgraund-header" style="min-width: 1200px !important;">
         <div class="container">
-            <a class="navbar-brand" href="index.php"><i class="uil uil-user"></i></a>
+            <a class="navbar-brand" href="stock-template.php"><i class="uil uil-user"></i></a>
 
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -217,8 +355,7 @@ if (isset($_COOKIE["productos_caja"])) {
             </button>
 
             <div class="collapse navbar-collapse" id="navbarNav">
-                <?php require_once "cabecera.php";
-                ?>
+                <?php require_once "cabecera.php"; ?>
 
                 <ul class="navbar-nav ml-lg-auto">
                     <div class="ml-lg-4" id="icono">
@@ -230,28 +367,28 @@ if (isset($_COOKIE["productos_caja"])) {
             </div>
         </div>
     </nav>
-
+    <!-- BARRA LATERAL -->
     <div class="reportes"><a class="atexto" href="reportes-reparto.php">Reportes</a></div>
     <div class="body-container">
         <div class="pos-system">
             <div class="header">
                 <h2 class="text-caja-black">Caja Registradora Reparto</h2>
-                <form action="" method="get">
+                <form action="" method="get" id="myForm">
                     <div class="input-foms-caja">
                         <input type="text" id="searchInput" placeholder="Buscar producto..." name="producto"
                             style="margin-right: 5px;">
-                        <input type="text" id="searchInput" placeholder="cantidad de productos..." name="cantidad"
-                            value="1">
+                        <input type="text" class="searchInput" placeholder="cantidad de productos..." name="cantidad"
+                            value="1" id="cantidad_input">
                         <input type="text" id="searchInput" placeholder="Buscar codigo..." name="codigo"
-                            style="margin-right: 5px;">
+                            style="margin-right: 5px;" autofocus>
                         <input type="number" id="searchInput" placeholder="descuento..." name="descuento">
                     </div>
 
-                    <button class="btn checkout-btn" type="submit">Agregar</button>
+                    <button class="btn checkout-btn" type="submit" id="openModal">Agregar</button>
                 </form>
             </div>
-            <div class="form-conteiner-aling">
-                <form class="content">
+            <div class="form-conteiner-aling" style="flex-direction: column;">
+                <form class="content" style="width: 100%;">
                     <div class="product-list">
                         <?php
                         $total_general = 0;
@@ -265,28 +402,47 @@ if (isset($_COOKIE["productos_caja"])) {
                                     $total_general += $clave['total'];
                                     ?>
                         <div class="product">
-                            <?php echo $clave['nombre_producto'] ?> |
-                            <?php echo $clave['codigo_barra'] ?> | C/U $<?php echo $clave['precio'] ?> | Cantidad:
-                            <?php echo $clave['cantidad'];
+                            <div class="container-data-product" style="display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 91%;
+    justify-content: space-between;">
+                                <div class="div-de-prod"><?php echo $clave['nombre_producto'] ?> </div>
+                                <div class="div-de-prod"><?php echo $clave['codigo_barra'] ?> </div>
+                                <div style="width: 2%;" class="div-de-prod"> C/U
+                                    $<?php echo $clave['precio'] ?>
+                                </div>
+                                Cantidad:
+                                <?php echo $clave['cantidad'];
 
-                                        ?>
+                                            ?>
+                            </div>
                             <form action="" method="get">
                                 <input type="hidden" name="eliminar" value="<?php echo $clave['codigo_barra']; ?>">
                                 <input type="hidden" name="indice_cantidad" value="<?php echo $vuelta_cant;
-                                            $vuelta_cant++;
-
-                                            ?>">
+                                            $vuelta_cant++; ?>">
                                 <button type="submit">❌</button>
                             </form>
                         </div>
                         <?php } else {
                                     $total_general += $clave['total'];
                                     ?>
-                        <div class="product">
-                            <?php echo $clave['nombre_producto'] ?> |
-                            <?php echo $clave['codigo_barra'] ?> | C/U $<?php echo $clave['precio'] ?> |
-                            Cantidad:
-                            <?php echo $clave['cantidad'] ?>
+                        <div class="product ">
+                            <div class="container-data-product" style="display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 91%;
+    justify-content: space-between;font-weight: bold;">
+                                <div style="font-weight: bold;"><?php echo $clave['nombre_producto'] ?> </div>
+                                <div style="font-weight: bold;"><?php echo $clave['codigo_barra'] ?> </div>
+                                <div> C/U
+                                    <?php $clave['precio'] ?>
+                                </div>
+                                Cantidad:
+                                <?php echo $clave['cantidad'];
+
+                                            ?>
+                            </div>
                             <form action="" method="get">
                                 <input type="hidden" name="eliminar" value="<?php echo $clave['codigo_barra']; ?>">
                                 <button type="submit" style="display: none;"></button>
@@ -299,28 +455,30 @@ if (isset($_COOKIE["productos_caja"])) {
                         ?>
                     </div>
                     <div class="cart">
-                        <h2 class="text-caja-black">Carrito de Compras</h2>
-                        <div class="cart-items">
-                        </div>
+
                         <div class="cart-total">
-                            <p>Total General: $<?php
-                            if (isset($_COOKIE["descuentos"])) {
-                                $resta_desc = json_decode($_COOKIE["descuentos"]);
-                                $total_desc = $total_general - ($total_general * floatval($resta_desc));
-                                $total_general = $total_desc;
-                                echo $total_general;
-                            } else {
-                                echo $total_general;
-                            }
-                            ?>
-                            </p>
+                            <div class="contenedor-total-divs">
+                                <p class="total_general">Total General:
+                                <p class="numero_total">$<?php
+                                if (isset($_COOKIE["descuentos"])) {
+                                    $resta_desc = json_decode($_COOKIE["descuentos"]);
+                                    $total_desc = $total_general - ($total_general * floatval($resta_desc));
+                                    $total_general = $total_desc;
+                                    echo $total_general;
+                                } else {
+                                    echo $total_general;
+                                }
+                                ?></p>
+                                </p>
+                            </div>
                         </div>
-                        <form action="finalizar-compra-reparto.php" method="post">
+                        <form action="finalizar-compra.php" method="post" style="margin-left: -3%;">
                             <input type="text" id="searchInput" placeholder="nombre y apellido..."
                                 name="nombre_y_apelido" required>
                             <input type="text" id="searchInput" placeholder="DNI..." name="DNI" required>
                             <input type="number" id="searchInput" placeholder="entrega..." name="entregar_plata">
                             <input type="hidden" id="searchInput" value="<?php echo $total_general; ?>" name="total">
+                            <input type="hidden" id="searchInput" value="<?php echo $url; ?>" name="url">
                             <select name="pago" id="searchInput">
                                 <option value="efectivo" class="option-efectivo">💵 Efectivo</option>
                                 <option value="trans" class="option-tarjeta">💳 Tarjeta</option>
@@ -336,10 +494,68 @@ if (isset($_COOKIE["productos_caja"])) {
             </div>
         </div>
     </div>
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <h3>Cantidad productos</h3>
+            <input type="text" id="cantidad_productos_modal" name="cantidad" placeholder="1" autofocus>
+            <button id="confirmAction">Confirmar</button>
+            <button class="cancel-btn" id="closeModal">Cancelar</button>
+        </div>
+    </div>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const form = document.getElementById("myForm");
+        const openModal = document.getElementById("openModal");
+        const confirmModal = document.getElementById("confirmModal");
+        const confirmAction = document.getElementById("confirmAction");
+        const closeModal = document.getElementById("closeModal");
+
+        function cargar() {
+            var cantidadModal = document.getElementById("cantidad_productos_modal");
+            var cantidadInput = document.getElementById("cantidad_input");
+            var valorModal = cantidadModal.value;
+            console.log(valorModal);
+            if (!cantidadModal || !cantidadInput) {
+
+            }
+            console.log(cantidadInput.value);
+            if (valorModal === "") {
+                cantidadModal.value = "1";
+            } else {
+                cantidadInput.value = valorModal;
+            }
+            // si apreto enter se envia el formulario
+
+            confirmModal.style.display = "none";
+            form.submit(); // Envía el formulario al confirmar
+        }
+
+        openModal.addEventListener("click", function(event) {
+            event.preventDefault(); // Evita el envío del formulario inmediato
+            confirmModal.style.display = "flex";
+            var cantidadModal = document.getElementById("cantidad_productos_modal");
+            cantidadModal.focus()
+            document.addEventListener("keypress", (e) => {
+                if (e.key == "Enter") {
+                    console.log(e.key)
+                    cargar()
+                }
+            })
+        });
+
+        closeModal.addEventListener("click", function() {
+            confirmModal.style.display = "none";
+        });
+
+        confirmAction.addEventListener("click", function() {
+            cargar()
+        });
+    });
+    </script>
     <?php
 
     ?>
-    <footer class="footer py-5">
+    <footer class="footer py-5" style="min-width: 1200px !important;display: flex ;justify-content: space-around;">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 col-12">
@@ -362,7 +578,7 @@ if (isset($_COOKIE["productos_caja"])) {
     <script src="js/smoothscroll.js"></script>
     <script src="js/custom.js"></script>
     <script src="js/mensaje-caja.js"></script>
-    <script src="js/dark-mode.js"></script>
+    <script src="./js/dark-mode.js"></script>
 
 </body>
 

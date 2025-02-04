@@ -1,8 +1,30 @@
 <!DOCTYPE html>
 <?php
 session_start();
+
+require_once "conecion.php";
+$dsn = 'mysql:host=localhost:3307;dbname=code_bar;';
+try {
+    $pdo = new PDO($dsn, $usuario, $contrasena);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    echo 'error al conectarse: ' . $e->getMessage();
+    exit;
+}
+$consulataTodosUsuarios = "SELECT usuario FROM usuario";
+$stmt = $pdo->prepare($consulataTodosUsuarios);
+$stmt->execute();
+$todosUsuers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <html lang="en">
+<style>
+th,
+td,
+tr {
+    border: solid black 0.5px;
+    text-align: center;
+}
+</style>
 
 <head>
     <meta charset="utf-8" />
@@ -68,6 +90,63 @@ session_start();
         <div class="ventas-recaudacion">
             <p><strong>Dias del Mes.</strong></p>
             <canvas id="grafica4"></canvas>
+        </div>
+        <div class="ventas-recaudacion">
+            <p><strong>Tabla de ventas.</strong></p>
+            <form action="" method="get">
+                <label for="usaer">Seleccione usuario</label>
+                <select name="usuario" id="usaer">
+                    <?php foreach ($todosUsuers as $selectUser) { ?>
+                    <option value="<?php echo $selectUser["usuario"]; ?>">
+                        <?php echo $selectUser["usuario"]; ?>
+                    </option>
+                    <?php }
+                    $total = 0;
+                    ?>
+                </select>
+                <input type="submit" value="Consultar ventas" />
+            </form>
+
+
+            <table style="border: solid black 1px; width: 100%; ">
+                <thead style="width: 100%;">
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Monto</th>
+                        <th>fecha</th>
+                    </tr>
+                </thead>
+                <?php if ($_GET) {
+                    $user = $_GET["usuario"];
+
+                    $conultaVentas = "SELECT * FROM ventas WHERE usuario = :usuario";
+                    $stmt = $pdo->prepare($conultaVentas);
+                    $stmt->bindParam(':usuario', $user, PDo::PARAM_STR);
+                    $stmt->execute();
+                    $datos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+                    foreach ($datos as $venta) {
+                        $total = $total + intval($venta["total"]);
+                        ?>
+
+                <tbody>
+                    <tr>
+                        <td><?php echo $venta["usuario"]; ?></td>
+                        <td><?php echo $venta["total"]; ?></td>
+                        <td>$<?php echo $venta["fecha"]; ?></td>
+                    </tr>
+                </tbody>
+                <?php }
+                } ?>
+                <tfoot>
+                    <tr>
+                        <td colspan="2"><strong>Total</strong></td>
+                        <td><strong>$<?php echo $total; ?></strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+
         </div>
     </div>
 

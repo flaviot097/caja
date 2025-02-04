@@ -58,3 +58,39 @@ $file = $driveService->files->create($fileMetadata, [
 
 printf("Archivo subido con ID: %s\n", $file->id);
 ?>
+
+
+
+
+$productos_no_actualizables = json_encode(array());
+$cantidada_cero = "0";
+$stmtlp = $pdo->prepare($sql_entrega);
+$stmtlp->bindParam(':dni', $dni, PDO::PARAM_STR);
+$stmtlp->bindParam(':nombre_y_apellido', $nombre, PDO::PARAM_STR);
+$stmtlp->bindParam(':productos', $productos_no_actualizables, PDO::PARAM_STR);
+$stmtlp->bindParam(':saldo', $tot, PDO::PARAM_INT);
+$stmtlp->bindParam(':cantidad', $cantidada_cero, PDO::PARAM_STR);
+$stmtlp->bindParam(':fecha', $fecha_date, PDO::PARAM_STR);
+if ($stmtlp->execute()) {
+
+$list = [
+'nombre_producto' => "Producto",
+'precio' => 0,
+'codigo_barra' => "codigo de barra",
+'cantidad' => 1,
+'total' => 0
+];
+$imprimir = json_encode([$_POST["nombre_y_apelido"], "efectivo", $value['total']]);
+$productos_caja[] = $list;
+$productos_caja_json = json_encode($productos_caja);
+//setcookie("productos_caja", "", time() - 3600, "/");
+//elimino cookies y genero mensaje
+
+setcookie("mensaje", "exito", time() + 10, '/');
+setcookie("imprimir", $imprimir, time() + 3600, "/");
+setcookie("entrega_si", $restar_total, time() + 3600, "/");
+header("location: factura-crear.php");
+} else {
+setcookie("mensaje", "fallo", time() + 10, '/');
+header("location: caja.php");
+}

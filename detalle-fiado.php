@@ -16,12 +16,7 @@ try {
     echo $e->getMessage();
 }
 
-$query = "SELECT * FROM fiado WHERE dni=:dni";
-$statement = $pdo->prepare($query);
-$statement->bindParam(":dni", $dni, PDO::PARAM_STR);
-$statement->execute();
-$todosFiados = $statement->fetchAll(PDO::FETCH_ASSOC);
-//var_dump($todosFiados);
+
 $saldo = 0;
 $total = 0;
 ?>
@@ -35,111 +30,111 @@ $total = 0;
     <link rel="stylesheet" href="styles.css">
 </head>
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f4f4f4;
-    }
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
 
-    .invoice-container {
-        width: 210mm;
-        min-height: 297mm;
-        padding: 20mm;
-        margin: 10mm auto;
-        background-color: #fff;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
-    }
+.invoice-container {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 20mm;
+    margin: 10mm auto;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+}
 
-    header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-    }
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
 
-    header .company-details {
-        text-align: left;
-    }
+header .company-details {
+    text-align: left;
+}
 
-    header .company-details h1 {
-        margin: 0;
-        font-size: 24px;
-    }
+header .company-details h1 {
+    margin: 0;
+    font-size: 24px;
+}
 
-    header .company-details p {
-        margin: 5px 0;
-    }
+header .company-details p {
+    margin: 5px 0;
+}
 
-    header .logo img {
-        max-width: 150px;
-    }
+header .logo img {
+    max-width: 150px;
+}
 
-    .invoice-details {
-        text-align: center;
-        margin-bottom: 20px;
-    }
+.invoice-details {
+    text-align: center;
+    margin-bottom: 20px;
+}
 
-    .invoice-details h2 {
-        margin: 0;
-        font-size: 28px;
-    }
+.invoice-details h2 {
+    margin: 0;
+    font-size: 28px;
+}
 
-    .invoice-details p {
-        margin: 5px 0;
-    }
+.invoice-details p {
+    margin: 5px 0;
+}
 
-    .client-details {
-        margin-bottom: 20px;
-    }
+.client-details {
+    margin-bottom: 20px;
+}
 
-    .client-details h3 {
-        margin: 0 0 10px 0;
-        font-size: 20px;
-    }
+.client-details h3 {
+    margin: 0 0 10px 0;
+    font-size: 20px;
+}
 
-    .client-details p {
-        margin: 5px 0;
-    }
+.client-details p {
+    margin: 5px 0;
+}
 
-    .invoice-items table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 20px;
-    }
+.invoice-items table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
 
-    .invoice-items th,
-    .invoice-items td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: left;
-    }
+.invoice-items th,
+.invoice-items td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
 
-    .invoice-items th {
-        background-color: #f4f4f4;
-    }
+.invoice-items th {
+    background-color: #f4f4f4;
+}
 
-    .invoice-items tfoot td {
-        font-weight: bold;
-    }
+.invoice-items tfoot td {
+    font-weight: bold;
+}
 
-    footer {
-        text-align: center;
-        margin-top: 20px;
-    }
+footer {
+    text-align: center;
+    margin-top: 20px;
+}
 
-    footer p {
-        margin: 0;
-        font-size: 16px;
-    }
+footer p {
+    margin: 0;
+    font-size: 16px;
+}
 
-    .invoice-items {
-        width: 70% !important;
-    }
+.invoice-items {
+    width: 70% !important;
+}
 
-    .title-detalle {
-        width: 70%;
-    }
+.title-detalle {
+    width: 70%;
+}
 </style>
 
 <body>
@@ -157,83 +152,108 @@ $total = 0;
 
         <section class="invoice-details">
             <h2 class="title-detalle">Detalle</h2>
-            <p class="title-detalle"><strong>Fecha:</strong> <?php echo date("d-m-y") ?></p>
+            <p class="title-detalle"><strong>Fecha:</strong>
+                <?php date_default_timezone_set('America/Buenos_Aires');
+                echo date("d-m-y") ?>
+            </p>
         </section>
 
         <section class="client-details">
             <h3>Detalles del Cliente</h3>
-            <p><strong>Nombre:</strong><?php echo ($todosFiados[0]["nombre_y_apellido"]); ?></p>
-            <p><strong>DNI:</strong><?php echo $dni; ?></p>
+            <p><strong>Nombre:</strong><?php echo $_GET["name-validate"]; ?></p>
+            <p><strong>DNI:</strong><?php echo $_GET["dni-validate"]; ?></p>
         </section>
 
         <section class="invoice-items">
-            <table><?php foreach ($todosFiados as $fiados) {
-                $code_barra = $fiados["productos"];
-                $saldo = $fiados["saldo"];
-                $json_productos = json_decode($code_barra);
-                $vuelta = 0;
-                //var_dump($json_productos);
-                //echo $json_productos[0];
-                echo "<br>";
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cantidad</th>
+                        <th>Procucto</th>
+                        <th>Precio C/U</th>
+                        <th>fecha</th>
+                        <th>subtotal</th>
+                    </tr>
+                </thead>
+                <?php
+
+                $total_forheach = 0;
+
+                $saldo_total = 0;
+
+                $query = "SELECT * FROM fiado WHERE dni = :dni";
+                $statement = $pdo->prepare($query);
+                $statement->bindParam(":dni", $_GET["dni-validate"], PDO::PARAM_INT);
+                $statement->execute();
+                $persona_fiado = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 
-                foreach ($json_productos as $product) {
+                $array_persona = [];
 
-                    $consulta = "SELECT precio FROM producto WHERE codigo_barra = :codigo_barra";
-                    $statement1 = $pdo->prepare($consulta);
-                    $statement1->bindParam(":codigo_barra", $product, PDO::PARAM_STR);
-                    $statement1->execute();
-                    $todosFiados1 = $statement1->fetchAll(PDO::FETCH_ASSOC);
-                    //consulta nombre
-                    $consulta1 = "SELECT nombre_producto FROM producto WHERE codigo_barra = :codigo_barra";
-                    $statement2 = $pdo->prepare($consulta1);
-                    $statement2->bindParam(":codigo_barra", $product, PDO::PARAM_STR);
-                    $statement2->execute();
-                    $nonmbre_p_fiado = $statement2->fetchAll(PDO::FETCH_ASSOC);
-                    ///
-                    //echo $fiados["saldo"];
-                    $cantidad_productos_codigo = json_decode($fiados["cantidad"])[$vuelta];
-                    //echo $todosFiados1[0]["precio"];
-                    if ($cantidad_productos_codigo !== 0) { ?>
-                            <thead>
-                                <tr>
-                                    <th>Cantidad</th>
-                                    <th>Procucto</th>
-                                    <th>Precio C/U</th>
-                                    <th>fecha</th>
-                                    <th>subtotal</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><?php echo $cantidad_productos_codigo; ?></td>
-                                    <td><?php echo $nonmbre_p_fiado[0]["nombre_producto"]; ?></td>
-                                    <td>$<?php echo $todosFiados1[0]["precio"]; ?></td>
-                                    <td><?php echo ($fiados["fecha"]); ?></td>
-                                    <td>$<?php echo ($todosFiados1[0]["precio"] * floatval($cantidad_productos_codigo));
-                                    $total += $todosFiados1[0]["precio"] * floatval($cantidad_productos_codigo) ?>
-                                    </td>
-                                </tr>
-                            </tbody>
-                            <?php $vuelta++;
+
+                $globalDNI = $_GET["dni-validate"];
+                $consulta_saldo = "SELECT saldo FROM saldos WHERE dni=:dni";
+                $statement_saldo = $pdo->prepare($consulta_saldo);
+                $statement_saldo->bindParam(":dni", $globalDNI, PDO::PARAM_INT);
+                $statement_saldo->execute();
+                if ($saldo = $statement_saldo->fetchAll(PDO::FETCH_ASSOC)) {
+                    if (count($saldo) > 1) {
+                        foreach ($saldo as $mas_de_uno) {
+                            $saldo_total = $saldo_total + $mas_de_uno["saldo"];
+                        }
+                    } else {
+                        $saldo_total = $saldo[0]["saldo"];
                     }
                 }
-            }
-            ; ?>
-                <tfoot>
+
+                if (count($persona_fiado) !== 0) {
+                    $nombre_Y_apellido = $persona_fiado[0]["nombre_y_apellido"];
+
+                    foreach ($persona_fiado as $fiado) {
+                        $consultar_stock = "SELECT precio , nombre_producto FROM producto WHERE codigo_barra = :codigo_barra";
+                        $stmtconsulta_s = $pdo->prepare($consultar_stock);
+                        $stmtconsulta_s->bindParam(':codigo_barra', $fiado["productos"], PDO::PARAM_STR);
+                        $stmtconsulta_s->execute();
+                        $resultado_productos = $stmtconsulta_s->fetchAll(PDO::FETCH_ASSOC);
+                        $precioUnitario = floatval($resultado_productos[0]["precio"]);
+                        $nombre_producto = $resultado_productos[0]["nombre_producto"];
+                        $cantidad = floatval($fiado["cantidad"]);
+                        $fecha = $fiado["fecha"];
+                        $subtotal = $precioUnitario * $cantidad;
+                        $total_forheach = $total_forheach + $subtotal;
+
+
+                        ?>
+                <tbody>
                     <tr>
-                        <td colspan="4">Saldo</td>
-                        <td>$<?php echo $saldo; ?></td>
+                        <td><?php echo $cantidad; ?></td>
+                        <td><?php echo $nombre_producto; ?></td>
+                        <td>$<?php echo $precioUnitario; ?></td>
+                        <td><?php echo $fecha; ?></td>
+                        <td>$<?php echo $subtotal; ?>
+                        </td>
                     </tr>
-                    <tr>
-                        <td colspan="4"><strong>Total</strong></td>
-                        <td><strong>$<?php echo $total + $saldo; ?></strong></td>
-                    </tr>
+                </tbody>
+
+                <?php
+                    }
+
+                }
+                ?>
+                <tr>
+                    <td colspan="4">Saldo</td>
+                    <td>$<?php echo $saldo_total; ?></td>
+                </tr>
+                <tr>
+                    <td colspan="4"><strong>Total</strong></td>
+                    <td><strong>$<?php echo $saldo_total + $total_forheach; ?></strong></td>
+                </tr>
                 </tfoot>
             </table>
         </section>
     </div>
 </body>
+
 
 </html>
 

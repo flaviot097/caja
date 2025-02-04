@@ -13,30 +13,35 @@ try {
 }
 $consultalocal = "UPDATE producto SET stock=:stock WHERE codigo_barra=:codigo_barra";
 $consultaReparto = "UPDATE producto_reparto SET stock=:stock WHERE codigo_barra=:codigo_barra";
-$selectProductoLocal = "SELECT stock FROM producto WHERE codigo_barra=:codigo_barra";
+$selectProductoLocal = "SELECT stock FROM producto WHERE codigo_barra = :codigo_barra";
+$selectProductoReparto = "SELECT stock FROM producto_reparto WHERE codigo_barra=:codigo_barra";
+
 
 foreach ($lista_actualizar as $producto) {
 
     $codigo_barra = $producto->codigo_barra;
-    $cantidad = $producto->cantidad;
-    $stock = strval(floatval($producto->stock) + floatval($producto->cantidad));
+    $cantidad_a_devolver = $producto->cantidad;
+    $stock_nuevo_repearto = strval(floatval($producto->stock) - floatval($producto->cantidad));
 
     //traer el stock del local
     $stmtLocal = $pdo->prepare($selectProductoLocal);
-    $stmtLocal->bindParam("codigo_barra", $codigo_barra, PDO::PARAM_STR);
+    $stmtLocal->bindParam(":codigo_barra", $codigo_barra, PDO::PARAM_STR);
     $stockLocal = $stmtLocal->execute();
     $stocknuevoLocal = $stmtLocal->fetchAll(PDO::FETCH_ASSOC);
 
-    $stock_local_restado = strval(floatval($stocknuevoLocal[0]["stock"]) - floatval($producto->cantidad));
+    $stock_local = strval(floatval($stocknuevoLocal[0]["stock"]) + floatval($producto->cantidad));
 
     $stmt = $pdo->prepare($consultalocal);
+
+    $stmt->bindParam(":codigo_barra", $codigo_barra, PDO::PARAM_STR);
+    $stmt->bindParam(":stock", $stock_local, PDO::PARAM_STR);
+    $stmt->execute();
+
+    //treaer stock reparto
+    //resto y actualizo los productos del reparto
     $stmt_reparto = $pdo->prepare($consultaReparto);
-
-    $stmt->bindParam("codigo_barra", $codigo_barra, PDO::PARAM_STR);
-    $stmt->bindParam("stock", $stock_local_restado, PDO::PARAM_STR);
-
-    $stmt_reparto->bindParam("codigo_barra", $codigo_barra, PDO::PARAM_STR);
-    $stmt_reparto->bindParam("stock", $stock, PDO::PARAM_STR);
+    $stmt_reparto->bindParam(":codigo_barra", $codigo_barra, PDO::PARAM_STR);
+    $stmt_reparto->bindParam(":stock", $stock_nuevo_repearto, PDO::PARAM_STR);
 
     if ($stmt_reparto->execute() && $stmt->execute()) {
         setcookie("productos_stock", "", time() - 3600, "/");

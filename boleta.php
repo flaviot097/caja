@@ -4,6 +4,11 @@ require 'vendor/autoload.php';
 use Dompdf\Dompdf;
 use Dompdf\Options;
 date_default_timezone_set('America/Buenos_Aires');
+$entrega_si = "";
+if (isset($_COOKIE["entrega_si"])) {
+    $entrega_si = $_COOKIE["entrega_si"];
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -15,117 +20,123 @@ date_default_timezone_set('America/Buenos_Aires');
     <link rel="stylesheet" href="styles.css">
 </head>
 <?php
-$cookie = $_COOKIE["imprimir"];
+$cookie;
+if ($_COOKIE["imprimir"]) {
+    $cookie = $_COOKIE["imprimir"];
+}
+
 $json = json_decode($cookie);
 $nombre_apellido = $json[0];
 $pago = $json[1];
+$vendedor = $json[3];
+
 $descuento = json_decode($_COOKIE["descuentos"], true) ?? 0;
 $total = 0;
 $productos_caja = json_decode($_COOKIE["productos_caja"], true);
 ?>
 
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f4f4f4;
-    }
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
 
-    .invoice-container {
-        width: 210mm;
-        min-height: 297mm;
-        padding: 20mm;
-        margin: 10mm auto;
-        background-color: #fff;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
-    }
+.invoice-container {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 20mm;
+    margin: 10mm auto;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+}
 
-    header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-    }
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
 
-    header .company-details {
-        text-align: left;
-    }
+header .company-details {
+    text-align: left;
+}
 
-    .invoice-items {
-        width: 80%
-    }
+.invoice-items {
+    width: 80%
+}
 
-    header .company-details h1 {
-        margin: 0;
-        font-size: 24px;
-    }
+header .company-details h1 {
+    margin: 0;
+    font-size: 24px;
+}
 
-    header .company-details p {
-        margin: 5px 0;
-    }
+header .company-details p {
+    margin: 5px 0;
+}
 
-    header .logo img {
-        max-width: 150px;
-    }
+header .logo img {
+    max-width: 150px;
+}
 
-    .invoice-details {
-        text-align: center;
-        margin-bottom: 20px;
-    }
+.invoice-details {
+    text-align: center;
+    margin-bottom: 20px;
+}
 
-    .invoice-details h2 {
-        margin: 0;
-        font-size: 28px;
-    }
+.invoice-details h2 {
+    margin: 0;
+    font-size: 28px;
+}
 
-    .invoice-details p {
-        margin: 5px 0;
-    }
+.invoice-details p {
+    margin: 5px 0;
+}
 
-    .client-details {
-        margin-bottom: 20px;
-    }
+.client-details {
+    margin-bottom: 20px;
+}
 
-    .client-details h3 {
-        margin: 0 0 10px 0;
-        font-size: 20px;
-    }
+.client-details h3 {
+    margin: 0 0 10px 0;
+    font-size: 20px;
+}
 
-    .client-details p {
-        margin: 5px 0;
-    }
+.client-details p {
+    margin: 5px 0;
+}
 
-    .invoice-items table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 20px;
-    }
+.invoice-items table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
 
-    .invoice-items th,
-    .invoice-items td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: left;
-    }
+.invoice-items th,
+.invoice-items td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
 
-    .invoice-items th {
-        background-color: #f4f4f4;
-    }
+.invoice-items th {
+    background-color: #f4f4f4;
+}
 
-    .invoice-items tfoot td {
-        font-weight: bold;
-    }
+.invoice-items tfoot td {
+    font-weight: bold;
+}
 
-    footer {
-        text-align: center;
-        margin-top: 20px;
-    }
+footer {
+    text-align: center;
+    margin-top: 20px;
+}
 
-    footer p {
-        margin: 0;
-        font-size: 16px;
-    }
+footer p {
+    margin: 0;
+    font-size: 16px;
+}
 </style>
 
 <body>
@@ -150,6 +161,7 @@ $productos_caja = json_decode($_COOKIE["productos_caja"], true);
             <h3>Detalles del Cliente</h3>
             <p><strong>Nombre:</strong><?php echo $nombre_apellido; ?></p>
             <p><strong>Método de pago:</strong><?php echo $pago; ?></p>
+            <p><strong>Vendedor:</strong> <?php echo $vendedor ?></p>
         </section>
 
         <section class="invoice-items">
@@ -157,29 +169,33 @@ $productos_caja = json_decode($_COOKIE["productos_caja"], true);
                 $total += $value["total"];
                 if ($value["nombre_producto"] !== "Producto") {
                     ?>
-                        <thead>
-                            <tr>
-                                <th>Cantidad</th>
-                                <th>Procucto</th>
-                                <th>Precio C/U</th>
-                                <th>subtotal</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><?php echo $value["cantidad"]; ?></td>
-                                <td><?php echo $value["nombre_producto"]; ?></td>
-                                <td>$<?php echo $value["precio"]; ?></td>
-                                <td>$<?php echo ($value["precio"] * $value["cantidad"]); ?></td>
-                            </tr>
-                        </tbody>
-                    <?php }
+                <thead>
+                    <tr>
+                        <th>Cantidad</th>
+                        <th>Procucto</th>
+                        <th>Precio C/U</th>
+                        <th>subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><?php echo $value["cantidad"]; ?></td>
+                        <td><?php echo $value["nombre_producto"]; ?></td>
+                        <td>$<?php echo $value["precio"]; ?></td>
+                        <td>$<?php echo ($value["precio"] * $value["cantidad"]); ?></td>
+                    </tr>
+                </tbody>
+                <?php }
             }
             ; ?>
                 <tfoot>
                     <tr>
                         <td colspan="3">Descuento</td>
                         <td><?php echo $descuento; ?>%</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">Entrega | $<?php echo $entrega_si; ?></td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td colspan="3"><strong>Total</strong></td>

@@ -11,6 +11,8 @@
             } catch (PDOException $e) {
                 echo $e->getMessage();
             }
+            date_default_timezone_set('America/Buenos_Aires');
+
 
             $fechaS = $_GET["datetime"];
             $hora = $_GET["turno"];
@@ -22,7 +24,7 @@
                 $hasta = "12:30:00";
             } elseif ($hora === "tarde") {
                 $desde = "12:31:00";
-                $hasta = "21:00:00";
+                $hasta = "23:00:00";
             }
 
             $query = "SELECT * FROM reparto_reporte WHERE DATE(fecha) = '$fechaS' AND TIME(hora) BETWEEN '$desde' AND '$hasta'";

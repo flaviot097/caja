@@ -8,8 +8,8 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 
-$mes_array = array_fill(0, 11, 0);
-$dia_array = array_fill(0, 30, 0);
+$mes_array = array_fill(0, 12, 0);
+$dia_array = array_fill(0, 31, 0);
 $anio_array = array_fill(2024, 9, 0);
 
 

@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<?php
-session_start();
+<?php session_start();
+
 date_default_timezone_set('America/Buenos_Aires');
+
 require_once "conecion.php";
 $dsn = "mysql:host=localhost:3307;dbname=code_bar;";
 try {
@@ -11,13 +12,8 @@ try {
     echo $e->getMessage();
 }
 
-$query = "SELECT * FROM fiado";
-$statement = $pdo->prepare($query);
-$statement->execute();
-$todosFiados = $statement->fetchAll(PDO::FETCH_ASSOC);
-$para_cookies = json_encode($todosFiados);
+error_reporting(0);
 
-setcookie("fiados_todos", $para_cookies, time() + 3600, "/");
 ?>
 <html lang="en">
 
@@ -73,73 +69,139 @@ setcookie("fiados_todos", $para_cookies, time() + 3600, "/");
 
     <div class="body-container">
         <div class="container-cartas-fiado">
-            <h1 class="text-fiado">Cuenta corriente</h1>
+
             <?php
-            $array_deudas = [];
 
-            // Agrupando las deudas por dni
-            foreach ($todosFiados as $value) {
-                $dni = $value["dni"];
-                if (!isset($array_deudas[$dni])) {
-                    $array_deudas[$dni] = [
-                        "nombre_y_apellido" => $value["nombre_y_apellido"],
-                        "saldo" => 0,
-                        "productos" => [],
-                        "cantidad" => []
-                    ];
+            $query = "SELECT DISTINCT dni FROM fiado";
+            $statement = $pdo->prepare($query);
+            $statement->execute();
+            $todosFiados = $statement->fetchAll(PDO::FETCH_ASSOC);
+            $para_cookies = json_encode($todosFiados);
+
+
+            $lista_total_producto;
+
+            foreach ($todosFiados as $dni_persona) {
+
+                $query = "SELECT * FROM fiado WHERE dni = :dni";
+                $statement = $pdo->prepare($query);
+                $statement->bindParam(":dni", $dni_persona["dni"], PDO::PARAM_INT);
+                $statement->execute();
+                $persona_fiado = $statement->fetchAll(PDO::FETCH_ASSOC);
+                $nombre_Y_apellido = $persona_fiado[0]["nombre_y_apellido"];
+
+                $array_persona = [];
+
+                foreach ($persona_fiado as $producto_fiado) {
+
+                    $cantidad_productos = floatval($producto_fiado["cantidad"]);
+                    $cb = $producto_fiado["productos"];
+                    $consultar_stock = "SELECT precio , nombre_producto FROM producto WHERE codigo_barra = :codigo_barra";
+                    $stmtconsulta_s = $pdo->prepare($consultar_stock);
+                    $stmtconsulta_s->bindParam(':codigo_barra', $cb, PDO::PARAM_STR);
+                    $stmtconsulta_s->execute();
+                    $resultado_productos = $stmtconsulta_s->fetchAll(PDO::FETCH_ASSOC);
+                    $precioUnitario = floatval($resultado_productos[0]["precio"]);
+                    $nombre_producto = $resultado_productos[0]["nombre_producto"];
+                    $total_producto = $precioUnitario * $cantidad_productos;
+                    array_push($array_persona, array("dni" => $dni_persona["dni"], "subtotal" => $total_producto, "cantidad" => $cantidad_productos, "nombre_producto" => $nombre_producto, "nombre" => $nombre_Y_apellido));
+
                 }
-                $array_deudas[$dni]["saldo"] += $value["saldo"];
-                $productos_arr = json_decode($value["productos"], true);
-                $cant_arr = json_decode($value["cantidad"], true);
 
-                if (is_array($productos_arr) && is_array($cant_arr)) {
-                    foreach ($productos_arr as $index => $producto) {
-                        if (isset($array_deudas[$dni]["productos"][$producto])) {
-                            $array_deudas[$dni]["productos"][$producto] += $cant_arr[$index];
-                        } else {
-                            $array_deudas[$dni]["productos"][$producto] = $cant_arr[$index];
-                        }
+
+
+                $array_nuevo[] = array($dni_persona["dni"] => $array_persona);
+            }
+            //consulto saldo sin  productos fiado
+            $consulta_saldo = "SELECT nombre_y_apellido ,dni, SUM(saldo) AS total_saldo FROM saldos GROUP BY dni";
+            $statement_saldo = $pdo->prepare($consulta_saldo);
+            $statement_saldo->execute();
+            $saldo_dni_todos = $statement_saldo->fetchAll(PDO::FETCH_ASSOC);
+
+
+            $dni_con_solo_saldo = array();
+            $dni_conSaldo = array();
+            foreach ($array_nuevo as $item_array) {
+                foreach ($item_array as $item_dni) {
+                    foreach ($item_dni as $desglose) {
+                        array_push($dni_conSaldo, $desglose["dni"]);
                     }
                 }
             }
+            foreach ($saldo_dni_todos as $dni_saldo) {
+                array_push($dni_con_solo_saldo, $dni_saldo["dni"]);
+            }
 
-            // Mostrar tarjetas para cada DNI
-            foreach ($array_deudas as $dni => $deuda) {
-                $totalPersona = $deuda["saldo"];
-                foreach ($deuda["productos"] as $producto => $cantidad) {
-                    $queryP = "SELECT precio FROM producto WHERE codigo_barra = :codigo_barra";
-                    $stmtP = $pdo->prepare($queryP);
-                    $stmtP->bindParam(':codigo_barra', $producto, PDO::PARAM_STR);
-                    $stmtP->execute();
-                    $f = $stmtP->fetch(PDO::FETCH_ASSOC);
-                    if ($f !== false) {
-                        $precioUnitario = $f["precio"];
-                        $totalPersona += $precioUnitario * $cantidad;
+            $dnis_con_saldo_solamente = (array_diff($dni_con_solo_saldo, $dni_conSaldo));
+
+
+
+            foreach ($array_nuevo as $persona) {
+                $saldo_total = 0;
+                $total = 0;
+                $person = 0;// variable para el saldo
+                foreach ($persona as $producto_items) {
+                    if ($person === 0) {
+                        $globalDNI = $producto_items[0]["dni"];
+                        $consulta_saldo = "SELECT saldo FROM saldos WHERE dni=:dni";
+                        $statement_saldo = $pdo->prepare($consulta_saldo);
+                        $statement_saldo->bindParam(":dni", $globalDNI, PDO::PARAM_INT);
+                        $statement_saldo->execute();
+                        $saldo = $statement_saldo->fetchAll(PDO::FETCH_ASSOC);
+
+                        if (count($saldo) !== 0) {
+                            if (count($saldo) > 1) {
+                                foreach ($saldo as $mas_de_uno) {
+                                    $saldo_total = $saldo_total + $mas_de_uno["saldo"];
+                                }
+                            } else {
+                                $saldo_total = $saldo[0]["saldo"];
+                            }
+                        } else {
+                            $saldo_total = 0;
+                        }
+
+                        $person = 1;// para que no se repita la consulta
                     }
-                }
-                if ($totalPersona !== 0) {
-
+                    $cliente_dni;
+                    //recorre cada producto que se compro
+                    foreach ($producto_items as $item) {
+                        $cliente_dni = $item["dni"];
+                        // $cookie_array = array("cantidad" => $item["cantidad"], "nombre" => $item["nombre_producto"], "subtotal" => $item["subtotal"]);
+                        $total += intval($item["subtotal"]);
+                    }
+                    // setcookie("$cliente_dni", $para_cookies, time() + 3600, "/");
+                    // echo ("  total: " . $saldo_total + $total);
+                    // echo "<br>";
+                    //     }
+            
+                    // }
+            
                     ?>
-
+            <h1 class="text-fiado">Cuenta corriente</h1>
             <div class="detalle">
                 <div class="container-title">
-                    <h2><?php echo $deuda["nombre_y_apellido"]; ?></h2>
+                    <h2>
+                        <?php echo $item["nombre"]; ?>
+                    </h2>
                     <form action="detalle-fiado.php" method="get" style="display: flex;
-    align-content: space-around;
-    flex-wrap: wrap; margin-left: 15px;">
-                        <input type="hidden" name="dni-validate" value="<?php echo $dni; ?>">
+                        align-content: space-around;
+                        flex-wrap: wrap; margin-left: 15px;">
+                        <input type="hidden" name="dni-validate" value="<?php echo $cliente_dni; ?>">
+                        <input type="hidden" name="name-validate" value="<?php echo $item["nombre"]; ?>">
                         <input type="submit" value="Detalle">
                     </form>
                 </div>
 
                 <form class="form-detalle" action="fiado-actualizar.php" method="post" class="card-fiado">
-                    <p><strong>Deuda:</strong> $<?php echo $totalPersona; ?></p>
-                    <input type="number" value="<?php echo $totalPersona; ?>" name="pagar_total" style="display: none;">
-                    <input type="hidden" name="nombre_apellido" value="<?php echo $deuda["nombre_y_apellido"]; ?>">
-                    <input type="number" value="<?php echo $dni; ?>" name="dni" style="display: none;">
-                    <input type="text" value="<?php echo htmlspecialchars(json_encode($deuda["productos"])); ?>"
-                        name="cantidad_productos" style="display: none;">
-                    <p><strong>Entrega:</strong> $<input type="number" value="<?php echo $totalPersona; ?>"
+                    <p><strong>Deuda:</strong> $<?php echo $saldo_total + $total ?></p>
+                    <input type="number" value="<?php echo $saldo_total + $total; ?>" name="pagar_total"
+                        style="display: none;">
+                    <input type="hidden" name="nombre_apellido" value="<?php echo $item["nombre"]; ?>">
+                    <input type="number" value="<?php echo $item["dni"]; ?>" name="dni" style="display: none;">
+                    <input type="text" value="<?php echo ($saldo_total + $total); ?>" name="cantidad_productos"
+                        style="display: none;">
+                    <p><strong>Entrega:</strong> $<input type="number" value="<?php echo ($saldo_total + $total); ?>"
                             name="entrega"></p>
                     <select name="pagar" id="pagar">
                         <option value="liquidar_total">Liquidar total de deuda</option>
@@ -149,6 +211,49 @@ setcookie("fiados_todos", $para_cookies, time() + 3600, "/");
                 </form>
             </div>
             <?php }
+            }
+
+            // Replico las tarjetas para los saldos solamente
+            
+            foreach ($dnis_con_saldo_solamente as $solo_saldo) {
+                foreach ($saldo_dni_todos as $datos) {
+                    if ($datos["dni"] == $solo_saldo) {
+                        ?>
+
+            <h1 class="text-fiado">Cuenta corriente</h1>
+            <div class="detalle">
+                <div class="container-title">
+                    <h2>
+                        <?php echo $datos["nombre_y_apellido"]; ?>
+                    </h2>
+                    <form action="detalle-fiado.php" method="get" style="display: flex;
+                        align-content: space-around;
+                        flex-wrap: wrap; margin-left: 15px;">
+                        <input type="hidden" name="dni-validate" value="<?php echo $datos["dni"]; ?>">
+                        <input type="hidden" name="name-validate" value="<?php echo $datos["nombre_y_apellido"]; ?>">
+                        <input type="submit" value="Detalle">
+                    </form>
+                </div>
+
+                <form class="form-detalle" action="fiado-actualizar.php" method="post" class="card-fiado">
+                    <p><strong>Deuda:</strong> $<?php echo $datos["total_saldo"]; ?></p>
+                    <input type="number" value="<?php echo $datos["total_saldo"]; ?>" name="pagar_total"
+                        style="display: none;">
+                    <input type="hidden" name="nombre_apellido" value="<?php echo $datos["nombre_y_apellido"]; ?>">
+                    <input type="number" value="<?php echo $datos["dni"]; ?>" name="dni" style="display: none;">
+                    <input type="text" value="<?php echo $datos["total_saldo"]; ?>" name="cantidad_productos"
+                        style="display: none;">
+                    <p><strong>Entrega:</strong> $<input type="number" value="<?php echo $datos["total_saldo"]; ?>"
+                            name="entrega"></p>
+                    <select name="pagar" id="pagar">
+                        <option value="liquidar_total">Liquidar total de deuda</option>
+                        <option value="entregar">Entrega</option>
+                    </select>
+                    <button class="pay-button" type="submit">Pagar</button>
+                </form>
+            </div>
+            <?php }
+                }
             }
             ?>
         </div>
@@ -164,21 +269,21 @@ setcookie("fiados_todos", $para_cookies, time() + 3600, "/");
                     <p class="copyright-text text-center">
                         Diseñado por <a rel="nofollow" href="">Flavio Trocello</a>
                     </p>
+                    </di v>
+                    </di v>
                 </div>
-            </div>
-        </div>
-    </footer>
+                </fo oter>
 
-    <script src="js/jquery-3.3.1.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/Headroom.js"></script>
-    <script src="js/jQuery.headroom.js"></script>
-    <script src="js/owl.carousel.min.js"></script>
-    <script src="js/smoothscroll.js"></script>
-    <script src="js/custom.js"></script>
-    <script src="js/dark-mode.js"></script>
-</body>
+                <script src="js/jquery-3.3.1.min.js"></script>
+                <script src="js/popper.min.js"></script>
+                <script src="js/bootstrap.min.js"></script>
+                <script src="js/Headroom.js"></script>
+                <script src="js/jQuery.headroom.js"></script>
+                <script src="js/owl.carousel.min.js"></script>
+                <script src="js/smoothscroll.js"></script>
+                <script src="js/custom.js"></script>
+                <script src="js/dark-mode.js"></script>
+                </bo dy>
 
 </html>
 

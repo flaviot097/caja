@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <?php
 session_start();
+if (empty($_SESSION["usuario"])) {
+    header("location: index.php");
+}
 ?>
 <html lang="en">
 
@@ -25,6 +28,13 @@ session_start();
     <!-- MAIN STYLE -->
     <link rel="stylesheet" href="css/tooplate-style.css" />
 </head>
+<style>
+.card-fiado {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+</style>
 
 <body>
     <!-- MENU -->
@@ -71,7 +81,7 @@ session_start();
                 </p>
                 <p class="text-center"><strong>Precio final</strong><br>$<span id="precio-final">0.00</span></p>
                 <p class="text-center"><strong>Stock Minino</strong> <br><input name="num_stock" type="number"></p>
-                <button id="agregar-producto" class="pay-button" type="submit">agregar Producto</button>
+                <button class="pay-button" type="submit">agregar Producto</button>
             </form>
         </div>
     </div>

@@ -349,11 +349,8 @@ if (isset($_COOKIE["productos_stock"])) {
     justify-content: space-between;">
                                 <div class="div-de-prod"><?php echo $clave['nombre_producto'] ?> </div>
                                 <div class="div-de-prod"><?php echo $clave['codigo_barra'] ?> </div>
-                                <div style="width: 2%;" class="div-de-prod"> U
-                                    <?php echo $clave['stock'] ?>
-                                </div>
                                 <form action="">
-                                    Agregar: <br />
+                                    Devolver: <br />
                                     <input type="text" name="cantidad-reparto"
                                         placeholder="<?php echo $clave['cantidad']; ?>">
                                     <input type="hidden" name="actualizar"
@@ -410,7 +407,7 @@ if (isset($_COOKIE["productos_stock"])) {
                     </div>
                     <div class="cart">
 
-                        <form action="actualizar-stock-masivo.php" method="post" style="margin-left: -3%;">
+                        <form action="devolver-local.php" method="post" style="margin-left: -3%;">
                             <button class="btn checkout-btn" type="submit" style="margin-top: 5px;">Actualizar
                                 Stock Reparto</button>
                         </form>

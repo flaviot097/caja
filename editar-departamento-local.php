@@ -25,6 +25,13 @@ session_start();
     <!-- MAIN STYLE -->
     <link rel="stylesheet" href="css/tooplate-style.css" />
 </head>
+<style>
+.card-fiado {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+</style>
 
 <body>
     <!-- MENU -->
@@ -65,7 +72,7 @@ session_start();
                 <p class="text-center"><strong>ganancia</strong><br><input id="ganancia" name="ganancia" type="number">%
                 </p>
                 <p class="text-center"><strong>Precio final</strong><br>$<span id="precio-final">0.00</span></p>
-                <button id="agregar-producto" style="margin-left: 15vh;" class="pay-button" type="submit">Editar
+                <button class="pay-button" type="submit">Editar
                     Producto</button>
             </form>
         </div>
