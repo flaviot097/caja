@@ -28,64 +28,64 @@ if (empty($_SESSION["usuario"])) {
     <link rel="stylesheet" href="css/tooplate-style.css" />
 </head>
 <style>
-.contador-container {
-    font-weight: bold;
-    font-size: 1rem;
-    margin-left: 5vh;
-    color: gray;
-    text-decoration: underline;
-}
+    .contador-container {
+        font-weight: bold;
+        font-size: 1rem;
+        margin-left: 5vh;
+        color: gray;
+        text-decoration: underline;
+    }
 
-.modal {
-    display: none;
-    /* Hidden by default */
-    position: fixed;
-    /* Stay in place */
-    z-index: 1;
-    /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%;
-    /* Full width */
-    height: 100%;
-    /* Full height */
-    overflow: auto;
-    /* Enable scroll if needed */
-    background-color: rgba(0, 0, 0, 0.4);
-    /* Fallback color */
-    background-color: rgba(0, 0, 0, 0.4);
-    /* Black w/ opacity */
-}
+    .modal {
+        display: none;
+        /* Hidden by default */
+        position: fixed;
+        /* Stay in place */
+        z-index: 1;
+        /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%;
+        /* Full width */
+        height: 100%;
+        /* Full height */
+        overflow: auto;
+        /* Enable scroll if needed */
+        background-color: rgba(0, 0, 0, 0.4);
+        /* Fallback color */
+        background-color: rgba(0, 0, 0, 0.4);
+        /* Black w/ opacity */
+    }
 
-/* Modal Content */
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    /* 15% from the top and centered */
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    /* Could be more or less, depending on screen size */
-}
+    /* Modal Content */
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        /* 15% from the top and centered */
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        /* Could be more or less, depending on screen size */
+    }
 
-/* The Close Button */
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
+    /* The Close Button */
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
 
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
 
-#button-modal {
-    background-color: #4CAF50;
-}
+    #button-modal {
+        background-color: #4CAF50;
+    }
 </style>
 
 <body>
@@ -220,16 +220,16 @@ if (empty($_SESSION["usuario"])) {
 
                         // Preparar la consulta según los campos proporcionados
                         if ($nombre_producto !== '') {
-                            $query .= " AND nombre_producto LIKE :nombre_producto";
+                            $query .= " AND nombre_producto LIKE :nombre_producto%";
                         }
                         if ($departamento !== '') {
-                            $query .= " AND departamento LIKE :departamento";
+                            $query .= " AND departamento LIKE :departamento%";
                         }
                         if ($proveedor !== '') {
-                            $query .= " AND proveedor LIKE :proveedor";
+                            $query .= " AND proveedor LIKE :proveedor%";
                         }
                         if ($code_bar_con !== "") {
-                            $query .= " AND codigo_barra LIKE :codigo_barra";
+                            $query .= " AND codigo_barra LIKE :codigo_barra%";
                         }
 
                         // Añadir el ORDER BY una sola vez al final
@@ -329,65 +329,65 @@ if (empty($_SESSION["usuario"])) {
     </footer>
     <script src="js/jquery-3.3.1.min.js"></script>
     <script>
-    $(document).ready(function() {
-        if ($(window).width() <= 768) {
-            $('#sidebar').addClass('collapse');
-        }
-
-        $(window).resize(function() {
+        $(document).ready(function () {
             if ($(window).width() <= 768) {
                 $('#sidebar').addClass('collapse');
-            } else {
-                $('#sidebar').removeClass('collapse');
             }
-        });
-    });
-    </script>
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Captura todos los elementos <p> con la clase 'eliminar'
-        const eliminarElements = document.querySelectorAll('.eliminar-prod');
 
-
-        eliminarElements.forEach(function(eliminarElement) {
-            eliminarElement.addEventListener('click', function() {
-                // Obtén el id del elemento clickeado
-                const codigoBarra = this.id;
-                var modal = document.getElementById("myModal");
-                var span = document.getElementsByClassName("close")[0];
-
-                modal.style.display = "block";
-                // Cuando se hace clic en <span> (x), se cierra el modal
-                span.onclick = function() {
-                    modal.style.display = "none";
+            $(window).resize(function () {
+                if ($(window).width() <= 768) {
+                    $('#sidebar').addClass('collapse');
+                } else {
+                    $('#sidebar').removeClass('collapse');
                 }
-                // Cuando se hace clic fuera del modal, se cierra
-                window.onclick = function(event) {
-                    if (event.target == modal) {
-                        modal.style.display = "none";
-                    }
-                }
-                Escucharbtneliminar(codigoBarra)
-                // Redirige a eliminar-producto.php con el parámetro codigo_eliminar
-                /*window.location.href = 'eliminar-producto-reparto.php?codigo_eliminar=' +
-                    encodeURIComponent(codigoBarra);*/
             });
         });
-    });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Captura todos los elementos <p> con la clase 'eliminar'
+            const eliminarElements = document.querySelectorAll('.eliminar-prod');
+
+
+            eliminarElements.forEach(function (eliminarElement) {
+                eliminarElement.addEventListener('click', function () {
+                    // Obtén el id del elemento clickeado
+                    const codigoBarra = this.id;
+                    var modal = document.getElementById("myModal");
+                    var span = document.getElementsByClassName("close")[0];
+
+                    modal.style.display = "block";
+                    // Cuando se hace clic en <span> (x), se cierra el modal
+                    span.onclick = function () {
+                        modal.style.display = "none";
+                    }
+                    // Cuando se hace clic fuera del modal, se cierra
+                    window.onclick = function (event) {
+                        if (event.target == modal) {
+                            modal.style.display = "none";
+                        }
+                    }
+                    Escucharbtneliminar(codigoBarra)
+                    // Redirige a eliminar-producto.php con el parámetro codigo_eliminar
+                    /*window.location.href = 'eliminar-producto-reparto.php?codigo_eliminar=' +
+                        encodeURIComponent(codigoBarra);*/
+                });
+            });
+        });
 
 
 
 
-    function Escucharbtneliminar(id) {
-        const btn_eliminar = document.getElementById("button-modal")
-        btn_eliminar.addEventListener("click", function() {
-            if (btn_eliminar) {
-                window.location.href = 'eliminar-producto.php?codigo_eliminar=' +
-                    encodeURIComponent(id);
-            }
-        })
+        function Escucharbtneliminar(id) {
+            const btn_eliminar = document.getElementById("button-modal")
+            btn_eliminar.addEventListener("click", function () {
+                if (btn_eliminar) {
+                    window.location.href = 'eliminar-producto.php?codigo_eliminar=' +
+                        encodeURIComponent(id);
+                }
+            })
 
-    }
+        }
     </script>
 
 

@@ -183,140 +183,140 @@ if (isset($_COOKIE["productos_caja"])) {
     <link rel="stylesheet" href="css/tooplate-style.css" />
 </head>
 <style>
-.body-container {
-    background-color: #333333;
-    /* Color oscuro de fondo */
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    max-width: 800px;
-    margin: 34px auto;
-}
+    .body-container {
+        background-color: #333333;
+        /* Color oscuro de fondo */
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        max-width: 800px;
+        margin: 34px auto;
+    }
 
-.btn.checkout-btn {
-    background-color: #FF5722;
-    /* Un color naranja para el botón */
-    color: #FFFFFF;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-}
+    .btn.checkout-btn {
+        background-color: #FF5722;
+        /* Un color naranja para el botón */
+        color: #FFFFFF;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
 
-.btn.checkout-btn:hover {
-    background-color: #E64A19;
-    /* Un tono más oscuro al hacer hover */
-}
+    .btn.checkout-btn:hover {
+        background-color: #E64A19;
+        /* Un tono más oscuro al hacer hover */
+    }
 
-#searchInput,
-#cantidad_input {
-    background-color: #444444;
-    color: #FFFFFF;
-    border: 1px solid #555555;
-    border-radius: 5px;
-    padding: 10px;
-    margin-bottom: 10px;
-}
+    #searchInput,
+    #cantidad_input {
+        background-color: #444444;
+        color: #FFFFFF;
+        border: 1px solid #555555;
+        border-radius: 5px;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
 
-.product-list .product {
-    background-color: #3E3E3E;
-    /* Fondo más oscuro para los productos */
-    padding: 15px;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    color: #FFFFFF;
-}
+    .product-list .product {
+        background-color: #3E3E3E;
+        /* Fondo más oscuro para los productos */
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        color: #FFFFFF;
+    }
 
-.container-data-product div {
-    margin-right: 10px;
-    font-weight: bold;
-}
+    .container-data-product div {
+        margin-right: 10px;
+        font-weight: bold;
+    }
 
-#searchInput::placeholder {
-    color: #AAAAAA;
-    /* Color más claro para los placeholders */
-}
+    #searchInput::placeholder {
+        color: #AAAAAA;
+        /* Color más claro para los placeholders */
+    }
 
-#cantidad_input::placeholder {
-    color: #AAAAAA;
-}
+    #cantidad_input::placeholder {
+        color: #AAAAAA;
+    }
 
-.footer {
-    background-color: #2B2B2B;
-    color: #CCCCCC;
-    padding: 20px 0;
-    text-align: center;
-    font-size: 14px;
-}
+    .footer {
+        background-color: #2B2B2B;
+        color: #CCCCCC;
+        padding: 20px 0;
+        text-align: center;
+        font-size: 14px;
+    }
 
-.footer a {
-    color: #FF5722;
-    text-decoration: none;
-}
+    .footer a {
+        color: #FF5722;
+        text-decoration: none;
+    }
 
-.footer a:hover {
-    text-decoration: underline;
-}
+    .footer a:hover {
+        text-decoration: underline;
+    }
 
-.div-de-prod {
-    width: 12%;
-}
+    .div-de-prod {
+        width: 12%;
+    }
 
-.headroom--not-bottom {
-    min-width: 1100px !important;
-}
+    .headroom--not-bottom {
+        min-width: 1100px !important;
+    }
 
-.numero_total {
-    font-size: 27px;
-    font-weight: 600;
-    line-height: 1.5;
-    color: black;
-    background-color: #e9c192 !important;
-    width: min-content;
-}
+    .numero_total {
+        font-size: 27px;
+        font-weight: 600;
+        line-height: 1.5;
+        color: black;
+        background-color: #e9c192 !important;
+        width: min-content;
+    }
 
-.contenedor-total-divs {
-    display: flex;
-    justify-content: flex-end;
-}
+    .contenedor-total-divs {
+        display: flex;
+        justify-content: flex-end;
+    }
 
-.total_general {
-    color: black;
-    font-size: x-large;
-}
+    .total_general {
+        color: black;
+        font-size: x-large;
+    }
 
 
-/* Modal */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    justify-content: center;
-    align-items: center;
-}
+    /* Modal */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        justify-content: center;
+        align-items: center;
+    }
 
-.modal-content {
-    background: #2c2c2c;
-    padding: 20px;
-    border-radius: 8px;
-    text-align: center;
-}
+    .modal-content {
+        background: #2c2c2c;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+    }
 
-.modal button {
-    margin: 10px;
-}
+    .modal button {
+        margin: 10px;
+    }
 
-.cancel-btn {
-    background: #dc3545;
-}
+    .cancel-btn {
+        background: #dc3545;
+    }
 
-.cancel-btn:hover {
-    background: #a71d2a;
-}
+    .cancel-btn:hover {
+        background: #a71d2a;
+    }
 </style>
 
 <body>
@@ -378,54 +378,54 @@ if (isset($_COOKIE["productos_caja"])) {
                                 if ($clave['nombre_producto'] !== "Producto") {
                                     $total_general += $clave['total'];
                                     ?>
-                        <div class="product">
-                            <div class="container-data-product" style="display: flex;
+                                    <div class="product">
+                                        <div class="container-data-product" style="display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     width: 91%;
     justify-content: space-between;">
-                                <div class="div-de-prod"><?php echo $clave['nombre_producto'] ?> </div>
-                                <div class="div-de-prod"><?php echo $clave['codigo_barra'] ?> </div>
-                                <div style="width: 2%;" class="div-de-prod"> C/U
-                                    $<?php echo $clave['precio'] ?>
-                                </div>
-                                Cantidad:
-                                <?php echo $clave['cantidad'];
+                                            <div class="div-de-prod"><?php echo $clave['nombre_producto'] ?> </div>
+                                            <div class="div-de-prod"><?php echo $clave['codigo_barra'] ?> </div>
+                                            <div style="width: 2%;" class="div-de-prod"> C/U
+                                                $<?php echo $clave['precio'] ?>
+                                            </div>
+                                            Cantidad:
+                                            <?php echo $clave['cantidad'];
 
                                             ?>
-                            </div>
-                            <form action="" method="get">
-                                <input type="hidden" name="eliminar" value="<?php echo $clave['codigo_barra']; ?>">
-                                <input type="hidden" name="indice_cantidad" value="<?php echo $vuelta_cant;
+                                        </div>
+                                        <form action="" method="get">
+                                            <input type="hidden" name="eliminar" value="<?php echo $clave['codigo_barra']; ?>">
+                                            <input type="hidden" name="indice_cantidad" value="<?php echo $vuelta_cant;
                                             $vuelta_cant++; ?>">
-                                <button type="submit">❌</button>
-                            </form>
-                        </div>
-                        <?php } else {
+                                            <button type="submit">❌</button>
+                                        </form>
+                                    </div>
+                                <?php } else {
                                     $total_general += $clave['total'];
                                     ?>
-                        <div class="product ">
-                            <div class="container-data-product" style="display: flex;
+                                    <div class="product ">
+                                        <div class="container-data-product" style="display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     width: 91%;
     justify-content: space-between;font-weight: bold;">
-                                <div style="font-weight: bold;"><?php echo $clave['nombre_producto'] ?> </div>
-                                <div style="font-weight: bold;"><?php echo $clave['codigo_barra'] ?> </div>
-                                <div> C/U
-                                    <?php $clave['precio'] ?>
-                                </div>
-                                Cantidad:
-                                <?php echo $clave['cantidad'];
+                                            <div style="font-weight: bold;"><?php echo $clave['nombre_producto'] ?> </div>
+                                            <div style="font-weight: bold;"><?php echo $clave['codigo_barra'] ?> </div>
+                                            <div> C/U
+                                                <?php $clave['precio'] ?>
+                                            </div>
+                                            Cantidad:
+                                            <?php echo $clave['cantidad'];
 
                                             ?>
-                            </div>
-                            <form action="" method="get">
-                                <input type="hidden" name="eliminar" value="<?php echo $clave['codigo_barra']; ?>">
-                                <button type="submit" style="display: none;"></button>
-                            </form>
-                        </div>
-                        <?php
+                                        </div>
+                                        <form action="" method="get">
+                                            <input type="hidden" name="eliminar" value="<?php echo $clave['codigo_barra']; ?>">
+                                            <button type="submit" style="display: none;"></button>
+                                        </form>
+                                    </div>
+                                    <?php
                                 }
                             }
                         }
@@ -481,54 +481,54 @@ if (isset($_COOKIE["productos_caja"])) {
         </div>
     </div>
     <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const form = document.getElementById("myForm");
-        const openModal = document.getElementById("openModal");
-        const confirmModal = document.getElementById("confirmModal");
-        const confirmAction = document.getElementById("confirmAction");
-        const closeModal = document.getElementById("closeModal");
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("myForm");
+            const openModal = document.getElementById("openModal");
+            const confirmModal = document.getElementById("confirmModal");
+            const confirmAction = document.getElementById("confirmAction");
+            const closeModal = document.getElementById("closeModal");
 
-        function cargar() {
-            var cantidadModal = document.getElementById("cantidad_productos_modal");
-            var cantidadInput = document.getElementById("cantidad_input");
-            var valorModal = cantidadModal.value;
-            console.log(valorModal);
-            if (!cantidadModal || !cantidadInput) {
+            function cargar() {
+                var cantidadModal = document.getElementById("cantidad_productos_modal");
+                var cantidadInput = document.getElementById("cantidad_input");
+                var valorModal = cantidadModal.value;
+                console.log(valorModal);
+                if (!cantidadModal || !cantidadInput) {
 
-            }
-            console.log(cantidadInput.value);
-            if (valorModal === "") {
-                cantidadModal.value = "1";
-            } else {
-                cantidadInput.value = valorModal;
-            }
-            // si apreto enter se envia el formulario
-
-            confirmModal.style.display = "none";
-            form.submit(); // Envía el formulario al confirmar
-        }
-
-        openModal.addEventListener("click", function(event) {
-            event.preventDefault(); // Evita el envío del formulario inmediato
-            confirmModal.style.display = "flex";
-            var cantidadModal = document.getElementById("cantidad_productos_modal");
-            cantidadModal.focus()
-            document.addEventListener("keypress", (e) => {
-                if (e.key == "Enter") {
-                    console.log(e.key)
-                    cargar()
                 }
-            })
-        });
+                console.log(cantidadInput.value);
+                if (valorModal === "") {
+                    cantidadModal.value = "1";
+                } else {
+                    cantidadInput.value = valorModal;
+                }
+                // si apreto enter se envia el formulario
 
-        closeModal.addEventListener("click", function() {
-            confirmModal.style.display = "none";
-        });
+                confirmModal.style.display = "none";
+                form.submit(); // Envía el formulario al confirmar
+            }
 
-        confirmAction.addEventListener("click", function() {
-            cargar()
+            openModal.addEventListener("click", function (event) {
+                event.preventDefault(); // Evita el envío del formulario inmediato
+                confirmModal.style.display = "flex";
+                var cantidadModal = document.getElementById("cantidad_productos_modal");
+                cantidadModal.focus()
+                document.addEventListener("keypress", (e) => {
+                    if (e.key == "Enter") {
+                        console.log(e.key)
+                        cargar()
+                    }
+                })
+            });
+
+            closeModal.addEventListener("click", function () {
+                confirmModal.style.display = "none";
+            });
+
+            confirmAction.addEventListener("click", function () {
+                cargar()
+            });
         });
-    });
     </script>
     <?php
 

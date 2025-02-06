@@ -10,9 +10,7 @@ if ($url == "/santiago_pagina/caja.php") {
 }
 
 setcookie("url_location", $url, time() + 1200, "/");
-//echo $_POST["nombre_y_apelido"];
-//echo $_POST["DNI"];
-//echo $_POST["pago"];
+
 $dni = $_POST["DNI"];
 $nombre = $_POST["nombre_y_apelido"];
 date_default_timezone_set('America/Buenos_Aires');
@@ -27,13 +25,13 @@ try {
     echo $er->getMessage();
 }
 
-
+$hoy = date("Y-m-d H:i:s");
 
 function tablaRepartos($codigoproducto, $cantidad_producto, $conneccion)
 {
     $dateTime = date("Y-m-d");
     $hora = date("H:i:s");
-    var_dump($hora);
+
 
     try {
 
@@ -61,13 +59,14 @@ function tablaRepartos($codigoproducto, $cantidad_producto, $conneccion)
 
 
 
-if ($_POST["pago"] == "entrega") {
+if ($_POST["pago"] === "entrega") {
 
     $total_con_entrega = $_POST["total"];
     $restar_total = $_POST["entregar_plata"];
-    $tot = $total_con_entrega - $restar_total;
+    $tot = intval(floatval($total_con_entrega) - floatval($restar_total));
 
-    $fecha = date("Y-m-d");
+    $fecha = date("Y-m-d H:i:s");//Y-m-d
+
 
     //actualizar stock
 
@@ -127,15 +126,17 @@ if ($_POST["pago"] == "entrega") {
                 $entrega_cliente = $entrega_cliente - $precio2;
                 $sql_saldo = "INSERT INTO saldos (dni,saldo,fecha,nombre_y_apellido) VALUES (:dni, :saldo,:fecha,:nombre)";
                 $resto_posiotivo = abs($resto);
-                //subir a fiado
+                //subir a fiado 
+                $fecha = date("Y-m-d");
+
                 $stmt2 = $pdo->prepare($sql_saldo);
                 $stmt2->bindParam(':dni', $dni, PDO::PARAM_STR);
                 $stmt2->bindParam(':saldo', $resto_posiotivo, PDO::PARAM_STR);
-                $stmt2->bindParam(':fecha', $fecha, PDO::PARAM_STR);
+                $stmt2->bindParam(':fecha', $hoy, PDO::PARAM_STR);
                 $stmt2->bindParam(':nombre', $nombre, PDO::PARAM_STR);
                 $stmt2->execute();
 
-                //echo "- queda saldo- ";
+
             } else {
                 $sql_fiado = "INSERT INTO fiado (dni,nombre_y_apellido,productos,cantidad,fecha) VALUES (:dni, :nombre_y_apellido, :productos ,:cantidad,:fecha)";
                 //subir a fiado
@@ -144,9 +145,9 @@ if ($_POST["pago"] == "entrega") {
                 $stmt2->bindParam(':nombre_y_apellido', $nombre, PDO::PARAM_STR);
                 $stmt2->bindParam(':productos', $cdb, PDO::PARAM_STR);
                 $stmt2->bindParam(':cantidad', $cantidad_productos, PDO::PARAM_STR);
-                $stmt2->bindParam(':fecha', $fecha, PDO::PARAM_STR);
+                $stmt2->bindParam(':fecha', $hoy, PDO::PARAM_STR);
                 $stmt2->execute();
-                //echo "se debe fiar";
+
             }
 
         }
@@ -389,7 +390,7 @@ if ($_POST["pago"] === "fiar") {
                 $stmt->bindParam(':nombre_y_apellido', $nombre, PDO::PARAM_STR);
                 $stmt->bindParam(':productos', $cod, PDO::PARAM_STR);
                 $stmt->bindParam(':cantidad', $cantidad_fiar, PDO::PARAM_STR);
-                $stmt->bindParam(':fecha', $fecha_date, PDO::PARAM_STR);
+                $stmt->bindParam(':fecha', $hoy, PDO::PARAM_STR);
                 if ($stmt->execute()) {
                     $exito = "exito";
                 } else {
