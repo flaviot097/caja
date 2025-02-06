@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
+<?php
+require_once "validacion-usuario.php";
+?>
 
 <head>
     <meta charset="UTF-8">
@@ -9,12 +12,13 @@
 </head>
 
 <body>
+    <div class="reportes"><a class="atexto" href="caja-reparto.php">Atras</a></div>
     <div class="container">
         <h1>Caja Registradora</h1>
         <div class="form-container">
             <input type="text" id="nombreProducto" placeholder="Nombre del producto" required>
-            <input type="text" id="codigoBarras" placeholder="Código de barras" required>
-            <input type="number" id="cantidad" placeholder="Cantidad" min="1" required>
+            <input type="text" id="codigoBarras" placeholder="Código de barras" autofocus required>
+            <input type="number" id="cantidad" placeholder="Cantidad" value="1" required>
             <button id="agregarProducto">Agregar Producto</button>
         </div>
         <div class="lista-productos">

@@ -1,4 +1,3 @@
-/* Estilos generales */
 * {
   margin: 0;
   padding: 0;
@@ -7,15 +6,17 @@
 }
 
 body {
-  background-color: #f4f4f9;
   display: flex;
+  flex-direction: column;
+  background-color: #f4f4f9;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  margin: 0;
+  min-height: 120px;
+  margin: 0px;
 }
 
 .container {
+  margin: 10px;
   width: 90%;
   max-width: 400px;
   background: #fff;
@@ -104,4 +105,20 @@ h1 {
 #searchInput {
   width: 100%;
   margin-top: 2%;
+}
+
+.select {
+  height: 35px;
+}
+.atexto {
+  color: grey;
+  background-color: rgba(88, 191, 119, 0.93) !important;
+  border-radius: 10px;
+  display: inline-table;
+  width: 14vh;
+}
+
+.atexto:hover {
+  color: grey !important;
+  background-color: rgba(59, 158, 88, 0.93) !important;
 }

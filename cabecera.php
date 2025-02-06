@@ -20,7 +20,7 @@
 </style>
 <ul class="navbar-nav mx-auto">
     <li class="nav-item">
-        <a href="session-close.php" class="nav-link"><?php if ($_SESSION["usuario"]) {
+        <a href="session-close.php" class="nav-link"><?php if ($_COOKIE["usuario_caja"]) {
             echo "Salir";
         } else {
             echo "Iniciar Sesión";
