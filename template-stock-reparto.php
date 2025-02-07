@@ -280,13 +280,15 @@ if (empty($_SESSION["usuario"])) {
     <h6 class='codigo-producto' id='costo-producto' name='costo'>costo: $" . $item["costo"] . "</h6>
     <h6 class='codigo-producto' id='ganancia-producto' name='ganancia'>ganancia: " . $item["ganancia"] . "%</h6>
     <h6 class='codigo-producto' id='precio-producto' name='precio'>Precio final: $" . $item["precio"] . "</h6>
-</a><div class='eliminar-producto' ><p class='eliminar-prod' id=" . $item["codigo_barra"] . "><img class='eliminar-img' src='images/eliminar.png' alt='eliminar'></p></div>
-<div class='contenedor-formularios'><form  method='Post' class='editar-producto' id=" . $item["codigo_barra"] . " action='editar-p_l.php'><label for='ingrese stock a editar' class='label-producto' >Editar</label>
+</a><form action='eliminar-producto-reparto.php' method='get' class='eliminar-producto eliminar-prod eliminate-prod' >
+<input type='hidden' name='codigo_B' value=" . $item["codigo_barra"] . ">
+<button style='height: 100%; type='submit' class='eliminar-prod' ><img class='eliminar-img' src='images/eliminar.png' alt='eliminar' ></button></form>
+<div class='contenedor-formularios'><form  method='Post' class='editar-producto' id=" . $item["codigo_barra"] . " action='editar-p_l_r.php'><label for='ingrese stock a editar' class='label-producto' >Editar</label>
 <input type='hidden' name='codigo_B' value=" . $item["codigo_barra"] . ">
 <input type='hidden' name='stock' value=" . $item["stock"] . ">
 <input class='input-producto' type='number' value=" . $item["stock"] . " name='editar_stock_prod'><button class='btm-submit' type='submit'>Stock</button>
 </form>
-<form class='editar-producto' action='template-editar-prod-l.php' method='post'>
+<form class='editar-producto' action='template-editar-prod-r.php' method='post'>
 <input type='hidden' name='codigo_B' value=" . $item["codigo_barra"] . ">
 <button class='productos-editar' type='submit'>Producto</button></form></div>
 </div> ";
@@ -345,11 +347,12 @@ if (empty($_SESSION["usuario"])) {
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Captura todos los elementos <p> con la clase 'eliminar'
-        const eliminarElements = document.querySelectorAll('.eliminar-prod');
+        const eliminarElements = document.querySelectorAll('.eliminate-prod');
 
 
         eliminarElements.forEach(function(eliminarElement) {
-            eliminarElement.addEventListener('click', function() {
+            eliminarElement.addEventListener('submit', function(e) {
+                e.preventDefault();
                 // Obtén el id del elemento clickeado
                 const codigoBarra = this.id;
                 var modal = document.getElementById("myModal");
@@ -366,10 +369,11 @@ if (empty($_SESSION["usuario"])) {
                         modal.style.display = "none";
                     }
                 }
-                Escucharbtneliminar(codigoBarra)
+
+                Escucharbtneliminar(this)
                 // Redirige a eliminar-producto.php con el parámetro codigo_eliminar
-                /*window.location.href = 'eliminar-producto-reparto.php?codigo_eliminar=' +
-                    encodeURIComponent(codigoBarra);*/
+                // window.location.href = 'eliminar-producto-reparto.php?codigo_eliminar=' +
+                //     encodeURIComponent(codigoBarra);
             });
         });
     });
@@ -377,12 +381,11 @@ if (empty($_SESSION["usuario"])) {
 
 
 
-    function Escucharbtneliminar(id) {
+    function Escucharbtneliminar(evento) {
         const btn_eliminar = document.getElementById("button-modal")
         btn_eliminar.addEventListener("click", function() {
             if (btn_eliminar) {
-                window.location.href = 'eliminar-producto-reparto.php?codigo_eliminar=' +
-                    encodeURIComponent(id);
+                evento.submit();
             }
         })
 

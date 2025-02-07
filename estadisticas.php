@@ -11,6 +11,10 @@ try {
     echo 'error al conectarse: ' . $e->getMessage();
     exit;
 }
+$total_hoy = 0;
+$color = "";
+date_default_timezone_set('America/Buenos_Aires');
+$hoy = date("Y-m-d");
 $consulataTodosUsuarios = "SELECT usuario FROM usuario";
 $stmt = $pdo->prepare($consulataTodosUsuarios);
 $stmt->execute();
@@ -104,7 +108,9 @@ tr {
                     $total = 0;
                     ?>
                 </select>
+                <input type="date" name="fecha">
                 <input type="submit" value="Consultar ventas" />
+                <!-- <a href="estadisticas-fecha.php"></a><button>Consultar por fecha</button></a> -->
             </form>
 
 
@@ -118,10 +124,20 @@ tr {
                 </thead>
                 <?php if ($_GET) {
                     $user = $_GET["usuario"];
+                    $fecha = $_GET["fecha"] ?? "";
 
-                    $conultaVentas = "SELECT * FROM ventas WHERE usuario = :usuario";
+                    $conultaVentas = "";
+                    if ($fecha == "") {
+                        $conultaVentas = "SELECT * FROM ventas WHERE usuario = :usuario";
+                    } else {
+                        $conultaVentas = "SELECT * FROM ventas WHERE usuario = :usuario AND fecha = :fecha";
+                    }
+
                     $stmt = $pdo->prepare($conultaVentas);
                     $stmt->bindParam(':usuario', $user, PDo::PARAM_STR);
+                    if ($fecha !== "") {
+                        $stmt->bindParam(':fecha', $fecha, PDo::PARAM_STR);
+                    }
                     $stmt->execute();
                     $datos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -133,8 +149,15 @@ tr {
                 <tbody>
                     <tr>
                         <td><?php echo $venta["usuario"]; ?></td>
-                        <td><?php echo $venta["total"]; ?></td>
-                        <td>$<?php echo $venta["fecha"]; ?></td>
+                        <td>$<?php echo $venta["total"]; ?></td>
+                        <td <?php
+                                if ($hoy == $venta["fecha"]) {
+                                    $color = "green";
+                                    $total_hoy += intval($venta["total"]);
+                                }
+                                $venta["fecha"]; ?> style=" background-color: <?php echo $color; ?>;">
+                            <?php echo $venta["fecha"]; ?>
+                        </td>
                     </tr>
                 </tbody>
                 <?php }
@@ -143,6 +166,10 @@ tr {
                     <tr>
                         <td colspan="2"><strong>Total</strong></td>
                         <td><strong>$<?php echo $total; ?></strong></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><strong>Total hoy</strong></td>
+                        <td><strong>$<?php echo $total_hoy; ?></strong></td>
                     </tr>
                 </tfoot>
             </table>

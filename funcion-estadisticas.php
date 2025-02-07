@@ -7,8 +7,8 @@ $stmt->execute();
 
 $result = $stmt->get_result();
 
-$user = $_SESSION["usuario"];
-$contrasenoa = $_SESSION["password"];
+//$user = $_SESSION["usuario"];
+//$contrasenoa = $_SESSION["password"];
 
 
 if ($result->num_rows > 0) {
@@ -31,7 +31,9 @@ if ($result->num_rows > 0) {
     <h6 class='codigo-producto' id='costo-producto' name='costo'>costo: $" . $item["costo"] . "</h6>
     <h6 class='codigo-producto' id='ganancia-producto' name='ganancia'>ganancia: " . $item["ganancia"] . "%</h6>
     <h6 class='codigo-producto' id='precio-producto' name='precio'>Precio final: $" . $item["precio"] . "</h6>
-</a><div class='eliminar-producto' ><p class='eliminar-prod' id=" . $item["codigo_barra"] . "><img class='eliminar-img' src='images/eliminar.png' alt='eliminar'></p></div>
+</a><form action='eliminar-producto.php' method='get' class='eliminar-producto eliminar-prod eliminate-prod' >
+<input type='hidden' name='codigo_B' value=" . $item["codigo_barra"] . ">
+<button style='height: 100%;' type='submit' class='eliminar-prod' ><img class='eliminar-img' src='images/eliminar.png' alt='eliminar' ></button></form>
 <div class='contenedor-formularios'><form  method='Post' class='editar-producto' id=" . $item["codigo_barra"] . " action='editar-p_l.php'><label for='ingrese stock a editar' class='label-producto' >Editar</label>
 <input type='hidden' name='codigo_B' value=" . $item["codigo_barra"] . ">
 <input type='hidden' name='stock' value=" . $item["stock"] . ">

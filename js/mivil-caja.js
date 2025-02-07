@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function limpiarCampos() {
     document.getElementById("codigoBarras").value = "";
     document.getElementById("nombreProducto").value = "";
-    document.getElementById("cantidad").value = "";
+    document.getElementById("cantidad").value = "1";
   }
 
   // Finalizar la venta

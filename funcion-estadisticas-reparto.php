@@ -21,7 +21,7 @@ if ($result->num_rows > 0) {
         ;
 
         echo "<div class='producto-stock' id=" . $item["codigo_barra"] . ">
-<div href='#' class='btn btn-primary btn-sm d-inline-flex align-items-center'>" . $item["nombre_producto"] . "<h6
+<a href='#' class='btn btn-primary btn-sm d-inline-flex align-items-center'>" . $item["nombre_producto"] . "<h6
         class='codigo-producto' id='codigo-producto'>codigo de producto: " . $item["codigo_barra"] . "</h6>
     <h6 class='cantidad-producto " . $color . "' id='cantidad-producto' name=" . $item["stock"] . "> Cantidad:" . $item["stock"] . " Unidades
     <h6 class='codigo-producto' id='proveedor-producto' name='proveedor'>Proveedor :" . $item["proveedor"] . "</h6>
@@ -30,11 +30,17 @@ if ($result->num_rows > 0) {
     <h6 class='codigo-producto' id='costo-producto' name='costo'>costo: $" . $item["costo"] . "</h6>
     <h6 class='codigo-producto' id='ganancia-producto' name='ganancia'>ganancia: " . $item["ganancia"] . "%</h6>
     <h6 class='codigo-producto' id='precio-producto' name='precio'>Precio final: $" . $item["precio"] . "</h6>
-</div><div class='eliminar-producto' ><p class='eliminar-prod' id=" . $item["codigo_barra"] . "><img class='eliminar-img' src='images/eliminar.png' alt='eliminar'></p></div>
-<form  method='Post' class='editar-producto' id=" . $item["codigo_barra"] . " action='editar-producto.php'><label for='ingrese stock a editar' class='label-producto' >Stock a editar</label>
+</a><form action='eliminar-producto-reparto.php' method='get' class='eliminar-producto eliminar-prod eliminate-prod' >
+<input type='hidden' name='codigo_B' value=" . $item["codigo_barra"] . ">
+<button style='height: 100%; type='submit' class='eliminar-prod' ><img class='eliminar-img' src='images/eliminar.png' alt='eliminar' ></button></form>
+<div class='contenedor-formularios'><form  method='Post' class='editar-producto' id=" . $item["codigo_barra"] . " action='editar-p_l_r.php'><label for='ingrese stock a editar' class='label-producto' >Editar</label>
 <input type='hidden' name='codigo_B' value=" . $item["codigo_barra"] . ">
 <input type='hidden' name='stock' value=" . $item["stock"] . ">
-<input class='input-producto' type='number' value=" . $item["stock"] . " name='editar_stock_prod'><button type='submit'>Editar</button></form>
+<input class='input-producto' type='number' value=" . $item["stock"] . " name='editar_stock_prod'><button class='btm-submit' type='submit'>Stock</button>
+</form>
+<form class='editar-producto' action='template-editar-prod-r.php' method='post'>
+<input type='hidden' name='codigo_B' value=" . $item["codigo_barra"] . ">
+<button class='productos-editar' type='submit'>Producto</button></form></div>
 </div> ";
     }
 } else {

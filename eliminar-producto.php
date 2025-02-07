@@ -2,7 +2,7 @@
 require_once "conecion.php";
 
 // Capturar el código de barras desde la URL
-$codigo_barra = $_GET["codigo_eliminar"];
+$codigo_barra = $_GET["codigo_B"];
 
 if ($codigo_barra) {
     $dsn = 'mysql:host=localhost:3307;dbname=code_bar;';
@@ -20,6 +20,7 @@ if ($codigo_barra) {
     $stmt->execute();
 
     header("location: stock-template.php");
+    exit;
 } else {
     echo "Código de barras no especificado.";
 }
