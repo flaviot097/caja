@@ -17,7 +17,7 @@ $sumaporcentaje = intval($costo * $ganancia / 100);
 $precio = intval($costo) + $sumaporcentaje;
 $fecha = date("Y-m-d");
 
-$query = "UPDATE producto
+$query = "UPDATE producto_reparto
 SET precio = :precio, 
     costo = :costo, 
     ganancia = :ganancia,
@@ -36,6 +36,30 @@ $stmt->bindParam(':fecha', $fecha, PDO::PARAM_STR);
 
 
 if ($stmt->execute()) {
+    $departamento = $_POST["departamento_c"];
+    $costo = $_POST["costo"];
+    $ganancia = $_POST["ganancia"];
+    $sumaporcentaje = intval($costo * $ganancia / 100);
+    $precio = intval($costo) + $sumaporcentaje;
+    $fecha = date("Y-m-d");
+
+    $query2 = "UPDATE producto
+    SET precio = :precio, 
+        costo = :costo, 
+        ganancia = :ganancia,
+        fecha = :fecha
+    WHERE departamento = :departamento";
+
+    $stmt = $pdo->prepare($query2);
+
+
+
+    $stmt->bindParam(':precio', $precio, PDO::PARAM_INT);
+    $stmt->bindParam(':departamento', $departamento, PDO::PARAM_STR);
+    $stmt->bindParam(':costo', $costo, PDO::PARAM_INT);
+    $stmt->bindParam(':ganancia', $ganancia, PDO::PARAM_INT);
+    $stmt->bindParam(':fecha', $fecha, PDO::PARAM_STR);
+
 
     setcookie("mensaje", "exito", time() + 10, '/');
     header("location: editar-departamento.php");

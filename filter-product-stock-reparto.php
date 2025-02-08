@@ -144,7 +144,7 @@ session_start();
     <!-- BARRA LATERAL -->
     <div class="sidebar">
         <h2 class="text-filter">Filtrar Productos</h2>
-        <form action="filter-products-stock.php" method="get" class="form-filtro">
+        <form action="filter-products-stock-reparto.php" method="get" class="form-filtro">
             <label for="nombre">Nombre del Producto</label>
             <input type="text" id="nombre" name="nombre_producto" class="form-control">
 

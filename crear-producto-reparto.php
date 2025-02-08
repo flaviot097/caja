@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <?php
-session_start();
-if (empty($_SESSION["usuario"])) {
-    header("location: index.php");
-}
+require_once "validacion-usuario.php";
 ?>
 <html lang="en">
 
