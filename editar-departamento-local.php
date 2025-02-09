@@ -26,11 +26,11 @@ session_start();
     <link rel="stylesheet" href="css/tooplate-style.css" />
 </head>
 <style>
-    .card-fiado {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
+.card-fiado {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 </style>
 
 <body>
@@ -63,12 +63,25 @@ session_start();
     <div class="mensaje" id="mensaje">
 
     </div>
-    <div class="body-container">
+    <div class="body-container" style="margin-top: 0px;">
         <div class="container-cartas-fiado">
-            <form action="accion-editar-departamento-local.php" class="card-fiado" method="post">
+            <form action="accion-editar-departamento.php" class="card-fiado" method="post">
                 <h2 class="text-center">Editar por departamento</h2>
-                <p class="text-center"><strong>departamento</strong> <br><input name="departamento_c" type="text"></p>
-                <p class="text-center"><strong>ganancia</strong><br><input id="ganancia" name="ganancia" type="number">%
+                <p class="text-center"><strong>departamento</strong> <br><input name="departamento_c" type="text"
+                        required></p>
+                <p class="text-center"><strong>ganancia</strong><br><input name="ganancia" type="number" required>%
+                </p>
+                <button class="pay-button" type="submit">Editar
+                    Producto</button>
+            </form>
+            <form action="accion-editar-departamento-local.php" class="card-fiado" method="post">
+                <!-- hay que cambiar la url de arriba por la de  abajo  -->
+                <h2 class="text-center"> Nombres de Productos</h2>
+                <p class="text-center"><strong>Nonmbre</strong> <br><input name="nombre_c" type="text" required></p>
+                <p class="text-center"><strong>costo</strong> <br>$<input id="costo" name="costo_c" type="number"
+                        required></p>
+                <p class="text-center"><strong>ganancia</strong><br><input id="ganancia" name="ganancia_c"
+                        type="number">%
                 </p>
                 <p class="text-center"><strong>Precio final</strong><br>$<span id="precio-final">0.00</span></p>
                 <button class="pay-button" type="submit">Editar
@@ -93,21 +106,21 @@ session_start();
         </div>
     </footer>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const costoInput = document.getElementById('costo');
-            const gananciaInput = document.getElementById('ganancia');
-            const precioFinalSpan = document.getElementById('precio-final');
+    document.addEventListener('DOMContentLoaded', function() {
+        const costoInput = document.getElementById('costo');
+        const gananciaInput = document.getElementById('ganancia');
+        const precioFinalSpan = document.getElementById('precio-final');
 
-            function calcularPrecioFinal() {
-                const costo = parseFloat(costoInput.value) || 0;
-                const ganancia = parseFloat(gananciaInput.value) || 0;
-                const precioFinal = costo + (costo * (ganancia / 100));
-                precioFinalSpan.textContent = precioFinal.toFixed(2);
-            }
+        function calcularPrecioFinal() {
+            const costo = parseFloat(costoInput.value) || 0;
+            const ganancia = parseFloat(gananciaInput.value) || 0;
+            const precioFinal = costo + (costo * (ganancia / 100));
+            precioFinalSpan.textContent = precioFinal.toFixed(2);
+        }
 
-            costoInput.addEventListener('input', calcularPrecioFinal);
-            gananciaInput.addEventListener('input', calcularPrecioFinal);
-        });
+        costoInput.addEventListener('input', calcularPrecioFinal);
+        gananciaInput.addEventListener('input', calcularPrecioFinal);
+    });
     </script>
 
     <script src="js/jquery-3.3.1.min.js"></script>

@@ -67,6 +67,13 @@ if ($_GET) {
     $codigo = $_GET['codigo'] ?? '';
     $cantidad = $_GET['cantidad'] ?? 1;
     $descuento = $_GET["descuento"] ?? 0;
+    $descuento_unitario = $_GET["descuento_prod"] ?? "";
+    $descuento_uni = 1;
+
+
+    if ($descuento_unitario !== "") {
+        $descuento_uni = floatval(intval($descuento_unitario) / 100);
+    }
 
     //descuento
     if ($descuento !== 0) {
@@ -116,13 +123,27 @@ if ($_GET) {
     }
 
     if (!empty($results)) {
-        $list = [
-            'nombre_producto' => $results[0]["nombre_producto"],
-            'precio' => $results[0]['precio'],
-            'codigo_barra' => $results[0]['codigo_barra'],
-            'cantidad' => $cantidad,
-            'total' => floatval($results[0]['precio']) * $cantidad
-        ];
+        $list;
+        if ($descuento_unitario !== "") {
+
+            $list = [
+                'nombre_producto' => $results[0]["nombre_producto"],
+                'precio' => $results[0]['precio'] - ($results[0]['precio'] * $descuento_uni),
+                'codigo_barra' => $results[0]['codigo_barra'],
+                'cantidad' => $cantidad,
+                'total' => floatval($results[0]['precio'] - ($results[0]['precio'] * $descuento_uni)) * $cantidad,
+                "decuento_u" => $descuento_unitario,
+                "precio_sim" => $results[0]['precio']
+            ];
+        } else {
+            $list = [
+                'nombre_producto' => $results[0]["nombre_producto"],
+                'precio' => $results[0]['precio'] * $descuento_uni,
+                'codigo_barra' => $results[0]['codigo_barra'],
+                'cantidad' => $cantidad,
+                'total' => floatval($results[0]['precio'] * $descuento_uni) * $cantidad,
+            ];
+        }
 
         if (isset($_COOKIE["productos_caja"])) {
             $productos_caja = json_decode($_COOKIE["productos_caja"], true);
@@ -315,6 +336,9 @@ if (isset($_COOKIE["productos_caja"])) {
     background: #a71d2a;
 }
 </style>
+.body-container {
+margin-top: 0px;
+}
 
 <body>
     <!-- MENU -->
@@ -352,10 +376,12 @@ if (isset($_COOKIE["productos_caja"])) {
                         <input type="text" id="searchInput" placeholder="Buscar producto..." name="producto"
                             style="margin-right: 5px;">
                         <input type="text" class="searchInput" placeholder="cantidad de productos..." name="cantidad"
-                            value="1" id="cantidad_input">
+                            value="1" id="cantidad_input" style="width: 30%; margin-right: 5px;">
                         <input type="text" id="searchInput" placeholder="Buscar codigo..." name="codigo"
                             style="margin-right: 5px;" autofocus>
-                        <input type="number" id="searchInput" placeholder="descuento..." name="descuento">
+                        <input type="number" id="searchInput" placeholder="descuento total..." name="descuento">
+                        <input type="number" id="searchInput" placeholder="descuento producto..." name="descuento_prod">
+
                     </div>
 
                     <button class="btn checkout-btn" type="submit" id="openModal">Agregar</button>
@@ -373,20 +399,35 @@ if (isset($_COOKIE["productos_caja"])) {
                         if (!empty($productos_caja)) {
                             foreach ($productos_caja as $clave) {
                                 if ($clave['nombre_producto'] !== "Producto") {
-                                    $total_general += $clave['total'];
+                                    $precio_uni = $clave["precio"];
+                                    $total_general += intval($clave['total']);
                                     ?>
                         <div class="product">
                             <div class="container-data-product" style="display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    width: 91%;
-    justify-content: space-between;">
+                            flex-direction: row;
+                            flex-wrap: wrap;
+                            width: 91%;
+                            justify-content: space-between;">
                                 <div class="div-de-prod"><?php echo $clave['nombre_producto'] ?> </div>
                                 <div class="div-de-prod"><?php echo $clave['codigo_barra'] ?> </div>
                                 <div style="width: 2%;" class="div-de-prod"> C/U
-                                    $<?php echo $clave['precio'] ?>
+                                    $<?php if (isset($clave["precio_sim"])) {
+                                                    echo $clave["precio_sim"];
+                                                } else {
+                                                    echo $precio_uni;
+                                                } ?>
                                 </div>
-                                Cantidad:
+                                <div style="width: 2%;" class="div-de-prod"> Sub
+                                    $<?php
+                                                echo (intval($precio_uni * ($clave["cantidad"])));
+                                                ?>
+                                </div>
+                                <div style="width: 2%;" class="div-de-prod">
+                                    <?php if (isset($clave["decuento_u"])) {
+                                                    echo "Desc: ";
+                                                    echo ($clave["decuento_u"]);
+                                                } ?>%
+                                </div>
                                 <?php echo $clave['cantidad'];
 
                                             ?>
@@ -399,22 +440,30 @@ if (isset($_COOKIE["productos_caja"])) {
                             </form>
                         </div>
                         <?php } else {
-                                    $total_general += $clave['total'];
+                                    $total_general += intval($clave['total']);
                                     ?>
                         <div class="product ">
                             <div class="container-data-product" style="display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    width: 91%;
-    justify-content: space-between;font-weight: bold;">
+                        flex-direction: row;
+                        flex-wrap: wrap;
+                        width: 91%;
+                        justify-content: space-between;font-weight: bold;">
                                 <div style="font-weight: bold;"><?php echo $clave['nombre_producto'] ?> </div>
                                 <div style="font-weight: bold;"><?php echo $clave['codigo_barra'] ?> </div>
                                 <div> C/U
-                                    <?php $clave['precio'] ?>
+                                    <?php echo $clave['precio'] ?>
+                                </div>
+                                <div style="width: 2%;" class="div-de-prod"> Sub
+                                    $<?php echo (intval($clave["precio"] * ($clave["cantidad"]))) ?>
+                                </div>
+                                <div style="width: 2%;" class="div-de-prod">
+                                    <?php if (isset($clave["decuento_u"])) {
+                                                    echo "Desc: ";
+                                                    echo ($clave["decuento_u"]);
+                                                } ?>%
                                 </div>
                                 Cantidad:
                                 <?php echo $clave['cantidad'];
-
                                             ?>
                             </div>
                             <form action="" method="get">
