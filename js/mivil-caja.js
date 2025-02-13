@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const totalVenta = document.getElementById("totalVenta");
   const agregarProductoBtn = document.getElementById("agregarProducto");
   const finalizarVentaBtn = document.getElementById("finalizarVenta");
-
+  const descuento_total = document.getElementById("descuento_total");
   let productos = [];
   let total = 0;
 
@@ -16,11 +16,10 @@ document.addEventListener("DOMContentLoaded", () => {
       } else if (nombre) {
         url += `nombre=${encodeURIComponent(nombre)}`;
       }
-
       const response = await fetch(url);
       if (!response.ok) {
-        alert("no se encontro el producto");
-        return null; // No mostramos alerta si no se encuentra el producto
+        alert("No se encontró el producto");
+        return null;
       }
       const data = await response.json();
       return data;
@@ -37,6 +36,9 @@ document.addEventListener("DOMContentLoaded", () => {
       .getElementById("nombreProducto")
       .value.trim();
     const cantidad = parseFloat(document.getElementById("cantidad").value);
+    const descuentoUni = parseFloat(
+      document.getElementById("decuento_uni").value
+    );
 
     if ((!codigoBarras && !nombreProducto) || cantidad <= 0) {
       alert(
@@ -46,30 +48,48 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const productoAPI = await obtenerProducto(codigoBarras, nombreProducto);
-
     if (productoAPI) {
       const { nombre_producto, precio } = productoAPI;
       const precioUnitario = parseFloat(precio);
-      const subtotal = precioUnitario * cantidad; //.toFixed(2);
 
+      // Calcular el precio unitario final según el descuento
+      const descuentoUnitario =
+        descuentoUni > 0 ? (precioUnitario * descuentoUni) / 100 : 0;
+      const precioFinal = precioUnitario - descuentoUnitario;
+      const subtotal = precioFinal * cantidad;
+
+      // Crear el producto con descuento aplicado (si aplica)
       const producto = {
-        nombre_producto,
+        nombre_producto: descuentoUni > 0 ? nombre_producto : nombre_producto,
         codigo_barra: productoAPI.codigo_barra || "N/A",
         cantidad,
-        precioUnitario,
+        precioUnitario: precioFinal,
         subtotal,
+        decuento_u: descuentoUni > 0 ? descuentoUni : 0, // Descuento unitario
+        precio_sim: descuentoUni > 0 ? precioUnitario : 0, // Precio original sin descuento
       };
 
+      // Agregar el producto a la lista
       productos.push(producto);
+
+      // Actualizar la lista y limpiar campos
       actualizarLista();
       limpiarCampos();
 
       // Actualizar el total
       total += parseFloat(subtotal);
-      totalVenta.textContent = total; //.toFixed(2);
-      var total_general = document.getElementById("searchInputTotal");
-
-      total_general.value = total;
+      totalVenta.textContent = total.toFixed(2);
+      document.getElementById("searchInputTotal").value = total.toFixed(2);
+      if (descuento_total.value !== 0) {
+        let condescuento =
+          total - (total * parseFloat(descuento_total.value)) / 100;
+        totalVenta.textContent = condescuento.toFixed(2);
+        document.getElementById("searchInputTotal").value =
+          condescuento.toFixed(2);
+        document.cookie = `descuentos=${
+          "0." + descuento_total
+        }; path=/; max-age=3600`;
+      }
     }
   });
 
@@ -78,11 +98,26 @@ document.addEventListener("DOMContentLoaded", () => {
     lista.innerHTML = "";
     productos.forEach((producto, index) => {
       const li = document.createElement("li");
-      li.innerHTML = `
-                ${producto.nombre_producto} (${producto.cantidad} x $${producto.precioUnitario}) - $${producto.subtotal}
-               <input type="hidden" class="eliminar" name="codigo_barra" value="${producto.codigo_barra}"></input>
-                <button class="eliminar" data-index="${index}">Eliminar</button>
-            `;
+      let contenido = `
+        ${producto.nombre_producto} (${
+        producto.cantidad
+      } x $${producto.precioUnitario.toFixed(
+        2
+      )}) - $${producto.subtotal.toFixed(2)}
+        <input type="hidden" class="eliminar" name="codigo_barra" value="${
+          producto.codigo_barra
+        }">
+        <button class="eliminar" data-index="${index}">Eliminar</button>
+      `;
+
+      // Mostrar descuento y precio original si aplica
+      if (producto.decuento_u > 0) {
+        contenido += `<br><small>Descuento: ${
+          producto.decuento_u
+        }%, Precio Original: $${producto.precio_sim.toFixed(2)}</small>`;
+      }
+
+      li.innerHTML = contenido;
       lista.appendChild(li);
     });
 
@@ -108,6 +143,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("codigoBarras").value = "";
     document.getElementById("nombreProducto").value = "";
     document.getElementById("cantidad").value = "1";
+    document.getElementById("decuento_uni").value = "0";
   }
 
   // Finalizar la venta
@@ -119,15 +155,14 @@ document.addEventListener("DOMContentLoaded", () => {
         codigo_barra: producto.codigo_barra,
         cantidad: producto.cantidad,
         total: producto.subtotal,
+        decuento_u: producto.decuento_u || 0,
+        precio_sim: producto.precio_sim || producto.precioUnitario,
       }));
-
       document.cookie =
         "productos_caja=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC";
-      // Convertir a JSON y guardar en una cookie
       document.cookie = `productos_caja=${JSON.stringify(
         productosCookie
       )}; path=/; max-age=3600`;
-
       productos = [];
       total = 0;
       totalVenta.textContent = "0.00";

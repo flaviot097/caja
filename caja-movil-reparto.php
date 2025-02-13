@@ -19,6 +19,10 @@ require_once "validacion-usuario.php";
             <input type="text" id="nombreProducto" placeholder="Nombre del producto" required>
             <input type="text" id="codigoBarras" placeholder="Código de barras" autofocus required>
             <input type="number" id="cantidad" placeholder="Cantidad" value="1" required>
+            <label for="Descuento total">Descuento a total (%)</label>
+            <input type="number" id="descuento_total" placeholder="Descuento al total" value="0">
+            <label for="Descuento">Descuento a Prodcuto (%)</label>
+            <input type="number" id="decuento_uni" placeholder="Descuento al producto" value="0">
             <button id="agregarProducto">Agregar Producto</button>
         </div>
         <div class="lista-productos">
