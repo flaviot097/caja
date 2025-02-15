@@ -65,6 +65,22 @@ session_start();
     </div>
     <div class="body-container" style="margin-top: 0px;">
         <div class="container-cartas-fiado">
+            <form action="accion-editar-nombre-departamento-local.php" class="card-fiado" method="post">
+                <!-- hay que cambiar la url de arriba por la de  abajo  -->
+                <h2 class="text-center"> Editar por departamento</h2>
+                <p class="text-center"><strong>Nombre departamento</strong> <br><input name="nombre_c" type="text"
+                        required></p>
+                <p class="text-center"><strong>costo</strong> <br>$<input id="costo" name="costo_c" type="number"
+                        required></p>
+                <p class="text-center"><strong>ganancia</strong><br><input id="ganancia" name="ganancia_c"
+                        type="number">%
+                </p>
+                <p class="text-center"><strong>Precio final</strong><br>$<span
+                        id="precio-final-departamento">0.00</span></p>
+                <button class="pay-button" type="submit">Editar
+                    Productos</button>
+            </form>
+
             <form action="accion-editar-departamento.php" class="card-fiado" method="post">
                 <h2 class="text-center">Editar por departamento</h2>
                 <p class="text-center"><strong>departamento</strong> <br><input name="departamento_c" type="text"
@@ -74,6 +90,7 @@ session_start();
                 <button class="pay-button" type="submit">Editar
                     Producto</button>
             </form>
+
             <form action="accion-editar-departamento-local.php" class="card-fiado" method="post">
                 <!-- hay que cambiar la url de arriba por la de  abajo  -->
                 <h2 class="text-center"> Nombres de Productos</h2>
@@ -110,6 +127,22 @@ session_start();
         const costoInput = document.getElementById('costo');
         const gananciaInput = document.getElementById('ganancia');
         const precioFinalSpan = document.getElementById('precio-final');
+
+        function calcularPrecioFinal() {
+            const costo = parseFloat(costoInput.value) || 0;
+            const ganancia = parseFloat(gananciaInput.value) || 0;
+            const precioFinal = costo + (costo * (ganancia / 100));
+            precioFinalSpan.textContent = precioFinal.toFixed(2);
+        }
+
+        costoInput.addEventListener('input', calcularPrecioFinal);
+        gananciaInput.addEventListener('input', calcularPrecioFinal);
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const costoInput = document.getElementById('costo');
+        const gananciaInput = document.getElementById('ganancia');
+        const precioFinalSpan = document.getElementById('precio-final-departamento');
 
         function calcularPrecioFinal() {
             const costo = parseFloat(costoInput.value) || 0;
