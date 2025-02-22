@@ -4,6 +4,8 @@ require 'vendor/autoload.php';
 use Dompdf\Dompdf;
 use Dompdf\Options;
 date_default_timezone_set('America/Buenos_Aires');
+session_start();
+
 
 $entrega_si = "";
 if (isset($_COOKIE["entrega_si"])) {
@@ -30,11 +32,11 @@ $pago = $json[1];
 $vendedor = $json[3];
 
 $descuento = 0;
-if (isset($_COOKIE["descuentos"])) {
-    $descuento = json_decode($_COOKIE["descuentos"], true);
+if (isset($_SESSION["descuentos"])) {
+    $descuento = $_SESSION["descuentos"];
 }
 $total = 0;
-$productos_caja = json_decode($_COOKIE["productos_caja"], true);
+$productos_caja = $_SESSION["productos_caja"];
 ?>
 
 <style>

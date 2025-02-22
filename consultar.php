@@ -42,7 +42,7 @@ if ($_GET) {
     if (count($resultado) !== 0) {
         $data = json_encode($resultado);
         setcookie("resultado_busca", $data, time() + 3600, "/");
-        var_dump(json_decode($_COOKIE["resultado_busca"]));
+
 
         $resultado_data = $resultado;
     } else {
@@ -139,7 +139,7 @@ if (isset($_COOKIE["resultado_busca"])) {
                 <button type="submit">buscar</button>
             </form>
             <form action="guardar-producto_cookies.php" method="post">
-                <?php if ($_GET) {
+                <?php if (!empty($resultado_data)) {
                     foreach ($resultado_data as $items) {
                         $code = $items["codigo_barra"];
                         $name = $items["nombre_producto"];

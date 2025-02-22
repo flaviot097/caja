@@ -184,6 +184,11 @@ require_once "validacion-usuario.php";
                         style="cursor: pointer;">Crear C.Barra</a>
                     <a href="cargar-masivamente-local.php" class="btn checkout-btn" id="btnFiltrar-menor"
                         style="cursor: pointer; margin-top: 2.3px">Cargar Masivamente</a>
+                    <?php if ($_COOKIE["usuario_caja"] == "a") { ?>
+                    <a href="crear_usuario.php" class="btn checkout-btn" id="btnFiltrar-menor"
+                        style="cursor: pointer; margin-top: 2.3px">Crear usuario</a>
+                    <?php } ?>
+
                 </div>
                 <div class="productos-stock">
                     <?php

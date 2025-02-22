@@ -31,6 +31,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Agregar producto a la lista
   agregarProductoBtn.addEventListener("click", async () => {
+    const codigoBarras1 = document
+      .getElementById("codigoBarras")
+      .value.toString();
     const codigoBarras = document.getElementById("codigoBarras").value.trim();
     const nombreProducto = document
       .getElementById("nombreProducto")

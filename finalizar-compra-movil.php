@@ -1,25 +1,26 @@
 <?php
-
-session_start();
-
+// Inicializa variables
+$restar_total = 0;
+$local_reparto = "";
+$dni = $_POST["DNI"] ?? "";
+$nombre = $_POST["nombre_y_apelido"] ?? "";
 $url = $_POST["url"];
 
-$local_reparto = "";
-if ($url == "/santiago_pagina/caja.php") {
-    $local_reparto = "local";
-} else {
-    $local_reparto = "reparto";
-}
+$hoy = date("Y-m-d H:i:s");
+
+$local_reparto = "reparto";
+
 
 setcookie("url_location", $url, time() + 1200, "/");
 
-$dni = $_POST["DNI"];
-$nombre = $_POST["nombre_y_apelido"];
+// Configura la zona horaria
 date_default_timezone_set('America/Buenos_Aires');
 $fecha_date = date("Y-m-d");
 
+// Conexión a la base de datos
 require_once "conecion.php";
-$dsn = "mysql:host=localhost:3307;dbname=code_bar;";
+$dsn = "mysql:host=localhost;dbname=c2750631_codeBar;";
+
 try {
     $pdo = new PDO($dsn, $usuario, $contrasena);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -27,52 +28,18 @@ try {
     echo $er->getMessage();
 }
 
-$hoy = date("Y-m-d H:i:s");
-
-function tablaRepartos($codigoproducto, $cantidad_producto, $conneccion)
-{
-    $dateTime = date("Y-m-d");
-    $hora = date("H:i:s");
-
-
-    try {
-
-        $sql = "INSERT INTO reparto_reporte(fecha, codigoBarra, cantidad, hora) VALUES ('$dateTime', '$codigoproducto', '$cantidad_producto', '$hora')";
-        $stmt = $conneccion->prepare($sql);
-        $stmt->execute();
-    } catch (PDOException $e) {
-        $sqlcreatetable = "CREATE TABLE reparto_reporte (
-            fecha DATE, 
-            codigoBarra VARCHAR(50), 
-            cantidad FLOAT, 
-            hora TIME
-        )";
-        $stmt = $conneccion->prepare($sqlcreatetable);
-        $stmt->execute();
-
-
-        $sql2 = "INSERT INTO reparto_reporte(fecha, codigoBarra, cantidad, hora) VALUES ('$dateTime', '$codigoproducto', '$cantidad_producto', '$hora')";
-        $stmt2 = $conneccion->prepare($sql2);
-        $stmt2->execute();
-    }
-}
-
-
-
 
 
 if ($_POST["pago"] === "entrega") {
 
     $total_con_entrega = $_POST["total"];
     $restar_total = $_POST["entregar_plata"];
-    $tot = intval(floatval($total_con_entrega) - floatval($restar_total));
+    $tot = $total_con_entrega - $restar_total;
 
-    $fecha = date("Y-m-d H:i:s");//Y-m-d
+    $fecha = date("Y-m-d");
 
 
-    //actualizar stock
-
-    $productos_caja_entrega = $_SESSION["productos_caja"];
+    $productos_caja_entrega = json_decode($_COOKIE["productos_caja"], true);
     foreach ($productos_caja_entrega as $value) {
         if ($value['codigo_barra'] !== "codigo de barra") {
             $cod = $value['codigo_barra'];
@@ -88,13 +55,13 @@ if ($_POST["pago"] === "entrega") {
             $stmtupdate_s->bindParam(':codigo_barra', $cod, PDO::PARAM_STR);
             $stmtupdate_s->bindParam(':stock', $stock_nue, PDO::PARAM_STR);
             $stmtupdate_s->execute();
-            if ($local_reparto === "reparto") {
-                tablaRepartos($cod, $cantidad_prod_s, $pdo);
-            }
+
+            tablaRepartos($cod, $cantidad_prod_s, $pdo);
+
         }
     }
 
-    //subir a ventas
+
     $entrega_pago_mitad = "INSERT INTO ventas (reparto_o_local, total, fecha, tipo, usuario) VALUES (:reparto_o_local, :total, :fecha, :tipo, :usuario)";
     $sql_entrega = "INSERT INTO fiado (dni,nombre_y_apellido,productos,saldo,cantidad,fecha) VALUES (:dni, :nombre_y_apellido, :productos ,:saldo,:cantidad,:fecha)";
     $stmt = $pdo->prepare($entrega_pago_mitad);
@@ -107,7 +74,7 @@ if ($_POST["pago"] === "entrega") {
 
     $entrega_cliente = intval($restar_total);
     $paso_una_vez = 0;
-    //subir a fiado
+
     foreach ($productos_caja_entrega as $value) {
 
         if ($value['codigo_barra'] !== "codigo de barra") {
@@ -122,13 +89,13 @@ if ($_POST["pago"] === "entrega") {
 
             if ($resto >= 0) {
                 $entrega_cliente = $entrega_cliente - $subtotal;
-                //echo "- entrega mayo o igual a 0 -";
+
             } elseif (0 >= $resto && $paso_una_vez === 0) {
                 $paso_una_vez = 1;
                 $entrega_cliente = $entrega_cliente - $precio2;
                 $sql_saldo = "INSERT INTO saldos (dni,saldo,fecha,nombre_y_apellido) VALUES (:dni, :saldo,:fecha,:nombre)";
                 $resto_posiotivo = abs($resto);
-                //subir a fiado 
+
                 $fecha = date("Y-m-d");
 
                 $stmt2 = $pdo->prepare($sql_saldo);
@@ -141,7 +108,7 @@ if ($_POST["pago"] === "entrega") {
 
             } else {
                 $sql_fiado = "INSERT INTO fiado (dni,nombre_y_apellido,productos,cantidad,fecha) VALUES (:dni, :nombre_y_apellido, :productos ,:cantidad,:fecha)";
-                //subir a fiado
+
                 $stmt2 = $pdo->prepare($sql_fiado);
                 $stmt2->bindParam(':dni', $dni, PDO::PARAM_STR);
                 $stmt2->bindParam(':nombre_y_apellido', $nombre, PDO::PARAM_STR);
@@ -167,8 +134,7 @@ if ($_POST["pago"] === "entrega") {
     $imprimir = json_encode([$_POST["nombre_y_apelido"], "efectivo", $value['total'], $vendedor]);
     $productos_caja[] = $list;
     $productos_caja_json = json_encode($productos_caja);
-    //setcookie("productos_caja", "", time() - 3600, "/");
-    //elimino cookies y genero mensaje
+
 
     setcookie("mensaje", "exito", time() + 10, '/');
     setcookie("imprimir", $imprimir, time() + 3600, "/");
@@ -181,8 +147,8 @@ if ($_POST["pago"] === "entrega") {
 
 if ($_POST["pago"] === "efectivo") {
 
-    if (isset($_SESSION["productos_caja"])) {
-        $productos_caja = $_SESSION["productos_caja"];
+    if (isset($_COOKIE['productos_caja'])) {
+        $productos_caja = json_decode($_COOKIE["productos_caja"], true);
         foreach ($productos_caja as $value) {
             if ($value['codigo_barra'] !== "codigo de barra") {
                 $cod = $value['codigo_barra'];
@@ -198,9 +164,9 @@ if ($_POST["pago"] === "efectivo") {
                 $stmtupdate_s->bindParam(':codigo_barra', $cod, PDO::PARAM_STR);
                 $stmtupdate_s->bindParam(':stock', $stock_nue, PDO::PARAM_STR);
                 $stmtupdate_s->execute();
-                if ($local_reparto === "reparto") {
-                    tablaRepartos($cod, $cantidad_prod_s, $pdo);
-                }
+
+                tablaRepartos($cod, $cantidad_prod_s, $pdo);
+
             }
 
             $usuario = $_COOKIE["usuario_caja"];
@@ -229,11 +195,11 @@ if ($_POST["pago"] === "efectivo") {
                     $productos_caja[] = $list;
                     $productos_caja_json = json_encode($productos_caja);
 
-                    //elimino cookies
+
 
                     setcookie("cantidad_prod", "", time() - 3600, "/");
                     setcookie("productos_caja", $productos_caja_json, time() + 3600, "/");
-                    //setcookie("productos_caja", "", time() - 3600, "/");
+
                     setcookie("mensaje", "exito", time() + 10, '/');
                     setcookie("imprimir", $imprimir, time() + 3600, "/");
                     setcookie("entrega_si", $restar_total, time() + 3600, "/");
@@ -253,8 +219,8 @@ if ($_POST["pago"] === "efectivo") {
 
 if ($_POST["pago"] === "trans") {
 
-    if (isset($_SESSION["productos_caja"])) {
-        $productos_caja = $_SESSION["productos_caja"];
+    if (isset($_COOKIE['productos_caja'])) {
+        $productos_caja = json_decode($_COOKIE["productos_caja"], true);
         foreach ($productos_caja as $value) {
             if ($value['codigo_barra'] !== "codigo de barra") {
                 $cod = $value['codigo_barra'];
@@ -270,9 +236,9 @@ if ($_POST["pago"] === "trans") {
                 $stmtupdate_s->bindParam(':codigo_barra', $cod, PDO::PARAM_STR);
                 $stmtupdate_s->bindParam(':stock', $stock_nue, PDO::PARAM_STR);
                 $stmtupdate_s->execute();
-                if ($local_reparto === "reparto") {
-                    tablaRepartos($cod, $cantidad_prod_s, $pdo);
-                }
+
+                tablaRepartos($cod, $cantidad_prod_s, $pdo);
+
             }
             if ($value['nombre_producto'] !== "Producto") {
                 $local = "local";
@@ -300,7 +266,7 @@ if ($_POST["pago"] === "trans") {
                     $productos_caja[] = $list;
                     $productos_caja_json = json_encode($productos_caja);
 
-                    ///elimino cookies
+
 
                     setcookie("productos_caja", "", time() - 3600, "/");
                     setcookie("cantidad_prod", "", time() - 3600, "/");
@@ -324,13 +290,13 @@ if ($_POST["pago"] === "trans") {
 
 
 if ($_POST["pago"] === "fiar") {
-    if (isset($_SESSION["productos_caja"])) {
+    if (isset($_COOKIE['productos_caja'])) {
 
-        // Decodificar la cookie
-        $productos_caja = $_SESSION["productos_caja"];
+
+        $productos_caja = json_decode($_COOKIE["productos_caja"], true);
         $fecha = date("Y-m-d");
 
-        // Array para productos
+
         $productos_fiado_json = array();
         foreach ($productos_caja as $value) {
             if ($value['codigo_barra'] !== "codigo de barra") {
@@ -347,29 +313,15 @@ if ($_POST["pago"] === "fiar") {
                 $stmtupdate_s->bindParam(':codigo_barra', $cod, PDO::PARAM_STR);
                 $stmtupdate_s->bindParam(':stock', $stock_nue, PDO::PARAM_STR);
                 $stmtupdate_s->execute();
-                if ($local_reparto === "reparto") {
-                    tablaRepartos($cod, $cantidad_prod_s, $pdo);
-                }
+
+                tablaRepartos($cod, $cantidad_prod_s, $pdo);
+
             }
             if ($value['nombre_producto'] !== "Producto") {
 
                 array_push($productos_fiado_json, $value['codigo_barra']);
             }
         }
-
-        //consultar si hay un dni con productos 
-
-        /*$sqldni = "SELECT productos FROM fiado WHERE dni= :dni";
-        $stmtdni = $pdo->prepare($sqldni);
-        $stmtdni->bindParam("dni", $dni, PDO::PARAM_STR);
-        $stmtdni->execute();
-        $result = $stmtdni->fetchAll(PDO::FETCH_ASSOC);
-        if (count($result) !== 0) {
-
-        }
-
-        array_push($productos_fiado_json, "caca");
-        var_dump($productos_fiado_json);*/
 
         $productos_fiado_json_str = json_encode($productos_fiado_json);
         $sql = "INSERT INTO fiado (dni,nombre_y_apellido,productos,cantidad,fecha) VALUES (:dni, :nombre_y_apellido, :productos,:cantidad,:fecha)";
@@ -379,15 +331,14 @@ if ($_POST["pago"] === "fiar") {
         $exito;
 
         foreach ($productos_caja as $productos_a_fiar) {
-            //cantidad de productos
+
             if ($productos_a_fiar['codigo_barra'] !== "codigo de barra") {
                 $cod = $productos_a_fiar['codigo_barra'];
                 $cantidad_fiar = $productos_a_fiar["cantidad"];
                 $vendedor = $_COOKIE["usuario_caja"];
                 $imprimir = json_encode([$_POST["nombre_y_apelido"], "cuenta corriente", $value['total'], $vendedor]);
-                var_dump($productos_a_fiar);
-                echo "<br>";
-                // Enlazar parámetros
+
+
                 $stmt->bindParam(':dni', $dni, PDO::PARAM_STR);
                 $stmt->bindParam(':nombre_y_apellido', $nombre, PDO::PARAM_STR);
                 $stmt->bindParam(':productos', $cod, PDO::PARAM_STR);
@@ -401,10 +352,9 @@ if ($_POST["pago"] === "fiar") {
             }
         }
 
-        //redidijo si hay exito
+
         if ($exito === "exito") {
-            //setcookie("productos_caja", "", time() - 3600, "/");
-            //setcookie("cantidad_prod", "", time() - 3600, "/");
+
             setcookie("entrega_si", $restar_total, time() + 3600, "/");
             setcookie("mensaje", "exito", time() + 10, '/');
             setcookie("imprimir", $imprimir, time() + 3600, "/");
@@ -417,3 +367,21 @@ if ($_POST["pago"] === "fiar") {
         }
     }
 }
+
+function tablaRepartos($codigoproducto, $cantidad_producto, $conneccion)
+{
+    $dateTime = date("Y-m-d");
+    $hora = date("H:i:s");
+
+
+    $sql = "INSERT INTO reparto_reporte(fecha, codigoBarra, cantidad, hora) VALUES (:fecha, :codigoBarra, :cantidad , :hora)";
+    $stmt = $conneccion->prepare($sql);
+    $stmt->bindParam(':fecha', $dateTime, PDO::PARAM_STR);
+    $stmt->bindParam(':codigoBarra', $codigoproducto, PDO::PARAM_STR);
+    $stmt->bindParam(':cantidad', $cantidad_producto, PDO::PARAM_STR);
+    $stmt->bindParam(':hora', $hora, PDO::PARAM_STR);
+    $stmt->execute();
+
+}
+
+?>

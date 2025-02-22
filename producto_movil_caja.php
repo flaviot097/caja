@@ -12,7 +12,7 @@ try {
 
     if ($codigoBarras || $nombre) {
         // Consulta SQL para buscar el producto por código de barras o nombre
-        $sql = "SELECT nombre_producto, codigo_barra, precio FROM producto WHERE ";
+        $sql = "SELECT nombre_producto, codigo_barra, precio FROM producto_reparto WHERE ";
         $params = [];
 
         if ($codigoBarras) {
