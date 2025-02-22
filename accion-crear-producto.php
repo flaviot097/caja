@@ -17,6 +17,7 @@ $stock = floatval($_POST["stock"]);
 $costo = $_POST["costo"];
 $ganancia = $_POST["ganancia"];
 $num_stock = $_POST["num_stock"];
+$stok_reparto = floatval($_POST["stock_reparto"]) ?? 0;
 $sumaporcentaje = intval($costo * $ganancia / 100);
 $precio = intval($costo) + $sumaporcentaje;
 $fecha = date("Y-m-d");
@@ -38,10 +39,28 @@ $stmt->bindParam(':ganancia', $ganancia, PDO::PARAM_INT);
 $stmt->bindParam(':num_stock', $num_stock, PDO::PARAM_INT);
 $stmt->bindParam(':fecha', $fecha, PDO::PARAM_STR);
 
+$stmt->execute();
 
-if ($stmt->execute()) {
+$q = "INSERT INTO producto_reparto (nombre_producto, precio, codigo_barra, departamento, proveedor, stock, costo, ganancia, num_stock, fecha) 
+VALUES (:nombre_producto, :precio, :codigo_barra, :departamento, :proveedor, :stock, :costo, :ganancia, :num_stock, :fecha)";
 
-    $gasto = $costo * $stock;
+$stmt2 = $pdo->prepare($q);
+
+
+$stmt2->bindParam(':nombre_producto', $nombre, PDO::PARAM_STR);
+$stmt2->bindParam(':precio', $precio, PDO::PARAM_INT);
+$stmt2->bindParam(':codigo_barra', $codigo_barra, PDO::PARAM_STR);
+$stmt2->bindParam(':departamento', $departamento, PDO::PARAM_STR);
+$stmt2->bindParam(':proveedor', $proveedor, PDO::PARAM_STR);
+$stmt2->bindParam(':stock', $stok_reparto, PDO::PARAM_STR);
+$stmt2->bindParam(':costo', $costo, PDO::PARAM_INT);
+$stmt2->bindParam(':ganancia', $ganancia, PDO::PARAM_INT);
+$stmt2->bindParam(':num_stock', $num_stock, PDO::PARAM_INT);
+$stmt2->bindParam(':fecha', $fecha, PDO::PARAM_STR);
+
+if ($stmt2->execute()) {
+
+    $gasto = $costo * ($stock + $stok_reparto);
     $query1 = "INSERT INTO egresos (nombre_egreso, total, fecha) VALUES (:nombre_egreso, :total, :fecha)";
 
     $stmt1 = $pdo->prepare($query1);

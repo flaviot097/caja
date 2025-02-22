@@ -74,6 +74,8 @@ require_once "validacion-usuario.php";
                 <p class="text-center"><strong>departamento</strong> <br><input name="departamento" type="text"></p>
                 <p class="text-center"><strong>proveedor</strong> <br><input type="text" name="proveedor"></p>
                 <p class="text-center"><strong>stock</strong> <br><input name="stock" type="text"></p>
+                <p class="text-center"><strong>stock reparto</strong> <br><input name="stock_reparto" value="0"
+                        type="text"></p>
                 <p class="text-center"><strong>costo</strong> <br>$<input name="costo" type="number" id="costo"></p>
                 <p class="text-center"><strong>ganancia</strong><br><input name="ganancia" type="number" id="ganancia">%
                 </p>
