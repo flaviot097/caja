@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <?php
-
-require_once "validacion-usuario.php";
+session_start();
 
 require_once "conecion.php";
 $dsn = 'mysql:host=localhost:3307;dbname=code_bar;';
@@ -20,12 +19,16 @@ $consulataTodosProveedores = "SELECT DISTINCT proveedor FROM producto";
 $stmt = $pdo->prepare($consulataTodosProveedores);
 $stmt->execute();
 $todosProveedores = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-
-
-
 ?>
 <html lang="en">
+<style>
+th,
+td,
+tr {
+    border: solid black 0.5px;
+    text-align: center;
+}
+</style>
 
 <head>
     <meta charset="utf-8" />
@@ -33,7 +36,7 @@ $todosProveedores = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta name="description" content="" />
     <meta name="Flavio Trocello" content="" />
 
-    <title>Inicio</title>
+    <title>pagina de gestion</title>
 
     <link rel="stylesheet" href="css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/unicons.css" />
@@ -41,71 +44,12 @@ $todosProveedores = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="css/owl.theme.default.min.css" />
     <link rel="stylesheet" href="css/target.css">
     <link rel="stylesheet" href="css/sidebar.css">
-    <link rel="stylesheet" href="css/stock-template.css">
+    <link rel="stylesheet" href="css/estadisticas.css">
+    <link rel="stylesheet" href="css/graficas.css">
 
     <!-- MAIN STYLE -->
     <link rel="stylesheet" href="css/tooplate-style.css" />
 </head>
-<style>
-.contador-container {
-    font-weight: bold;
-    font-size: 1rem;
-    margin-left: 5vh;
-    color: gray;
-    text-decoration: underline;
-}
-
-.modal {
-    display: none;
-    /* Hidden by default */
-    position: fixed;
-    /* Stay in place */
-    z-index: 1;
-    /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%;
-    /* Full width */
-    height: 100%;
-    /* Full height */
-    overflow: auto;
-    /* Enable scroll if needed */
-    background-color: rgba(0, 0, 0, 0.4);
-    /* Fallback color */
-    background-color: rgba(0, 0, 0, 0.4);
-    /* Black w/ opacity */
-}
-
-/* Modal Content */
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    /* 15% from the top and centered */
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    /* Could be more or less, depending on screen size */
-}
-
-/* The Close Button */
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-#button-modal {
-    background-color: #4CAF50;
-}
-</style>
 
 <body>
     <!-- MENU -->
@@ -123,7 +67,7 @@ $todosProveedores = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item">
-                        <a href="session-close.php" class="nav-link"><?php if ($_SESSION["usuario"]) {
+                        <a href="session-close.php" class="nav-link"><?php if ($_COOKIE["usuario_caja"]) {
                             echo "Salir";
                         } else {
                             echo "Iniciar Sesión";
@@ -167,11 +111,9 @@ $todosProveedores = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <!-- BARRA LATERAL -->
     <div class="sidebar">
         <h2 class="text-filter">Filtrar Productos</h2>
-        <form action="filter-products-stock.php" method="get" class="form-filtro">
-            <label for="nombre">Nombre del Producto</label>
-            <input type="text" id="nombre" name="nombre_producto" class="form-control">
-
-            <label for="departamento">Departamento</label>
+        <form action="" method="get">
+            <label for="usaer" class="form-control" style="border-color: transparent; background: #f8f9fa;">Seleccione
+                Proveedor</label>
             <select name="proveedor" id="usaer" class="form-control">
                 <option value="">Seleccione proveedor</option>
                 <?php foreach ($todosProveedores as $selectproveedor) { ?>
@@ -182,19 +124,8 @@ $todosProveedores = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 $total = 0;
                 ?>
             </select>
-
-            <label for="proveedor">Proveedor</label>
-            <input type="text" id="proveedor" name="proveedor" class="form-control">
-
-            <label for="Codigo de barra">Codigo de Barra</label>
-            <input type="text" id="proveedor" name="codigo_barra" class="form-control">
-
-            <button type="submit" class="btn btn-primary mt-3">Filtrar</button>
-            <?php if ($_GET) {
-            /*?><a href="stock-template.php" class="btn btn-primary mt-3">Eliminar filtros</a><?php*/
-        }
-        ;
-        ?>
+            <input type="submit" value="Consultar Productos" class="btn btn-primary mt-3" />
+            <!-- <a href="estadisticas-fecha.php"></a><button>Consultar por fecha</button></a> -->
         </form>
     </div>
     <!-- PROJECTS -->
@@ -212,6 +143,13 @@ $todosProveedores = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         style="cursor: pointer;">Backup</a>
                     <a href="generar-code-bar.php" class="btn checkout-btn" id="btnFiltrar-menor"
                         style="cursor: pointer;">Crear C.Barra</a>
+                    <a href="cargar-masivamente-local.php" class="btn checkout-btn" id="btnFiltrar-menor"
+                        style="cursor: pointer; margin-top: 2.3px">Cargar Masivamente</a>
+                    <?php if ($_COOKIE["usuario_caja"] == "a") { ?>
+                    <a href="crear_usuario.php" class="btn checkout-btn" id="btnFiltrar-menor"
+                        style="cursor: pointer; margin-top: 2.3px">Crear usuario</a>
+                    <?php } ?>
+
                 </div>
                 <div class="productos-stock">
                     <?php
@@ -231,68 +169,26 @@ $todosProveedores = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         }
 
                         // Obtener valores de los parámetros GET
-                        $nombre_producto = $_GET['nombre_producto'] ?? '';
-                        $departamento = $_GET['departamento'] ?? '';
+                    
                         $proveedor = $_GET['proveedor'] ?? '';
-                        $code_bar_con = $_GET['codigo_barra'] ?? '';
 
-                        if ($nombre_producto === '' && $departamento === '' && $proveedor === '' && $code_bar_con === '') {
+                        if ($proveedor === '') {
                             echo "Se debe completar al menos un campo para realizar la búsqueda.";
                             exit;
-                        }
+                        } else {
 
-                        // Construir la consulta base
-                        $query;
-
-                        // Preparar la consulta según los campos proporcionados
-                        if ($nombre_producto !== '' && $departamento === '' && $proveedor === '' && $code_bar_con === '') {
-                            $query = "SELECT * FROM producto WHERE nombre_producto LIKE :nombre_producto";
+                            // Construir la consulta base
+                            $query = "SELECT * FROM producto WHERE proveedor = :proveedor ORDER BY stock ASC";
                         }
-                        if ($departamento !== ' ' && $nombre_producto === '' && $proveedor === '' && $code_bar_con === '') {
-                            $query = "SELECT * FROM producto WHERE departamento LIKE :departamento";
-                        }
-                        if ($proveedor !== '' && $departamento === '' && $nombre_producto === '' && $code_bar_con === '') {
-                            $query = "SELECT * FROM producto WHERE proveedor LIKE :proveedor";
-                        }
-                        if ($code_bar_con !== "" && $departamento === '' && $proveedor === '' && $nombre_producto === '') {
-                            $query = "SELECT * FROM producto WHERE codigo_barra LIKE :codigo_barra";
-                        }
-
-
-                        //peoveedor y departamento
-                        if ($code_bar_con === "" && $departamento !== '' && $proveedor !== '' && $nombre_producto === '') {
-                            $query = "SELECT * FROM producto WHERE departamento LIKE :departamento AND proveedor LIKE :proveedor";
-                        }
-                        //nombre y departamento
-                        if ($code_bar_con === "" && $departamento !== '' && $proveedor === '' && $nombre_producto !== '') {
-                            $query = "SELECT * FROM producto WHERE departamento LIKE :departamento AND nombre_producto LIKE :nombre_producto";
-                        }
-
-                        if ($code_bar_con === "" && $departamento === '' && $proveedor !== '' && $nombre_producto !== '') {
-                            $query = "SELECT * FROM producto WHERE proveedor LIKE :proveedor AND nombre_producto LIKE :nombre_producto";
-
-                        }
-
-                        // Añadir el ORDER BY una sola vez al final
-                        $query .= " ORDER BY stock ASC";
 
                         // Preparar la consulta con PDO
                         $stmt = $pdo->prepare($query);
 
                         // Vincular los parámetros según corresponda
                     
-                        if ($nombre_producto !== '') {
-                            $stmt->bindValue(':nombre_producto', $nombre_producto . "%", PDO::PARAM_STR);
-                        }
-                        if ($departamento !== '') {
-                            $stmt->bindValue(':departamento', $departamento, PDO::PARAM_STR);
-                        }
-                        if ($proveedor !== '') {
-                            $stmt->bindValue(':proveedor', $proveedor, PDO::PARAM_STR);
-                        }
-                        if ($code_bar_con !== "") {
-                            $stmt->bindValue(':codigo_barra', $code_bar_con, PDO::PARAM_STR);
-                        }
+
+                        $stmt->bindValue(':proveedor', $proveedor, PDO::PARAM_STR);
+
 
 
 
@@ -358,7 +254,7 @@ $todosProveedores = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <button class="eliminar-btn-modals" id="button-modal">Eliminar</button>
         </div>
     </div>
-    <footer class="footer py-5">
+    <footer class="footer py-5" style="min-width: 1200px !important;display: flex ;justify-content: space-around;">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 col-12">

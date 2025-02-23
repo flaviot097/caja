@@ -211,8 +211,8 @@ footer p {
                         <td><?php echo $descuento; ?>%</td>
                     </tr>
                     <tr>
-                        <td colspan="4">Entrega | $<?php echo $entrega_si; ?></td>
-                        <td></td>
+                        <td colspan="3">Entrega | $<?php echo $entrega_si; ?></td>
+                        <td>Saldo $<?php echo ($total - $entrega_si); ?></td>
                     </tr>
                     <tr>
                         <td colspan="4"><strong>Total</strong></td>

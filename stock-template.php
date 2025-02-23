@@ -3,6 +3,27 @@
 
 
 require_once "validacion-usuario.php";
+
+require_once "conecion.php";
+$dsn = 'mysql:host=localhost:3307;dbname=code_bar;';
+try {
+    $pdo = new PDO($dsn, $usuario, $contrasena);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    echo 'error al conectarse: ' . $e->getMessage();
+    exit;
+}
+$total_hoy = 0;
+$color = "";
+date_default_timezone_set('America/Buenos_Aires');
+$hoy = date("Y-m-d");
+$consulataTodosProveedores = "SELECT DISTINCT proveedor FROM producto";
+$stmt = $pdo->prepare($consulataTodosProveedores);
+$stmt->execute();
+$todosProveedores = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+
 ?>
 <html lang="en">
 
@@ -154,12 +175,24 @@ require_once "validacion-usuario.php";
             <input type="text" id="departamento" name="departamento" class="form-control">
 
             <label for="proveedor">Proveedor</label>
-            <input type="text" id="proveedor" name="proveedor" class="form-control">
+            <select name="proveedor" id="usaer" class="form-control">
+                <option value="">Seleccione proveedor</option>
+                <?php foreach ($todosProveedores as $selectproveedor) { ?>
+                <option value="<?php echo $selectproveedor["proveedor"]; ?>">
+                    <?php echo $selectproveedor["proveedor"]; ?>
+                </option>
+                <?php }
+                $total = 0;
+                ?>
+            </select>
 
             <label for="Codigo de barra">Codigo de Barra</label>
             <input type="text" id="proveedor" name="codigo_barra" class="form-control">
 
             <button type="submit" class="btn btn-primary mt-3">Filtrar</button>
+            <a href="proveedores-template.php"><button class="btn btn-primary mt-3" type="button"
+                    style="margin-botton: 30px;">Mostrar
+                    Proveedores</button></a>
             <?php if ($_GET) {
             /*?><a href="stock-template.php" class="btn btn-primary mt-3">Eliminar filtros</a><?php*/
         }
