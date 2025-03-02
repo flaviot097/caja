@@ -98,7 +98,7 @@ $nombre_cuenta_corriente = $_POST["nombre"];
 
             <?php
 
-            $consulta_dni = "SELECT dni FROM fiado WHERE nombre_y_apellido = :nombre_y_apellido";
+            $consulta_dni = "SELECT dni FROM fiado WHERE dni = :nombre_y_apellido";
             $stmt_dni = $pdo->prepare($consulta_dni);
             $stmt_dni->bindValue(':nombre_y_apellido', $nombre_cuenta_corriente . "%", PDO::PARAM_STR);
             $stmt_dni->execute();
@@ -249,7 +249,8 @@ $nombre_cuenta_corriente = $_POST["nombre"];
             foreach ($dnis_con_saldo_solamente as $solo_saldo) {
                 foreach ($saldo_dni_todos as $datos) {
                     if ($datos["dni"] == $solo_saldo) {
-                        ?>
+                        if ($datos["dni"] == $nombre_cuenta_corriente) {
+                            ?>
 
             <h1 class="text-fiado">Cuenta corriente</h1>
             <div class="detalle">
@@ -284,6 +285,7 @@ $nombre_cuenta_corriente = $_POST["nombre"];
                 </form>
             </div>
             <?php }
+                    }
                 }
             }
             ?>

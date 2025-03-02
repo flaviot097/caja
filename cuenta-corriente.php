@@ -16,6 +16,9 @@ try {
 
 error_reporting(0);
 
+$total_deuda_clientes = 0;
+$numero_deudores = 0;
+
 ?>
 <html lang="en">
 
@@ -70,20 +73,20 @@ error_reporting(0);
     </nav>
 
     <style>
-        .button-search {
-            background-color: #28a745;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+    .button-search {
+        background-color: #28a745;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
 
-        #input_nombre {
-            border: 1px solid #555555;
-            border-radius: 5px;
-        }
+    #input_nombre {
+        border: 1px solid #555555;
+        border-radius: 5px;
+    }
     </style>
 
     <div class="body-container">
@@ -91,11 +94,12 @@ error_reporting(0);
             <div class="container-formulario">
                 <form action="filtrar-fiado.php" method="post"
                     style="display: flex; flex-wrap: wrap; justify-content: space-around;">
-                    <input type="text" placeholder="Ingrese Nombre..." name="nombre" id="input_nombre" class="">
+                    <input type="text" placeholder="Ingrese Numero de cliente..." name="nombre" id="input_nombre"
+                        class="">
                     <button type="submit" class="button-search">Buscar</button>
                 </form>
             </div>
-
+            <h1 class="text-fiado">Cuenta corriente</h1>
             <?php
 
             $query = "SELECT DISTINCT dni FROM fiado";
@@ -108,6 +112,9 @@ error_reporting(0);
             $lista_total_producto;
 
             foreach ($todosFiados as $dni_persona) {
+
+                $numero_deudores = $numero_deudores + 1;
+
 
                 $query = "SELECT * FROM fiado WHERE dni = :dni";
                 $statement = $pdo->prepare($query);
@@ -204,84 +211,96 @@ error_reporting(0);
                     // }
             
                     ?>
-                    <h1 class="text-fiado">Cuenta corriente</h1>
-                    <div class="detalle">
-                        <div class="container-title">
-                            <h2>
-                                <?php echo $item["nombre"]; ?>
-                            </h2>
-                            <form action="detalle-fiado.php" method="get" style="display: flex;
+
+            <div class="detalle">
+                <div class="container-title">
+                    <h2>
+                        <?php echo $item["nombre"]; ?>
+                    </h2>
+                    <form action="detalle-fiado.php" method="get" style="display: flex;
                         align-content: space-around;
                         flex-wrap: wrap; margin-left: 15px;">
-                                <input type="hidden" name="dni-validate" value="<?php echo $cliente_dni; ?>">
-                                <input type="hidden" name="name-validate" value="<?php echo $item["nombre"]; ?>">
-                                <input type="submit" value="Detalle">
-                            </form>
-                        </div>
+                        <input type="hidden" name="dni-validate" value="<?php echo $cliente_dni; ?>">
+                        <input type="hidden" name="name-validate" value="<?php echo $item["nombre"]; ?>">
+                        <input type="submit" value="Detalle">
+                    </form>
+                </div>
 
-                        <form class="form-detalle" action="fiado-actualizar.php" method="post" class="card-fiado">
-                            <p><strong>Deuda:</strong> $<?php echo $saldo_total + $total ?></p>
-                            <input type="number" value="<?php echo $saldo_total + $total; ?>" name="pagar_total"
-                                style="display: none;">
-                            <input type="hidden" name="nombre_apellido" value="<?php echo $item["nombre"]; ?>">
-                            <input type="number" value="<?php echo $item["dni"]; ?>" name="dni" style="display: none;">
-                            <input type="text" value="<?php echo ($saldo_total + $total); ?>" name="cantidad_productos"
-                                style="display: none;">
-                            <p><strong>Entrega:</strong> $<input type="number" value="<?php echo ($saldo_total + $total); ?>"
-                                    name="entrega"></p>
-                            <select name="pagar" id="pagar">
-                                <option value="liquidar_total">Liquidar total de deuda</option>
-                                <option value="entregar">Entrega</option>
-                            </select>
-                            <button class="pay-button" type="submit">Pagar</button>
-                        </form>
-                    </div>
-                <?php }
+                <form class="form-detalle" action="fiado-actualizar.php" method="post" class="card-fiado">
+                    <p><strong>Deuda:</strong> $<?php echo $saldo_total + $total ?></p>
+                    <input type="number" value="<?php echo $saldo_total + $total; ?>" name="pagar_total"
+                        style="display: none;">
+                    <input type="hidden" name="nombre_apellido" value="<?php echo $item["nombre"]; ?>">
+                    <input type="number" value="<?php echo $item["dni"]; ?>" name="dni" style="display: none;">
+                    <input type="text" value="<?php echo ($saldo_total + $total); ?>" name="cantidad_productos"
+                        style="display: none;">
+                    <p><strong>Entrega:</strong> $<input type="number" value="<?php echo ($saldo_total + $total);
+
+                            $total_deuda_clientes = $total_deuda_clientes + ($saldo_total + $total);
+
+                            ?>" name="entrega"></p>
+                    <select name="pagar" id="pagar">
+                        <option value="liquidar_total">Liquidar total de deuda</option>
+                        <option value="entregar">Entrega</option>
+                    </select>
+                    <button class="pay-button" type="submit">Pagar</button>
+                </form>
+            </div>
+            <?php }
             }
 
             // Replico las tarjetas para los saldos solamente
             
             foreach ($dnis_con_saldo_solamente as $solo_saldo) {
+
+                $numero_deudores = $numero_deudores + 1;
+
+
                 foreach ($saldo_dni_todos as $datos) {
                     if ($datos["dni"] == $solo_saldo) {
                         ?>
 
-                        <h1 class="text-fiado">Cuenta corriente</h1>
-                        <div class="detalle">
-                            <div class="container-title">
-                                <h2>
-                                    <?php echo $datos["nombre_y_apellido"]; ?>
-                                </h2>
-                                <form action="detalle-fiado.php" method="get" style="display: flex;
+            <h1 class="text-fiado">Cuenta corriente</h1>
+            <div class="detalle">
+                <div class="container-title">
+                    <h2>
+                        <?php echo $datos["nombre_y_apellido"]; ?>
+                    </h2>
+                    <form action="detalle-fiado.php" method="get" style="display: flex;
                         align-content: space-around;
                         flex-wrap: wrap; margin-left: 15px;">
-                                    <input type="hidden" name="dni-validate" value="<?php echo $datos["dni"]; ?>">
-                                    <input type="hidden" name="name-validate" value="<?php echo $datos["nombre_y_apellido"]; ?>">
-                                    <input type="submit" value="Detalle">
-                                </form>
-                            </div>
+                        <input type="hidden" name="dni-validate" value="<?php echo $datos["dni"]; ?>">
+                        <input type="hidden" name="name-validate" value="<?php echo $datos["nombre_y_apellido"]; ?>">
+                        <input type="submit" value="Detalle">
+                    </form>
+                </div>
 
-                            <form class="form-detalle" action="fiado-actualizar.php" method="post" class="card-fiado">
-                                <p><strong>Deuda:</strong> $<?php echo $datos["total_saldo"]; ?></p>
-                                <input type="number" value="<?php echo $datos["total_saldo"]; ?>" name="pagar_total"
-                                    style="display: none;">
-                                <input type="hidden" name="nombre_apellido" value="<?php echo $datos["nombre_y_apellido"]; ?>">
-                                <input type="number" value="<?php echo $datos["dni"]; ?>" name="dni" style="display: none;">
-                                <input type="text" value="<?php echo $datos["total_saldo"]; ?>" name="cantidad_productos"
-                                    style="display: none;">
-                                <p><strong>Entrega:</strong> $<input type="number" value="<?php echo $datos["total_saldo"]; ?>"
-                                        name="entrega"></p>
-                                <select name="pagar" id="pagar">
-                                    <option value="liquidar_total">Liquidar total de deuda</option>
-                                    <option value="entregar">Entrega</option>
-                                </select>
-                                <button class="pay-button" type="submit">Pagar</button>
-                            </form>
-                        </div>
-                    <?php }
+                <form class="form-detalle" action="fiado-actualizar.php" method="post" class="card-fiado">
+                    <p><strong>Deuda:</strong> $<?php echo $datos["total_saldo"]; ?></p>
+                    <input type="number" value="<?php echo $datos["total_saldo"]; ?>" name="pagar_total"
+                        style="display: none;">
+                    <input type="hidden" name="nombre_apellido" value="<?php echo $datos["nombre_y_apellido"]; ?>">
+                    <input type="number" value="<?php echo $datos["dni"]; ?>" name="dni" style="display: none;">
+                    <input type="text" value="<?php echo $datos["total_saldo"]; ?>" name="cantidad_productos"
+                        style="display: none;">
+                    <p><strong>Entrega:</strong> $<input type="number"
+                            value="<?php echo $datos["total_saldo"];
+                                        $total_deuda_clientes = $total_deuda_clientes + floatval($datos["total_saldo"]); ?>" name="entrega"></p>
+                    <select name="pagar" id="pagar">
+                        <option value="liquidar_total">Liquidar total de deuda</option>
+                        <option value="entregar">Entrega</option>
+                    </select>
+                    <button class="pay-button" type="submit">Pagar</button>
+                </form>
+            </div>
+            <?php }
                 }
             }
             ?>
+
+            <div><b>Cantidad de Fiados: <?php echo $numero_deudores ?></b></div><br>
+            <div><b>Total deudas de clientes: $<?php echo $total_deuda_clientes ?></b></div>
+
         </div>
     </div>
 

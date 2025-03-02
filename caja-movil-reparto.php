@@ -33,7 +33,7 @@ require_once "validacion-usuario.php";
             <h3>Total: $<span id="totalVenta">0.00</span></h3>
         </div>
         <div class="acciones">
-            <form action="finalizar-compra.php" method="post">
+            <form action="finalizar-compra-movil.php" method="post">
                 <input type="text" id="searchInput" placeholder="nombre y apellido..." name="nombre_y_apelido" required>
                 <input type="text" id="searchInput" placeholder="DNI..." name="DNI" required>
                 <input type="number" id="searchInput" placeholder="entrega..." name="entregar_plata">

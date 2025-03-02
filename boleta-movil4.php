@@ -1,13 +1,13 @@
-<?php ob_start();
+<?php
+
+ob_start();
+session_start();
 
 require 'vendor/autoload.php';
 use Dompdf\Dompdf;
 use Dompdf\Options;
 date_default_timezone_set('America/Buenos_Aires');
 
-session_start();
-
-$entrega_si = "";
 $entrega_si = 0; // Valor predeterminado
 if (isset($_COOKIE["entrega_si"])) {
     $temp_entrega = $_COOKIE["entrega_si"];
@@ -18,6 +18,7 @@ if (isset($_COOKIE["entrega_si"])) {
         $entrega_si = 0;
     }
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -40,11 +41,11 @@ $pago = $json[1];
 $vendedor = $json[3];
 
 $descuento = 0;
-if (isset($_SESSION["descuentos"])) {
-    $descuento = $_SESSION["descuentos"];
+if (isset($_COOKIE["descuentos"])) {
+    $descuento = $_COOKIE["descuentos"];
 }
 $total = 0;
-$productos_caja = $_SESSION["productos_caja"];
+$productos_caja = $_COOKIE["productos_caja"];
 ?>
 
 <style>
@@ -160,7 +161,7 @@ footer p {
                 <p>Teléfono: 155439860</p>
             </div>
             <div class="logo">
-                <img src='http://localhost/santiago_pagina/images/mc.png' alt='MC'>
+                <img src='http://caja-app-mc.online/santiago_pagina/mc.png' alt='MC'>
             </div>
         </header>
 
@@ -217,8 +218,11 @@ footer p {
                         <td><?php echo $descuento; ?>%</td>
                     </tr>
                     <tr>
-                        <td colspan="3">Entrega | $<?php echo $entrega_si; ?></td>
-                        <td>Saldo $<?php echo ($total - $entrega_si); ?></td>
+                        <td colspan="4">Entrega $<?php echo $entrega_si;
+                        if ($entrega_si !== 0) { ?> | Saldo
+                            $<?php echo ($total - $entrega_si);
+                        } ?></td>
+
                     </tr>
                     <tr>
                         <td colspan="4"><strong>Total</strong></td>
@@ -246,7 +250,6 @@ $dompdf = new Dompdf($options);
 
 $dompdf->loadHtml($html);
 $dompdf->setPaper("A4", 'portrait');
-
 //setcookie("productos_caja", "", time() - 3600, "/");
 //setcookie("cantidad_prod", "", time() - 3600, "/");
 

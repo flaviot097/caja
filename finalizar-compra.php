@@ -236,7 +236,6 @@ if ($_POST["pago"] === "efectivo") {
                     //setcookie("productos_caja", "", time() - 3600, "/");
                     setcookie("mensaje", "exito", time() + 10, '/');
                     setcookie("imprimir", $imprimir, time() + 3600, "/");
-                    setcookie("entrega_si", $restar_total, time() + 3600, "/");
                     header("location: factura-crear.php");
 
 

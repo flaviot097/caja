@@ -39,42 +39,49 @@ $stmt->bindParam(':ganancia', $ganancia, PDO::PARAM_INT);
 $stmt->bindParam(':num_stock', $num_stock, PDO::PARAM_INT);
 $stmt->bindParam(':fecha', $fecha, PDO::PARAM_STR);
 
-$stmt->execute();
+if ($stmt->execute()) {
 
-$q = "INSERT INTO producto_reparto (nombre_producto, precio, codigo_barra, departamento, proveedor, stock, costo, ganancia, num_stock, fecha) 
+    $q = "INSERT INTO producto_reparto (nombre_producto, precio, codigo_barra, departamento, proveedor, stock, costo, ganancia, num_stock, fecha) 
 VALUES (:nombre_producto, :precio, :codigo_barra, :departamento, :proveedor, :stock, :costo, :ganancia, :num_stock, :fecha)";
 
-$stmt2 = $pdo->prepare($q);
+    $stmt2 = $pdo->prepare($q);
 
 
-$stmt2->bindParam(':nombre_producto', $nombre, PDO::PARAM_STR);
-$stmt2->bindParam(':precio', $precio, PDO::PARAM_INT);
-$stmt2->bindParam(':codigo_barra', $codigo_barra, PDO::PARAM_STR);
-$stmt2->bindParam(':departamento', $departamento, PDO::PARAM_STR);
-$stmt2->bindParam(':proveedor', $proveedor, PDO::PARAM_STR);
-$stmt2->bindParam(':stock', $stok_reparto, PDO::PARAM_STR);
-$stmt2->bindParam(':costo', $costo, PDO::PARAM_INT);
-$stmt2->bindParam(':ganancia', $ganancia, PDO::PARAM_INT);
-$stmt2->bindParam(':num_stock', $num_stock, PDO::PARAM_INT);
-$stmt2->bindParam(':fecha', $fecha, PDO::PARAM_STR);
+    $stmt2->bindParam(':nombre_producto', $nombre, PDO::PARAM_STR);
+    $stmt2->bindParam(':precio', $precio, PDO::PARAM_INT);
+    $stmt2->bindParam(':codigo_barra', $codigo_barra, PDO::PARAM_STR);
+    $stmt2->bindParam(':departamento', $departamento, PDO::PARAM_STR);
+    $stmt2->bindParam(':proveedor', $proveedor, PDO::PARAM_STR);
+    $stmt2->bindParam(':stock', $stok_reparto, PDO::PARAM_STR);
+    $stmt2->bindParam(':costo', $costo, PDO::PARAM_INT);
+    $stmt2->bindParam(':ganancia', $ganancia, PDO::PARAM_INT);
+    $stmt2->bindParam(':num_stock', $num_stock, PDO::PARAM_INT);
+    $stmt2->bindParam(':fecha', $fecha, PDO::PARAM_STR);
 
-if ($stmt2->execute()) {
+    if ($stmt2->execute()) {
 
-    $gasto = $costo * ($stock + $stok_reparto);
-    $query1 = "INSERT INTO egresos (nombre_egreso, total, fecha) VALUES (:nombre_egreso, :total, :fecha)";
+        $gasto = $costo * ($stock + $stok_reparto);
+        $query1 = "INSERT INTO egresos (nombre_egreso, total, fecha) VALUES (:nombre_egreso, :total, :fecha)";
 
-    $stmt1 = $pdo->prepare($query1);
+        $stmt1 = $pdo->prepare($query1);
 
-    $stmt1->bindParam(':nombre_egreso', $proveedor, PDO::PARAM_STR);
-    $stmt1->bindParam(':total', $gasto, PDO::PARAM_INT);
-    $stmt1->bindParam(':fecha', $fecha, PDO::PARAM_STR);
+        $stmt1->bindParam(':nombre_egreso', $proveedor, PDO::PARAM_STR);
+        $stmt1->bindParam(':total', $gasto, PDO::PARAM_INT);
+        $stmt1->bindParam(':fecha', $fecha, PDO::PARAM_STR);
 
 
-    if ($stmt1->execute()) {
-        setcookie("mensaje", "exito", time() + 10, '/');
+        if ($stmt1->execute()) {
+            setcookie("mensaje", "exito", time() + 10, '/');
+            header("location: crear-producto.php");
+        } else {
+            setcookie("mensaje", "fallo", time() + 10, '/');
+            header("location: crear-producto.php");
+        }
+
+    } else {
+        setcookie("mensaje", "fallo", time() + 10, '/');
         header("location: crear-producto.php");
     }
-
 } else {
     setcookie("mensaje", "fallo", time() + 10, '/');
     header("location: crear-producto.php");

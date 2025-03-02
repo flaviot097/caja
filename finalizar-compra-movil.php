@@ -20,6 +20,7 @@ $fecha_date = date("Y-m-d");
 // Conexión a la base de datos
 require_once "conecion.php";
 $dsn = "mysql:host=localhost;dbname=c2750631_codeBar;";
+$dsn = "mysql:host=localhost:3307;dbname=code_bar;";
 
 try {
     $pdo = new PDO($dsn, $usuario, $contrasena);
@@ -27,6 +28,9 @@ try {
 } catch (PDOException $er) {
     echo $er->getMessage();
 }
+
+$productos_caja_entrega = json_decode($_COOKIE["productos_caja"], true);
+
 
 
 
@@ -49,6 +53,10 @@ if ($_POST["pago"] === "entrega") {
             $stmtconsulta_s->bindParam(':codigo_barra', $cod, PDO::PARAM_STR);
             $stmtconsulta_s->execute();
             $existente1 = ($stmtconsulta_s->fetchAll())[0]["stock"];
+            var_dump($existente1);
+
+
+            exit;
             $stock_nue = floatval($existente1) - floatval($cantidad_prod_s);
             $update_stock = "UPDATE producto SET stock=:stock WHERE codigo_barra=:codigo_barra";
             $stmtupdate_s = $pdo->prepare($update_stock);
@@ -139,10 +147,9 @@ if ($_POST["pago"] === "entrega") {
     setcookie("mensaje", "exito", time() + 10, '/');
     setcookie("imprimir", $imprimir, time() + 3600, "/");
     setcookie("entrega_si", $restar_total, time() + 3600, "/");
-    header("location: factura-crear.php");
+    header("location: factura-movil-crear.php");
 
 }
-
 
 
 if ($_POST["pago"] === "efectivo") {
@@ -202,13 +209,14 @@ if ($_POST["pago"] === "efectivo") {
 
                     setcookie("mensaje", "exito", time() + 10, '/');
                     setcookie("imprimir", $imprimir, time() + 3600, "/");
-                    setcookie("entrega_si", $restar_total, time() + 3600, "/");
-                    header("location: factura-crear.php");
+                    header("location: factura-movil-crear.php");
+                    exit;
 
 
                 } else {
                     setcookie("mensaje", "fallo", time() + 10, '/');
                     header("location: caja.php");
+                    exit;
                 }
             }
         }
@@ -268,19 +276,19 @@ if ($_POST["pago"] === "trans") {
 
 
 
-                    setcookie("productos_caja", "", time() - 3600, "/");
-                    setcookie("cantidad_prod", "", time() - 3600, "/");
-                    setcookie("productos_caja", $productos_caja_json, time() + 3600, "/");
+
                     setcookie("mensaje", "exito", time() + 10, '/');
-                    //setcookie("productos_caja", "", time() - 3600, "/");
+
                     setcookie("imprimir", $imprimir, time() + 3600, "/");
 
-                    header("location: factura-crear.php");
+                    header("location: factura-movil-crear.php");
+                    exit;
 
 
                 } else {
                     setcookie("mensaje", "fallo", time() + 10, '/');
                     header("location: caja.php");
+                    exit;
                 }
             }
         }
@@ -355,15 +363,17 @@ if ($_POST["pago"] === "fiar") {
 
         if ($exito === "exito") {
 
-            setcookie("entrega_si", $restar_total, time() + 3600, "/");
+
             setcookie("mensaje", "exito", time() + 10, '/');
             setcookie("imprimir", $imprimir, time() + 3600, "/");
-            header("location: factura-crear.php");
+            header("location: factura-movil-crear.php");
+            exit;
 
 
         } else {
             setcookie("mensaje", "fallo", time() + 10, '/');
             header("location: caja.php");
+            exit;
         }
     }
 }
