@@ -88,6 +88,66 @@ $numero_deudores = 0;
         border-radius: 5px;
     }
     </style>
+    <style>
+    .contador-container {
+        font-weight: bold;
+        font-size: 1rem;
+        margin-left: 5vh;
+        color: gray;
+        text-decoration: underline;
+    }
+
+    .modal {
+        display: none;
+        /* Hidden by default */
+        position: fixed;
+        /* Stay in place */
+        z-index: 1;
+        /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%;
+        /* Full width */
+        height: 100%;
+        /* Full height */
+        overflow: auto;
+        /* Enable scroll if needed */
+        background-color: rgba(0, 0, 0, 0.4);
+        /* Fallback color */
+        background-color: rgba(0, 0, 0, 0.4);
+        /* Black w/ opacity */
+    }
+
+    /* Modal Content */
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        /* 15% from the top and centered */
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        /* Could be more or less, depending on screen size */
+    }
+
+    /* The Close Button */
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    #button-modal {
+        background-color: #4CAF50;
+    }
+    </style>
 
     <div class="body-container">
         <div class="container-cartas-fiado">
@@ -290,7 +350,7 @@ $numero_deudores = 0;
                         <option value="liquidar_total">Liquidar total de deuda</option>
                         <option value="entregar">Entrega</option>
                     </select>
-                    <button class="pay-button" type="submit">Pagar</button>
+                    <button class="pay-button" id="button-pay" type="submit">Pagar</button>
                 </form>
             </div>
             <?php }
@@ -304,6 +364,14 @@ $numero_deudores = 0;
         </div>
     </div>
 
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>¿Quiere completar el pago?.</p>
+            <button class="eliminar-btn-modals" id="button-modal">Eliminar</button>
+        </div>
+    </div>
+
     <footer class="footer py-5" style="min-width: 1200px !important;">
         <div class="container">
             <div class="row">
@@ -314,20 +382,67 @@ $numero_deudores = 0;
                     <p class="copyright-text text-center">
                         Diseñado por <a rel="nofollow" href="">Flavio Trocello</a>
                     </p>
-                    </di v>
-                    </di v>
                 </div>
-                </fo oter>
+            </div>
+        </div>
+    </footer>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Captura todos los elementos <p> con la clase 'eliminar'
+        const eliminarElements = document.querySelectorAll('.form-detalle');
+        eliminarElements.forEach((e) => console.log(e));
 
-                <script src="js/jquery-3.3.1.min.js"></script>
-                <script src="js/popper.min.js"></script>
-                <script src="js/bootstrap.min.js"></script>
-                <script src="js/Headroom.js"></script>
-                <script src="js/jQuery.headroom.js"></script>
-                <script src="js/owl.carousel.min.js"></script>
-                <script src="js/smoothscroll.js"></script>
-                <script src="js/custom.js"></script>
-                <script src="js/dark-mode.js"></script>
+        eliminarElements.forEach(function(eliminarElement) {
+            eliminarElement.addEventListener('submit', function(e) {
+                e.preventDefault();
+                // Obtén el id del elemento clickeado
+                const codigoBarra = this.id;
+                var modal = document.getElementById("myModal");
+                var span = document.getElementsByClassName("close")[0];
+
+                modal.style.display = "block";
+                // Cuando se hace clic en <span> (x), se cierra el modal
+                span.onclick = function() {
+                    modal.style.display = "none";
+                }
+                // Cuando se hace clic fuera del modal, se cierra
+                window.onclick = function(event) {
+                    if (event.target == modal) {
+                        modal.style.display = "none";
+                    }
+                }
+
+                Escucharbtneliminar(this)
+                // Redirige a eliminar-producto.php con el parámetro codigo_eliminar
+                // window.location.href = 'eliminar-producto-reparto.php?codigo_eliminar=' +
+                //     encodeURIComponent(codigoBarra);
+            });
+        });
+    });
+
+
+
+
+    function Escucharbtneliminar(evento) {
+        const btn_eliminar = document.getElementById("button-modal")
+        btn_eliminar.addEventListener("click", function() {
+            if (btn_eliminar) {
+                evento.submit();
+            }
+        })
+
+    }
+    </script>
+
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/Headroom.js"></script>
+    <script src="js/jQuery.headroom.js"></script>
+    <script src="js/owl.carousel.min.js"></script>
+    <script src="js/smoothscroll.js"></script>
+    <script src="js/custom.js"></script>
+    <script src="js/dark-mode.js"></script>
 </body>
 
 </html>

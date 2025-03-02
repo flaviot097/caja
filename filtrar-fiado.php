@@ -281,7 +281,7 @@ $nombre_cuenta_corriente = $_POST["nombre"];
                         <option value="liquidar_total">Liquidar total de deuda</option>
                         <option value="entregar">Entrega</option>
                     </select>
-                    <button class="pay-button" type="submit">Pagar</button>
+                    <button class="pay-button" id="button-pay" type="submit">Pagar</button>
                 </form>
             </div>
             <?php }
@@ -289,6 +289,14 @@ $nombre_cuenta_corriente = $_POST["nombre"];
                 }
             }
             ?>
+        </div>
+    </div>
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>¿Quiere eliminar este articulo del stock?.</p>
+            <button class="eliminar-btn-modals" id="button-modal">Eliminar</button>
         </div>
     </div>
 
@@ -302,20 +310,67 @@ $nombre_cuenta_corriente = $_POST["nombre"];
                     <p class="copyright-text text-center">
                         Diseñado por <a rel="nofollow" href="">Flavio Trocello</a>
                     </p>
-                    </di v>
-                    </di v>
                 </div>
-                </fo oter>
+            </div>
+        </div>
+    </footer>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Captura todos los elementos <p> con la clase 'eliminar'
+        const eliminarElements = document.querySelectorAll('#button-pay');
+        eliminarElements.forEach((e) => console.log(e));
 
-                <script src="js/jquery-3.3.1.min.js"></script>
-                <script src="js/popper.min.js"></script>
-                <script src="js/bootstrap.min.js"></script>
-                <script src="js/Headroom.js"></script>
-                <script src="js/jQuery.headroom.js"></script>
-                <script src="js/owl.carousel.min.js"></script>
-                <script src="js/smoothscroll.js"></script>
-                <script src="js/custom.js"></script>
-                <script src="js/dark-mode.js"></script>
+        eliminarElements.forEach(function(eliminarElement) {
+            eliminarElement.addEventListener('submit', function(e) {
+                e.preventDefault();
+                // Obtén el id del elemento clickeado
+                const codigoBarra = this.id;
+                var modal = document.getElementById("myModal");
+                var span = document.getElementsByClassName("close")[0];
+
+                modal.style.display = "block";
+                // Cuando se hace clic en <span> (x), se cierra el modal
+                span.onclick = function() {
+                    modal.style.display = "none";
+                }
+                // Cuando se hace clic fuera del modal, se cierra
+                window.onclick = function(event) {
+                    if (event.target == modal) {
+                        modal.style.display = "none";
+                    }
+                }
+
+                Escucharbtneliminar(this)
+                // Redirige a eliminar-producto.php con el parámetro codigo_eliminar
+                // window.location.href = 'eliminar-producto-reparto.php?codigo_eliminar=' +
+                //     encodeURIComponent(codigoBarra);
+            });
+        });
+    });
+
+
+
+
+    function Escucharbtneliminar(evento) {
+        const btn_eliminar = document.getElementById("button-modal")
+        btn_eliminar.addEventListener("click", function() {
+            if (btn_eliminar) {
+                evento.submit();
+            }
+        })
+
+    }
+    </script>
+
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/Headroom.js"></script>
+    <script src="js/jQuery.headroom.js"></script>
+    <script src="js/owl.carous.js"></script>
+    <script src="js/smoothscroll.js"></script>
+    <script src="js/custom.js"></script>
+    <script src="js/dark-mode.js"></script>
 </body>
 
 </html>
