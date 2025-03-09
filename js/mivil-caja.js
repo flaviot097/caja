@@ -161,6 +161,9 @@ document.addEventListener("DOMContentLoaded", () => {
         decuento_u: producto.decuento_u || 0,
         precio_sim: producto.precio_sim || producto.precioUnitario,
       }));
+      const product_total = document.getElementById("productos_total");
+      product_total.value = JSON.stringify(productosCookie);
+
       document.cookie =
         "productos_caja=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC";
       document.cookie = `productos_caja=${JSON.stringify(

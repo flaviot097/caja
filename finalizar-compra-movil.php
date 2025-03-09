@@ -6,6 +6,10 @@ $dni = $_POST["DNI"] ?? "";
 $nombre = $_POST["nombre_y_apelido"] ?? "";
 $url = $_POST["url"];
 
+
+$p_total = json_decode($_POST["productos_total"], true);
+
+
 $hoy = date("Y-m-d H:i:s");
 
 $local_reparto = "reparto";
@@ -19,7 +23,7 @@ $fecha_date = date("Y-m-d");
 
 // Conexión a la base de datos
 require_once "conecion.php";
-$dsn = "mysql:host=localhost;dbname=c2750631_codeBar;";
+//$dsn = "mysql:host=localhost;dbname=c2750631_codeBar;";
 $dsn = "mysql:host=localhost:3307;dbname=code_bar;";
 
 try {
@@ -29,8 +33,29 @@ try {
     echo $er->getMessage();
 }
 
-$productos_caja_entrega = json_decode($_COOKIE["productos_caja"], true);
 
+// $p_total_json = json_encode($_POST["productos_total"]);
+// echo "<script>
+//     localStorage.setItem('productos_caja', " . $p_total_json . ");
+//     </script>";
+
+//$productos_caja_entrega = json_decode($_COOKIE["productos_caja"], true);
+
+
+
+try {
+    $usuario_venta = $_COOKIE["usuario_caja"];
+    $consulta = "INSERT INTO temporal(productos,fecha, usuario) values(:productos, :fecha, :usuario)";
+    $stmtemporal = $pdo->prepare($consulta);
+    $stmtemporal->bindParam(":productos", $_POST["productos_total"], PDO::PARAM_STR);
+    $stmtemporal->bindParam(":fecha", $hoy, PDO::PARAM_STR);
+    $stmtemporal->bindParam(":usuario", $usuario_venta, PDO::PARAM_STR);
+    $stmtemporal->execute();
+
+} catch (Exception $e) {
+    echo $e->getMessage();
+    exit;
+}
 
 
 
@@ -43,7 +68,8 @@ if ($_POST["pago"] === "entrega") {
     $fecha = date("Y-m-d");
 
 
-    $productos_caja_entrega = json_decode($_COOKIE["productos_caja"], true);
+    $productos_caja_entrega = $p_total;
+
     foreach ($productos_caja_entrega as $value) {
         if ($value['codigo_barra'] !== "codigo de barra") {
             $cod = $value['codigo_barra'];
@@ -55,8 +81,6 @@ if ($_POST["pago"] === "entrega") {
             $existente1 = ($stmtconsulta_s->fetchAll())[0]["stock"];
             var_dump($existente1);
 
-
-            exit;
             $stock_nue = floatval($existente1) - floatval($cantidad_prod_s);
             $update_stock = "UPDATE producto SET stock=:stock WHERE codigo_barra=:codigo_barra";
             $stmtupdate_s = $pdo->prepare($update_stock);
@@ -70,8 +94,10 @@ if ($_POST["pago"] === "entrega") {
     }
 
 
-    $entrega_pago_mitad = "INSERT INTO ventas (reparto_o_local, total, fecha, tipo, usuario) VALUES (:reparto_o_local, :total, :fecha, :tipo, :usuario)";
-    $sql_entrega = "INSERT INTO fiado (dni,nombre_y_apellido,productos,saldo,cantidad,fecha) VALUES (:dni, :nombre_y_apellido, :productos ,:saldo,:cantidad,:fecha)";
+    $entrega_pago_mitad = "INSERT INTO ventas (reparto_o_local, total, fecha, tipo, usuario) VALUES (:reparto_o_local,
+:total, :fecha, :tipo, :usuario)";
+    $sql_entrega = "INSERT INTO fiado (dni,nombre_y_apellido,productos,saldo,cantidad,fecha) VALUES (:dni,
+:nombre_y_apellido, :productos ,:saldo,:cantidad,:fecha)";
     $stmt = $pdo->prepare($entrega_pago_mitad);
     $stmt->bindParam(':reparto_o_local', $local_reparto, PDO::PARAM_STR);
     $stmt->bindParam(':total', $restar_total, PDO::PARAM_INT);
@@ -115,7 +141,8 @@ if ($_POST["pago"] === "entrega") {
 
 
             } else {
-                $sql_fiado = "INSERT INTO fiado (dni,nombre_y_apellido,productos,cantidad,fecha) VALUES (:dni, :nombre_y_apellido, :productos ,:cantidad,:fecha)";
+                $sql_fiado = "INSERT INTO fiado (dni,nombre_y_apellido,productos,cantidad,fecha) VALUES (:dni, :nombre_y_apellido,
+:productos ,:cantidad,:fecha)";
 
                 $stmt2 = $pdo->prepare($sql_fiado);
                 $stmt2->bindParam(':dni', $dni, PDO::PARAM_STR);
@@ -155,7 +182,7 @@ if ($_POST["pago"] === "entrega") {
 if ($_POST["pago"] === "efectivo") {
 
     if (isset($_COOKIE['productos_caja'])) {
-        $productos_caja = json_decode($_COOKIE["productos_caja"], true);
+        $productos_caja = $p_total;
         foreach ($productos_caja as $value) {
             if ($value['codigo_barra'] !== "codigo de barra") {
                 $cod = $value['codigo_barra'];
@@ -180,7 +207,8 @@ if ($_POST["pago"] === "efectivo") {
             if ($value['nombre_producto'] !== "Producto") {
                 $local = "local";
                 $fecha = date("Y-m-d");
-                $sql = "INSERT INTO ventas (reparto_o_local, total, fecha, tipo ,usuario) VALUES (:reparto_o_local, :total, :fecha, :tipo ,:usuario)";
+                $sql = "INSERT INTO ventas (reparto_o_local, total, fecha, tipo ,usuario) VALUES (:reparto_o_local, :total, :fecha,
+:tipo ,:usuario)";
                 $stmt = $pdo->prepare($sql);
                 $stmt->bindParam(':reparto_o_local', $local_reparto, PDO::PARAM_STR);
                 $stmt->bindParam(':total', $value['total'], PDO::PARAM_INT);
@@ -228,7 +256,7 @@ if ($_POST["pago"] === "efectivo") {
 if ($_POST["pago"] === "trans") {
 
     if (isset($_COOKIE['productos_caja'])) {
-        $productos_caja = json_decode($_COOKIE["productos_caja"], true);
+        $productos_caja = $p_total;
         foreach ($productos_caja as $value) {
             if ($value['codigo_barra'] !== "codigo de barra") {
                 $cod = $value['codigo_barra'];
@@ -252,7 +280,8 @@ if ($_POST["pago"] === "trans") {
                 $local = "local";
                 $fecha = date("Y-m-d");
                 $vendedor = $_COOKIE["usuario_caja"];
-                $sql = "INSERT INTO ventas (reparto_o_local, total, fecha, tipo,usuario) VALUES (:reparto_o_local, :total, :fecha, :tipo, :usuario)";
+                $sql = "INSERT INTO ventas (reparto_o_local, total, fecha, tipo,usuario) VALUES (:reparto_o_local, :total, :fecha,
+:tipo, :usuario)";
                 $stmt = $pdo->prepare($sql);
                 $stmt->bindParam(':reparto_o_local', $local_reparto, PDO::PARAM_STR);
                 $stmt->bindParam(':total', $value['total'], PDO::PARAM_INT);
@@ -301,7 +330,7 @@ if ($_POST["pago"] === "fiar") {
     if (isset($_COOKIE['productos_caja'])) {
 
 
-        $productos_caja = json_decode($_COOKIE["productos_caja"], true);
+        $productos_caja = $p_total;
         $fecha = date("Y-m-d");
 
 
@@ -332,7 +361,8 @@ if ($_POST["pago"] === "fiar") {
         }
 
         $productos_fiado_json_str = json_encode($productos_fiado_json);
-        $sql = "INSERT INTO fiado (dni,nombre_y_apellido,productos,cantidad,fecha) VALUES (:dni, :nombre_y_apellido, :productos,:cantidad,:fecha)";
+        $sql = "INSERT INTO fiado (dni,nombre_y_apellido,productos,cantidad,fecha) VALUES (:dni, :nombre_y_apellido,
+:productos,:cantidad,:fecha)";
         $stmt = $pdo->prepare($sql);
         $saldo = 0;
         $imprimir;
@@ -384,7 +414,8 @@ function tablaRepartos($codigoproducto, $cantidad_producto, $conneccion)
     $hora = date("H:i:s");
 
 
-    $sql = "INSERT INTO reparto_reporte(fecha, codigoBarra, cantidad, hora) VALUES (:fecha, :codigoBarra, :cantidad , :hora)";
+    $sql = "INSERT INTO reparto_reporte(fecha, codigoBarra, cantidad, hora) VALUES (:fecha, :codigoBarra, :cantidad ,
+:hora)";
     $stmt = $conneccion->prepare($sql);
     $stmt->bindParam(':fecha', $dateTime, PDO::PARAM_STR);
     $stmt->bindParam(':codigoBarra', $codigoproducto, PDO::PARAM_STR);

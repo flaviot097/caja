@@ -39,6 +39,7 @@ require_once "validacion-usuario.php";
                 <input type="number" id="searchInput" placeholder="entrega..." name="entregar_plata">
                 <input type="hidden" id="searchInputTotal" class="total_movil" value="" name="total">
                 <input type="hidden" id="searchInput" value="movil" name="url">
+                <input type="hidden" id="productos_total" value="" name="productos_total">
                 <select name="pago" id="searchInput">
                     <option value="efectivo" class="option-efectivo">💵 Efectivo</option>
                     <option value="trans" class="option-tarjeta">💳 Tarjeta</option>

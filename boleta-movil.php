@@ -22,6 +22,33 @@ if (isset($_COOKIE["entrega_si"])) {
 <!DOCTYPE html>
 <html lang="es">
 
+<?php
+require_once "conecion.php";
+//$dsn = "mysql:host=localhost;dbname=c2750631_codeBar;";
+$dsn = "mysql:host=localhost:3307;dbname=code_bar;";
+
+try {
+    $pdo = new PDO($dsn, $usuario, $contrasena);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $er) {
+    echo $er->getMessage();
+}
+
+$productos_caja;
+
+try {
+    $usuario_venta = $_COOKIE["usuario_caja"];
+    $consulta = "SELECT * FROM temporal WHERE usuario=:usuario";
+    $stmtemporal = $pdo->prepare($consulta);
+    $stmtemporal->bindParam(":usuario", $usuario_venta, PDO::PARAM_STR);
+    $stmtemporal->execute();
+    $productos_caja = $stmtemporal->fetchAll(PDO::FETCH_ASSOC)[0]["productos"];
+
+} catch (PDOException $er) {
+    echo $er->getMessage();
+}
+?>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -43,7 +70,7 @@ if (isset($_COOKIE["descuentos"])) {
     $descuento = $_COOKIE["descuentos"];
 }
 $total = 0;
-$productos_caja = json_decode($_COOKIE["productos_caja"], true);
+$productos_caja = json_decode($productos_caja, true);
 ?>
 
 <style>
@@ -323,4 +350,17 @@ $dompdf->setPaper('custom', 'portrait');
 $dompdf->render();
 
 // Mostrar el PDF en el navegador
-$dompdf->stream("factura_pdf", array("Attachment" => false)); ?>
+$dompdf->stream("factura_pdf", array("Attachment" => false));
+
+try {
+    $usuario_venta = $_COOKIE["usuario_caja"];
+    $consulta = "DELETE FROM temporal WHERE usuario=:usuario";
+    $stmtemporal = $pdo->prepare($consulta);
+    $stmtemporal->bindParam(":usuario", $usuario_venta, PDO::PARAM_STR);
+    $stmtemporal->execute();
+
+} catch (PDOException $er) {
+    echo $er->getMessage();
+}
+
+?>

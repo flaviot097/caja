@@ -134,8 +134,8 @@ $pago = $json[1];
         <h1>En qué formato desea imprimir</h1>
         <div class="print-options">
             <p>:</p>
-            <a href="boleta.php" class="button">A4</a>
-            <a href="boleta4.php" class="button">Mini impresora</a>
+            <a href="boleta-movil.php" class="button">A4</a>
+            <a href="boleta-movil4.php" class="button">Mini impresora</a>
         </div>
 
         <div class="table-container">
