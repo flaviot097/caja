@@ -257,4 +257,16 @@ $dompdf->setPaper("A4", 'portrait');
 $dompdf->render();
 
 // Mostrar el PDF en el navegador
-$dompdf->stream("factura_pdf", array("Attachment" => false)); ?>
+$dompdf->stream("factura_pdf", array("Attachment" => false));
+
+try {
+    $usuario_venta = $_COOKIE["usuario_caja"];
+    $consulta = "DELETE FROM temporal WHERE usuario=:usuario";
+    $stmtemporal = $pdo->prepare($consulta);
+    $stmtemporal->bindParam(":usuario", $usuario_venta, PDO::PARAM_STR);
+    $stmtemporal->execute();
+
+} catch (PDOException $er) {
+    echo $er->getMessage();
+}
+?>

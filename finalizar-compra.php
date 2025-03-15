@@ -183,6 +183,7 @@ if ($_POST["pago"] === "efectivo") {
 
     if (isset($_SESSION["productos_caja"])) {
         $productos_caja = $_SESSION["productos_caja"];
+
         foreach ($productos_caja as $value) {
             if ($value['codigo_barra'] !== "codigo de barra") {
                 $cod = $value['codigo_barra'];
@@ -236,7 +237,7 @@ if ($_POST["pago"] === "efectivo") {
                     //setcookie("productos_caja", "", time() - 3600, "/");
                     setcookie("mensaje", "exito", time() + 10, '/');
                     setcookie("imprimir", $imprimir, time() + 3600, "/");
-                    header("location: factura-crear.php");
+
 
 
                 } else {
@@ -245,6 +246,7 @@ if ($_POST["pago"] === "efectivo") {
                 }
             }
         }
+        header("location: factura-crear.php");
     }
 }
 

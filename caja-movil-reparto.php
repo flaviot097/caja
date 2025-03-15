@@ -10,6 +10,24 @@ require_once "validacion-usuario.php";
     <title>Caja Registradora Móvil</title>
     <link rel="stylesheet" href="./css/movil.css">
 </head>
+<style>
+#resultados {
+
+    border: 1px solid #ccc;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
+.resultado-item {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.resultado-item:hover {
+    background-color: #f0f0f0;
+}
+</style>
 
 <body>
     <div class="reportes"><a class="atexto" href="caja-reparto.php">Atras</a></div>
@@ -17,6 +35,7 @@ require_once "validacion-usuario.php";
         <h1>Caja Registradora</h1>
         <div class="form-container">
             <input type="text" id="nombreProducto" placeholder="Nombre del producto" required>
+            <div id="resultados"></div>
             <input type="text" id="codigoBarras" placeholder="Código de barras" autofocus required>
             <input type="number" id="cantidad" placeholder="Cantidad" value="1" required>
             <label for="Descuento total">Descuento a total (%)</label>
@@ -51,6 +70,8 @@ require_once "validacion-usuario.php";
         </div>
     </div>
     <script src="./js/mivil-caja.js"></script>
+    <script src="./js/coneccion_api.js"></script>
+
 </body>
 
 </html>

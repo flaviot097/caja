@@ -1,14 +1,16 @@
 <?php
 session_start();
-
-if (empty($_SESSION["usuario"])) {
-    header("location: index.php");
-}
+require_once 'validacion-usuario.php';
 
 require_once "conecion.php";
 require_once "delete-element.php";
 //require_once "cargar_cookie.php";
+if (empty($_SESSION["usuario"])) {
+    header("location: index.php");
+}
 $url = $_SERVER['REQUEST_URI'];
+
+
 if (!empty($_COOKIE["fiados_todos"])) {
     setcookie("fiados_todos", "", time() - 3600, "/");
 }
@@ -26,10 +28,9 @@ try {
     exit;
 }
 
-// Función para eliminar un producto de la cookie
-if (isset($_GET['eliminar']) && isset($_COOKIE["productos_caja"])) {
+if (isset($_GET['eliminar']) && isset($_SESSION["productos_caja"])) {
     $eliminar_codigo = $_GET['eliminar'];
-    $productos_caja = json_decode($_COOKIE["productos_caja"], true);
+    $productos_caja = $_SESSION["productos_caja"];
 
 
 
@@ -47,17 +48,15 @@ if (isset($_GET['eliminar']) && isset($_COOKIE["productos_caja"])) {
 
     /////////////// cantidad indice
     $cantidad_eliminar = intval($_GET["indice_cantidad"]);
-    $cant_pro_caja = json_decode($_COOKIE["cantidad_prod"], true);
+    $cant_pro_caja = $_SESSION["cantidad_prod"] ?? [];
     unset($cant_pro_caja[$cantidad_eliminar]);
     $cant_pro_caja = array_values($cant_pro_caja);
-    $pdc = json_encode($cant_pro_caja);
-    setcookie("cantidad_prod", $pdc, time() + 3600, "/");
+    $_SESSION["cantidad_prod"] = $cant_pro_caja;
 
 
 
     // Actualizar la cookie con la lista de productos modificada
-    $productos_caja_json = json_encode($productos_actualizados);
-    setcookie("productos_caja", $productos_caja_json, time() + 3600, "/");
+    $_SESSION["productos_caja"] = $productos_actualizados;
     header('Location: ' . $_SERVER['PHP_SELF']);
     exit;
 }
@@ -68,19 +67,26 @@ if ($_GET) {
     $codigo = $_GET['codigo'] ?? '';
     $cantidad = $_GET['cantidad'] ?? 1;
     $descuento = $_GET["descuento"] ?? 0;
+    $descuento_unitario = $_GET["descuento_prod"] ?? "";
+    $descuento_uni = 1;
+
+
+    if ($descuento_unitario !== "") {
+        $descuento_uni = floatval(intval($descuento_unitario) / 100);
+    }
 
     //descuento
     if ($descuento !== 0) {
         $N_desc = "0." . $descuento;
-        setcookie("descuentos", $N_desc, time() + 3600, "/");
+        $_SESSION["descuentos"] = $N_desc;
     }
 
     // Verificar si la cookie "cantidad_prod" existe
-    if (!isset($_COOKIE["cantidad_prod"])) {
+    if (!isset($_SESSION["cantidad_prod"])) {
         $lista_c_c = [];
     } else {
         // Decodificar el valor de la cookie existente
-        $lista_c_c = json_decode($_COOKIE["cantidad_prod"], true);
+        $lista_c_c = $_SESSION["cantidad_prod"];
 
         // Asegurarse de que la variable sea un array
         if (!is_array($lista_c_c)) {
@@ -91,8 +97,7 @@ if ($_GET) {
     $lista_c_c[] = $cantidad;
 
     // Codificar el array y guardar en la cookie
-    $lista_c_c_json = json_encode($lista_c_c);
-    setcookie("cantidad_prod", $lista_c_c_json, time() + 3600, "/");
+    $_SESSION["cantidad_prod"] = $lista_c_c;
     ########################
 
 
@@ -117,27 +122,39 @@ if ($_GET) {
     }
 
     if (!empty($results)) {
-        $list = [
-            'nombre_producto' => $results[0]["nombre_producto"],
-            'precio' => $results[0]['precio'],
-            'codigo_barra' => $results[0]['codigo_barra'],
-            'cantidad' => $cantidad,
-            'total' => floatval($results[0]['precio']) * $cantidad
-        ];
+        $list;
+        if ($descuento_unitario !== "") {
 
-        if (isset($_COOKIE["productos_caja"])) {
-            $productos_caja = json_decode($_COOKIE["productos_caja"], true);
+            $list = [
+                'nombre_producto' => $results[0]["nombre_producto"],
+                'precio' => $results[0]['precio'] - ($results[0]['precio'] * $descuento_uni),
+                'codigo_barra' => $results[0]['codigo_barra'],
+                'cantidad' => $cantidad,
+                'total' => floatval($results[0]['precio'] - ($results[0]['precio'] * $descuento_uni)) * $cantidad,
+                "decuento_u" => $descuento_unitario,
+                "precio_sim" => $results[0]['precio']
+            ];
+        } else {
+            $list = [
+                'nombre_producto' => $results[0]["nombre_producto"],
+                'precio' => $results[0]['precio'] * $descuento_uni,
+                'codigo_barra' => $results[0]['codigo_barra'],
+                'cantidad' => $cantidad,
+                'total' => floatval($results[0]['precio'] * $descuento_uni) * $cantidad,
+            ];
+        }
+
+        if (isset($_SESSION["productos_caja"])) {
+            $productos_caja = $_SESSION["productos_caja"];
             $productos_caja[] = $list;
-            $productos_caja_json = json_encode($productos_caja);
-            setcookie("productos_caja", $productos_caja_json, time() + 3600, "/");
+            $_SESSION["productos_caja"] = $productos_caja;
             //
 
             header('Location: ' . $_SERVER['PHP_SELF']);
             exit;
         } else {
             $productos_caja = [$list];
-            $productos_caja_json = json_encode($productos_caja);
-            setcookie("productos_caja", $productos_caja_json, time() + 3600, "/");
+            $_SESSION["productos_caja"] = $productos_caja;
             //
             header('Location: ' . $_SERVER['PHP_SELF']);
             exit;
@@ -149,8 +166,8 @@ if ($_GET) {
 }
 
 // Cargar productos desde la cookie
-if (isset($_COOKIE["productos_caja"])) {
-    $productos_caja = json_decode($_COOKIE["productos_caja"], true);
+if (isset($_SESSION["productos_caja"])) {
+    $productos_caja = $_SESSION["productos_caja"];
 } else {
     $productos_caja = [];
 }

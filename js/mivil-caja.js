@@ -164,11 +164,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const product_total = document.getElementById("productos_total");
       product_total.value = JSON.stringify(productosCookie);
 
-      document.cookie =
-        "productos_caja=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC";
-      document.cookie = `productos_caja=${JSON.stringify(
-        productosCookie
-      )}; path=/; max-age=3600`;
+      // document.cookie =
+      //   "productos_caja=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+      // document.cookie = `productos_caja=${JSON.stringify(
+      //   productosCookie
+      // )}; path=/; max-age=3600`;
       productos = [];
       total = 0;
       totalVenta.textContent = "0.00";
