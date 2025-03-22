@@ -47,64 +47,64 @@ $todosProveedores = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="css/tooplate-style.css" />
 </head>
 <style>
-.contador-container {
-    font-weight: bold;
-    font-size: 1rem;
-    margin-left: 5vh;
-    color: gray;
-    text-decoration: underline;
-}
+    .contador-container {
+        font-weight: bold;
+        font-size: 1rem;
+        margin-left: 5vh;
+        color: gray;
+        text-decoration: underline;
+    }
 
-.modal {
-    display: none;
-    /* Hidden by default */
-    position: fixed;
-    /* Stay in place */
-    z-index: 1;
-    /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%;
-    /* Full width */
-    height: 100%;
-    /* Full height */
-    overflow: auto;
-    /* Enable scroll if needed */
-    background-color: rgba(0, 0, 0, 0.4);
-    /* Fallback color */
-    background-color: rgba(0, 0, 0, 0.4);
-    /* Black w/ opacity */
-}
+    .modal {
+        display: none;
+        /* Hidden by default */
+        position: fixed;
+        /* Stay in place */
+        z-index: 1;
+        /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%;
+        /* Full width */
+        height: 100%;
+        /* Full height */
+        overflow: auto;
+        /* Enable scroll if needed */
+        background-color: rgba(0, 0, 0, 0.4);
+        /* Fallback color */
+        background-color: rgba(0, 0, 0, 0.4);
+        /* Black w/ opacity */
+    }
 
-/* Modal Content */
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    /* 15% from the top and centered */
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    /* Could be more or less, depending on screen size */
-}
+    /* Modal Content */
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        /* 15% from the top and centered */
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        /* Could be more or less, depending on screen size */
+    }
 
-/* The Close Button */
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
+    /* The Close Button */
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
 
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
 
-#button-modal {
-    background-color: #4CAF50;
-}
+    #button-modal {
+        background-color: #4CAF50;
+    }
 </style>
 
 <body>
@@ -178,9 +178,9 @@ $todosProveedores = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <select name="proveedor" id="usaer" class="form-control">
                 <option value="">Seleccione proveedor</option>
                 <?php foreach ($todosProveedores as $selectproveedor) { ?>
-                <option value="<?php echo $selectproveedor["proveedor"]; ?>">
-                    <?php echo $selectproveedor["proveedor"]; ?>
-                </option>
+                    <option value="<?php echo $selectproveedor["proveedor"]; ?>">
+                        <?php echo $selectproveedor["proveedor"]; ?>
+                    </option>
                 <?php }
                 $total = 0;
                 ?>
@@ -213,13 +213,15 @@ $todosProveedores = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         style="cursor: pointer;">Editar por Departamento</a>
                     <a href="template-backup.php" class="btn checkout-btn" id="btnFiltrar-menor"
                         style="cursor: pointer;">Backup</a>
+                    <a href="generar-code-bar-anual.php" class="btn checkout-btn" id="btnFiltrar-menor"
+                        style="cursor: pointer;">Borrar registros anuales</a>
                     <a href="generar-code-bar.php" class="btn checkout-btn" id="btnFiltrar-menor"
                         style="cursor: pointer;">Crear C.Barra</a>
                     <a href="cargar-masivamente-local.php" class="btn checkout-btn" id="btnFiltrar-menor"
                         style="cursor: pointer; margin-top: 2.3px">Cargar Masivamente</a>
                     <?php if ($_COOKIE["usuario_caja"] == "a") { ?>
-                    <a href="crear_usuario.php" class="btn checkout-btn" id="btnFiltrar-menor"
-                        style="cursor: pointer; margin-top: 2.3px">Crear usuario</a>
+                        <a href="crear_usuario.php" class="btn checkout-btn" id="btnFiltrar-menor"
+                            style="cursor: pointer; margin-top: 2.3px">Crear usuario</a>
                     <?php } ?>
 
                 </div>
@@ -367,66 +369,66 @@ $todosProveedores = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </footer>
     <script src="js/jquery-3.3.1.min.js"></script>
     <script>
-    $(document).ready(function() {
-        if ($(window).width() <= 768) {
-            $('#sidebar').addClass('collapse');
-        }
-
-        $(window).resize(function() {
+        $(document).ready(function () {
             if ($(window).width() <= 768) {
                 $('#sidebar').addClass('collapse');
-            } else {
-                $('#sidebar').removeClass('collapse');
             }
-        });
-    });
-    </script>
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Captura todos los elementos <p> con la clase 'eliminar'
-        const eliminarElements = document.querySelectorAll('.eliminate-prod');
 
-
-        eliminarElements.forEach(function(eliminarElement) {
-            eliminarElement.addEventListener('submit', function(e) {
-                e.preventDefault();
-                // Obtén el id del elemento clickeado
-                const codigoBarra = this.id;
-                var modal = document.getElementById("myModal");
-                var span = document.getElementsByClassName("close")[0];
-
-                modal.style.display = "block";
-                // Cuando se hace clic en <span> (x), se cierra el modal
-                span.onclick = function() {
-                    modal.style.display = "none";
+            $(window).resize(function () {
+                if ($(window).width() <= 768) {
+                    $('#sidebar').addClass('collapse');
+                } else {
+                    $('#sidebar').removeClass('collapse');
                 }
-                // Cuando se hace clic fuera del modal, se cierra
-                window.onclick = function(event) {
-                    if (event.target == modal) {
-                        modal.style.display = "none";
-                    }
-                }
-
-                Escucharbtneliminar(this)
-                // Redirige a eliminar-producto.php con el parámetro codigo_eliminar
-                // window.location.href = 'eliminar-producto-reparto.php?codigo_eliminar=' +
-                //     encodeURIComponent(codigoBarra);
             });
         });
-    });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Captura todos los elementos <p> con la clase 'eliminar'
+            const eliminarElements = document.querySelectorAll('.eliminate-prod');
+
+
+            eliminarElements.forEach(function (eliminarElement) {
+                eliminarElement.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    // Obtén el id del elemento clickeado
+                    const codigoBarra = this.id;
+                    var modal = document.getElementById("myModal");
+                    var span = document.getElementsByClassName("close")[0];
+
+                    modal.style.display = "block";
+                    // Cuando se hace clic en <span> (x), se cierra el modal
+                    span.onclick = function () {
+                        modal.style.display = "none";
+                    }
+                    // Cuando se hace clic fuera del modal, se cierra
+                    window.onclick = function (event) {
+                        if (event.target == modal) {
+                            modal.style.display = "none";
+                        }
+                    }
+
+                    Escucharbtneliminar(this)
+                    // Redirige a eliminar-producto.php con el parámetro codigo_eliminar
+                    // window.location.href = 'eliminar-producto-reparto.php?codigo_eliminar=' +
+                    //     encodeURIComponent(codigoBarra);
+                });
+            });
+        });
 
 
 
 
-    function Escucharbtneliminar(evento) {
-        const btn_eliminar = document.getElementById("button-modal")
-        btn_eliminar.addEventListener("click", function() {
-            if (btn_eliminar) {
-                evento.submit();
-            }
-        })
+        function Escucharbtneliminar(evento) {
+            const btn_eliminar = document.getElementById("button-modal")
+            btn_eliminar.addEventListener("click", function () {
+                if (btn_eliminar) {
+                    evento.submit();
+                }
+            })
 
-    }
+        }
     </script>
 
 
