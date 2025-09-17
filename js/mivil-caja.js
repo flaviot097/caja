@@ -101,6 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
     lista.innerHTML = "";
     productos.forEach((producto, index) => {
       const li = document.createElement("li");
+      li.className = "itemLista";
       let contenido = `
         ${producto.nombre_producto} (${
         producto.cantidad

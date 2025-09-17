@@ -21,6 +21,21 @@ $stok_reparto = floatval($_POST["stock_reparto"]) ?? 0;
 $sumaporcentaje = intval($costo * $ganancia / 100);
 $precio = intval($costo) + $sumaporcentaje;
 $fecha = date("Y-m-d");
+$sector = $_POST["sector"];
+
+$consultaSectores = "INSERT INTO productos_index_sectores (sector_id ,codigo_barra)  VALUES (:id,:cod)";
+if ($sector !== "-") {
+    $stmtSector = $pdo->prepare($consultaSectores);
+    $stmtSector->bindParam(':id', $sector, PDO::PARAM_INT);
+    $stmtSector->bindParam(':cod', $codigo_barra, PDO::PARAM_STR);
+    if ($stmtSector->execute()) {
+        $sectorId = $stmtSector->fetchColumn();
+    } else {
+        echo "Error al obtener el ID del sector.";
+        exit;
+    }
+}
+
 
 $query = "INSERT INTO producto (nombre_producto, precio, codigo_barra, departamento, proveedor, stock, costo, ganancia, num_stock, fecha) 
           VALUES (:nombre_producto, :precio, :codigo_barra, :departamento, :proveedor, :stock, :costo, :ganancia, :num_stock, :fecha)";

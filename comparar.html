@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Comparar JSONs - Datos Faltantes</title>
+  </head>
+  <body>
+    <h1>Comparar JSONs - Datos Faltantes</h1>
+
+    <div>
+      <label for="json1">Seleccionar archivo JSON 1:</label>
+      <input type="file" id="json1" accept=".json" />
+    </div>
+
+    <div>
+      <label for="json2">Seleccionar archivo JSON 2:</label>
+      <input type="file" id="json2" accept=".json" />
+    </div>
+
+    <button onclick="compararJSONs()">Comparar JSONs</button>
+
+    <h2>Datos Faltantes en JSON 1 (Comparado con JSON 2):</h2>
+    <div id="faltantes1"></div>
+
+    <h2>Datos Faltantes en JSON 2 (Comparado con JSON 1):</h2>
+    <div id="faltantes2"></div>
+
+    <script>
+      function compararJSONs() {
+        const fileInput1 = document.getElementById("json1");
+        const fileInput2 = document.getElementById("json2");
+        const faltantes1Div = document.getElementById("faltantes1");
+        const faltantes2Div = document.getElementById("faltantes2");
+
+        const file1 = fileInput1.files[0];
+        const file2 = fileInput2.files[0];
+
+        if (!file1 || !file2) {
+          faltantes1Div.innerText =
+            "Por favor, selecciona ambos archivos JSON.";
+          faltantes2Div.innerText = "";
+          return;
+        }
+
+        const reader1 = new FileReader();
+        const reader2 = new FileReader();
+
+        reader1.onload = function (e1) {
+          try {
+            const jsonData1 = JSON.parse(e1.target.result);
+            reader2.onload = function (e2) {
+              try {
+                const jsonData2 = JSON.parse(e2.target.result);
+                compararYMostrarFaltantes(
+                  jsonData1,
+                  jsonData2,
+                  faltantes1Div,
+                  faltantes2Div
+                );
+              } catch (error) {
+                faltantes2Div.innerText =
+                  "Error al parsear JSON 2: " + error.message;
+              }
+            };
+            reader2.onerror = function (error) {
+              faltantes2Div.innerText =
+                "Error al leer archivo JSON 2: " + error.message;
+            };
+            reader2.readAsText(file2);
+          } catch (error) {
+            faltantes1Div.innerText =
+              "Error al parsear JSON 1: " + error.message;
+          }
+        };
+
+        reader1.onerror = function (error) {
+          faltantes1Div.innerText =
+            "Error al leer archivo JSON 1: " + error.message;
+        };
+
+        reader1.readAsText(file1);
+      }
+
+      function compararYMostrarFaltantes(
+        json1,
+        json2,
+        faltantes1Div,
+        faltantes2Div
+      ) {
+        const datos1 = Array.isArray(json1)
+          ? json1
+          : json1 && json1["Formulario"]
+          ? json1["Formulario"]
+          : [];
+        const datos2 = Array.isArray(json2)
+          ? json2
+          : json2 && json2["Formulario"]
+          ? json2["Formulario"]
+          : [];
+
+        const faltantesEn1 = datos2.filter(
+          (item2) =>
+            !datos1.some(
+              (item1) =>
+                String(item1).toLowerCase() === String(item2).toLowerCase()
+            )
+        );
+        const faltantesEn2 = datos1.filter(
+          (item1) =>
+            !datos2.some(
+              (item2) =>
+                String(item1).toLowerCase() === String(item2).toLowerCase()
+            )
+        );
+
+        mostrarResultados(faltantesEn1, faltantes1Div, "en JSON 1");
+        mostrarResultados(faltantesEn2, faltantes2Div, "en JSON 2");
+      }
+
+      function mostrarResultados(faltantes, elementoDiv, nombreJSON) {
+        elementoDiv.innerHTML = "";
+        if (faltantes.length > 0) {
+          elementoDiv.innerHTML += `Los siguientes datos están en el otro JSON pero no ${nombreJSON}:<br>`;
+          faltantes.forEach((dato) => {
+            elementoDiv.innerHTML += ` ${dato}<br>`;
+          });
+        } else {
+          elementoDiv.innerText = `No se encontraron datos faltantes ${nombreJSON} comparado con el otro JSON.`;
+        }
+      }
+    </script>
+  </body>
+</html>

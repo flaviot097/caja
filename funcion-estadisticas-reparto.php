@@ -19,12 +19,40 @@ if ($result->num_rows > 0) {
             $color = "red";
         }
         ;
+        $dsn = 'mysql:host=localhost:3307;dbname=code_bar;';
+        try {
+            $pdo = new PDO($dsn, $usuario, $contrasena);
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (PDOException $e) {
+            echo 'error al conectarse: ' . $e->getMessage();
+            exit;
+        }
+        $sectorP = "";
+        $consultaID = "SELECT sector_id FROM productos_index_sectores WHERE codigo_barra = :codigo_barra";
+        $stmtID = $pdo->prepare($consultaID);
+        $stmtID->bindParam(':codigo_barra', $item["codigo_barra"], PDO::PARAM_STR);
+        $sectorId = $stmtID->execute();
+        $sectorId = $stmtID->fetchAll(PDO::FETCH_ASSOC);
+        if (count($sectorId) > 0) {
+            $consultaSectores = "SELECT nombre_sector FROM sectores WHERE id = :id_s";
+            $sec = $sectorId[0]["sector_id"];
+            $stmtc = $pdo->prepare($consultaSectores);
+            $stmtc->bindParam(':id_s', $sec, PDO::PARAM_INT);
+            if ($stmtc->execute()) {
+                $sectorP = $stmtc->fetchAll(PDO::FETCH_ASSOC)[0]["nombre_sector"];
+            }
+        } else {
+            $sectorP = "Sin sector";
+        }
+        ;
 
         echo "<div class='producto-stock' id=" . $item["codigo_barra"] . ">
 <a href='#' class='btn btn-primary btn-sm d-inline-flex align-items-center'>" . $item["nombre_producto"] . "<h6
         class='codigo-producto' id='codigo-producto'>codigo de producto: " . $item["codigo_barra"] . "</h6>
     <h6 class='cantidad-producto " . $color . "' id='cantidad-producto' name=" . $item["stock"] . "> Cantidad:" . $item["stock"] . " Unidades
     <h6 class='codigo-producto' id='proveedor-producto' name='proveedor'>Proveedor :" . $item["proveedor"] . "</h6>
+        <span class='codigo-producto sector' id='depto-producto' name='sector'>" . $sectorP . "</span>
+    </span>
     <h6 class='codigo-producto' id='depto-producto' name='dpartamento'>" . $item["departamento"] . "</h6>
     </h6>
     <h6 class='codigo-producto' id='costo-producto' name='costo'>costo: $" . $item["costo"] . "</h6>

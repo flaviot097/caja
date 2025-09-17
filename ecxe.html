@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Comparar Columnas Excel</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  </head>
+  <body>
+    <h1>Comparar Columnas Excel</h1>
+    <input type="file" id="archivoExcel" accept=".xlsx, .xls" />
+    <button onclick="comparar()">Comparar</button>
+    <div id="resultados"></div>
+
+    <script>
+      function comparar() {
+        const archivoInput = document.getElementById("archivoExcel");
+        const resultadosDiv = document.getElementById("resultados");
+        const archivo = archivoInput.files[0];
+
+        if (!archivo) {
+          resultadosDiv.innerText = "Por favor, selecciona un archivo Excel.";
+          return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: "array" });
+
+          // Asume que los datos están en la primera hoja
+          const primeraHojaNombre = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[primeraHojaNombre];
+
+          const columnaFormularioLetra = prompt(
+            "Ingrese la letra de la columna 'Formulario':"
+          ).toUpperCase();
+          const columnaKeyMenLetra = prompt(
+            "Ingrese la letra de la columna 'key_men':"
+          ).toUpperCase();
+
+          if (!columnaFormularioLetra || !columnaKeyMenLetra) {
+            resultadosDiv.innerText =
+              "Por favor, ingrese las letras de las columnas.";
+            return;
+          }
+
+          const datosFormulario = obtenerColumna(
+            worksheet,
+            columnaFormularioLetra
+          ).map((valor) => valor.toLowerCase());
+          const datosKeyMen = obtenerColumna(worksheet, columnaKeyMenLetra).map(
+            (valor) => valor.toLowerCase()
+          );
+
+          const unicosEnKeyMen = datosKeyMen.filter(
+            (keyMen) => !datosFormulario.includes(keyMen)
+          );
+
+          resultadosDiv.innerHTML = ""; // Limpiar resultados anteriores
+          if (unicosEnKeyMen.length > 0) {
+            resultadosDiv.innerHTML +=
+              "Datos encontrados en la columna '" +
+              columnaKeyMenLetra +
+              "' que no están en la columna '" +
+              columnaFormularioLetra +
+              "' (sin distinguir mayúsculas/minúsculas):<br>";
+            unicosEnKeyMen.forEach((dato) => {
+              resultadosDiv.innerHTML += "- " + dato + "<br>";
+            });
+          } else {
+            resultadosDiv.innerText =
+              "No se encontraron datos en la columna '" +
+              columnaKeyMenLetra +
+              "' que no estén en la columna '" +
+              columnaFormularioLetra +
+              "' (sin distinguir mayúsculas/minúsculas).";
+          }
+        };
+
+        reader.onerror = function (error) {
+          resultadosDiv.innerText = "Error al leer el archivo: " + error;
+        };
+
+        reader.readAsArrayBuffer(archivo);
+      }
+
+      function obtenerColumna(worksheet, columnaLetra) {
+        const datos = [];
+        let fila = 1;
+        let celda = worksheet[columnaLetra + fila];
+        while (celda) {
+          const valor = celda.v ? String(celda.v).trim() : "";
+          if (valor) {
+            datos.push(valor);
+          }
+          fila++;
+          celda = worksheet[columnaLetra + fila];
+        }
+        return datos;
+      }
+    </script>
+  </body>
+</html>

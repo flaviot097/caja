@@ -86,6 +86,12 @@ if (empty($_SESSION["usuario"])) {
 #button-modal {
     background-color: #4CAF50;
 }
+
+.sector {
+    background-color: #3c6d3dff !important;
+    border-radius: 3px;
+
+}
 </style>
 
 <body>
@@ -270,11 +276,31 @@ if (empty($_SESSION["usuario"])) {
                                     $color = "red";
                                 }
                                 ;
+                                $sectorP = "";
+                                $consultaID = "SELECT sector_id FROM productos_index_sectores WHERE codigo_barra = :codigo_barra";
+                                $stmtID = $pdoConeccion->prepare($consultaID);
+                                $stmtID->bindParam(':codigo_barra', $item["codigo_barra"], PDO::PARAM_STR);
+                                $sectorId = $stmtID->execute();
+                                $sectorId = $stmtID->fetchAll(PDO::FETCH_ASSOC);
+                                var_dump($sectorId);
+                                if (count($sectorId) > 0) {
+                                    $consultaSectores = "SELECT id , nombre_sector WHERE id = :id";
+                                    $stmtID = $pdoConeccion->prepare($consultaSectores);
+                                    $stmtID->bindParam(':id', $sectorId, PDO::PARAM_INT);
+                                    $stmtID->execute();
+                                    $sectorP = $stmtID->fetchAll(PDO::FETCH_ASSOC);
+                                } else {
+                                    $sectorP = "Sin sector";
+                                }
+                                ;
+
                                 echo "<div class='producto-stock' id=" . $item["codigo_barra"] . ">
 <a href='#' class='btn btn-primary btn-sm d-inline-flex align-items-center'>" . $item["nombre_producto"] . "<h6
         class='codigo-producto' id='codigo-producto'>codigo de producto: " . $item["codigo_barra"] . "</h6>
-    <h6 class='cantidad-producto " . $color . "' id='cantidad-producto' name=" . $item["stock"] . "> Cantidad:" . $item["stock"] . " Unidades
+    <span class='cantidad-producto " . $color . "' id='cantidad-producto' name=" . $item["stock"] . "> Cantidad:" . $item["stock"] . " Unidades
     <h6 class='codigo-producto' id='proveedor-producto' name='proveedor'>Proveedor :" . $item["proveedor"] . "</h6>
+    <span class='codigo-producto' id='depto-producto' name='sector'>" . $sectorP . "</span>
+    </span>
     <h6 class='codigo-producto' id='depto-producto' name='dpartamento'>" . $item["departamento"] . "</h6>
     </h6>
     <h6 class='codigo-producto' id='costo-producto' name='costo'>costo: $" . $item["costo"] . "</h6>

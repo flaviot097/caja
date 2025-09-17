@@ -25,6 +25,45 @@ $ganancia = $resultados[0]["ganancia"];
 $num_stock = $resultados[0]["num_stock"];
 $fecha = date("Y-m-d");
 
+$sector = $_POST["sector"];
+if ($sector !== "-" && $sector !== "" && $sector !== null && $sector !== 0) {
+    $consultaSectores = "INSERT INTO productos_index_sectores (sector_id ,codigo_barra)  VALUES (:id,:cod)";
+    $consultaID = "SELECT * FROM productos_index_sectores WHERE codigo_barra = :codigo_barra";
+    $stmtID = $pdo->prepare($consultaID);
+    $stmtID->bindParam(':codigo_barra', $codigo_barra_v, PDO::PARAM_STR);
+    if ($stmtID->execute()) {
+        $count = $stmtID->fetchColumn();
+        if ($count > 0) {
+            $consultaSectores = "UPDATE productos_index_sectores SET sector_id = :id WHERE codigo_barra = :cod";
+            $stmtSector = $pdo->prepare($consultaSectores);
+            $stmtSector->bindParam(':id', $sector, PDO::PARAM_INT);
+            $stmtSector->bindParam(':cod', $codigo_barra_v, PDO::PARAM_STR);
+            if ($stmtSector->execute()) {
+                $sectorId = $stmtSector->fetchColumn();
+            } else {
+                echo "Error al actualizar el sector.";
+                exit;
+            }
+        } else {
+            $stmtSector = $pdo->prepare($consultaSectores);
+            $stmtSector->bindParam(':id', $sector, PDO::PARAM_INT);
+            $stmtSector->bindParam(':cod', $codigo_barra_v, PDO::PARAM_STR);
+            if ($stmtSector->execute()) {
+                $sectorId = $stmtSector->fetchColumn();
+            } else {
+                echo "Error al insertar el sector.";
+                exit;
+            }
+        }
+    }
+    ;
+} elseif ($sector === "-") {
+    $consultaSectores = "DELETE FROM productos_index_sectores WHERE codigo_barra = :cod";
+    $stmtID = $pdo->prepare($consultaSectores);
+    $stmtID->bindParam(':cod', $codigo_barra_v, PDO::PARAM_STR);
+    $stmtID->execute();
+}
+
 
 $query1 = "UPDATE producto_reparto SET nombre_producto = :nombre_producto, 
             precio = :precio, 
@@ -205,10 +244,10 @@ if ($stmt1->execute()) {
     echo "-";
     if ($stmt3->execute()) {
         setcookie("mensaje", "exito", time() + 10, '/');
-        header("location: template-editar-prod-l.php");
+        header("location: template-editar-prod-r.php");
     } else {
         setcookie("mensaje", "fallo", time() + 10, '/');
-        header("location: template-editar-prod-l.php");
+        header("location: template-editar-prod-r.php");
     }
 
 }

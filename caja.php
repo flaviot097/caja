@@ -493,14 +493,16 @@ if (isset($_SESSION["productos_caja"])) {
                                 </p>
                             </div>
                         </div>
+                        <div id="contador-productos">
+                        </div>
                         <form action="finalizar-compra.php" method="post" style="margin-left: -3%;">
                             <input type="text" id="searchInput" placeholder="nombre y apellido..."
-                                name="nombre_y_apelido" required>
-                            <input type="text" id="searchInput" placeholder="DNI..." name="DNI" required>
+                                name="nombre_y_apelido">
+                            <input type="text" id="searchInput" placeholder="DNI..." name="DNI">
                             <input type="number" id="searchInput" placeholder="entrega..." name="entregar_plata">
                             <input type="hidden" id="searchInput" value="<?php echo $total_general; ?>" name="total">
                             <input type="hidden" id="searchInput" value="<?php echo $url; ?>" name="url">
-                            <select name="pago" id="searchInput">
+                            <select name="pago" id="searchInput" required>
                                 <option value="efectivo" class="option-efectivo">💵 Efectivo</option>
                                 <option value="trans" class="option-tarjeta">💳 Tarjeta</option>
                                 <option value="entrega" class="option-fiar">Con entrega</option>
@@ -575,6 +577,12 @@ if (isset($_SESSION["productos_caja"])) {
             cargar()
         });
     });
+
+    var productosDiv = document.querySelectorAll('.product');
+    var nuemroProductos = productosDiv.length;
+    var contadorProductos = document.getElementById('contador-productos');
+    contadorProductos.innerHTML =
+        `<h3 style="text-align: center; margin-top: -1vh; color: grey;">Items: ${nuemroProductos}</h3>`;
     </script>
     <?php
 

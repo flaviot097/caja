@@ -13,8 +13,8 @@ if ($url == "/santiago_pagina/caja.php") {
 
 setcookie("url_location", $url, time() + 1200, "/");
 
-$dni = $_POST["DNI"];
-$nombre = $_POST["nombre_y_apelido"];
+$dni = $_POST["DNI"] ?? 1;
+$nombre = $_POST["nombre_y_apelido"] ?? "NN";
 date_default_timezone_set('America/Buenos_Aires');
 $fecha_date = date("Y-m-d");
 
@@ -71,25 +71,48 @@ if ($_POST["pago"] === "entrega") {
 
 
     //actualizar stock
-
     $productos_caja_entrega = $_SESSION["productos_caja"];
-    foreach ($productos_caja_entrega as $value) {
-        if ($value['codigo_barra'] !== "codigo de barra") {
-            $cod = $value['codigo_barra'];
-            $cantidad_prod_s = $value["cantidad"];
-            $consultar_stock = "SELECT stock FROM producto WHERE codigo_barra=:codigo_barra";
-            $stmtconsulta_s = $pdo->prepare($consultar_stock);
-            $stmtconsulta_s->bindParam(':codigo_barra', $cod, PDO::PARAM_STR);
-            $stmtconsulta_s->execute();
-            $existente1 = ($stmtconsulta_s->fetchAll())[0]["stock"];
-            $stock_nue = floatval($existente1) - floatval($cantidad_prod_s);
-            $update_stock = "UPDATE producto SET stock=:stock WHERE codigo_barra=:codigo_barra";
-            $stmtupdate_s = $pdo->prepare($update_stock);
-            $stmtupdate_s->bindParam(':codigo_barra', $cod, PDO::PARAM_STR);
-            $stmtupdate_s->bindParam(':stock', $stock_nue, PDO::PARAM_STR);
-            $stmtupdate_s->execute();
-            if ($local_reparto === "reparto") {
-                tablaRepartos($cod, $cantidad_prod_s, $pdo);
+    if ($local_reparto == "reparto") {
+        foreach ($productos_caja_entrega as $value) {
+            if ($value['codigo_barra'] !== "codigo de barra") {
+                $cod = $value['codigo_barra'];
+                $cantidad_prod_s = $value["cantidad"];
+                $consultar_stock = "SELECT stock FROM producto_reparto WHERE codigo_barra=:codigo_barra";
+                $stmtconsulta_s = $pdo->prepare($consultar_stock);
+                $stmtconsulta_s->bindParam(':codigo_barra', $cod, PDO::PARAM_STR);
+                $stmtconsulta_s->execute();
+                $existente1 = ($stmtconsulta_s->fetchAll())[0]["stock"];
+                $stock_nue = floatval($existente1) - floatval($cantidad_prod_s);
+                $update_stock = "UPDATE producto SET stock=:stock WHERE codigo_barra=:codigo_barra";
+                $stmtupdate_s = $pdo->prepare($update_stock);
+                $stmtupdate_s->bindParam(':codigo_barra', $cod, PDO::PARAM_STR);
+                $stmtupdate_s->bindParam(':stock', $stock_nue, PDO::PARAM_STR);
+                $stmtupdate_s->execute();
+                if ($local_reparto === "reparto") {
+                    tablaRepartos($cod, $cantidad_prod_s, $pdo);
+                }
+            }
+        }
+    } else {
+
+        foreach ($productos_caja_entrega as $value) {
+            if ($value['codigo_barra'] !== "codigo de barra") {
+                $cod = $value['codigo_barra'];
+                $cantidad_prod_s = $value["cantidad"];
+                $consultar_stock = "SELECT stock FROM producto WHERE codigo_barra=:codigo_barra";
+                $stmtconsulta_s = $pdo->prepare($consultar_stock);
+                $stmtconsulta_s->bindParam(':codigo_barra', $cod, PDO::PARAM_STR);
+                $stmtconsulta_s->execute();
+                $existente1 = ($stmtconsulta_s->fetchAll())[0]["stock"];
+                $stock_nue = floatval($existente1) - floatval($cantidad_prod_s);
+                $update_stock = "UPDATE producto SET stock=:stock WHERE codigo_barra=:codigo_barra";
+                $stmtupdate_s = $pdo->prepare($update_stock);
+                $stmtupdate_s->bindParam(':codigo_barra', $cod, PDO::PARAM_STR);
+                $stmtupdate_s->bindParam(':stock', $stock_nue, PDO::PARAM_STR);
+                $stmtupdate_s->execute();
+                if ($local_reparto === "reparto") {
+                    tablaRepartos($cod, $cantidad_prod_s, $pdo);
+                }
             }
         }
     }

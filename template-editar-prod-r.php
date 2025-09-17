@@ -25,6 +25,23 @@ session_start();
     <!-- MAIN STYLE -->
     <link rel="stylesheet" href="css/tooplate-style.css" />
 </head>
+<?php
+
+require_once "conecion.php";
+$dsn = 'mysql:host=localhost:3307;dbname=code_bar;';
+try {
+    $pdo = new PDO($dsn, $usuario, $contrasena);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    echo 'error al conectarse: ' . $e->getMessage();
+    exit;
+}
+$consulataTodosSecotres = "SELECT nombre_sector, id FROM sectores";
+$stmt = $pdo->prepare($consulataTodosSecotres);
+$stmt->execute();
+$todosSectores = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+?>
 
 <body>
     <!-- MENU -->
@@ -68,6 +85,19 @@ session_start();
                 <p class="text-center"><strong>Codigo de barra</strong> <br><input name="codigo_barra" type="text"></p>
                 <p class="text-center"><strong>departamento</strong> <br><input name="departamento" type="text"></p>
                 <p class="text-center"><strong>proveedor</strong> <br><input type="text" name="proveedor"></p>
+                <p class="text-center"><strong>Sector</strong> <br>
+                    <select name='sector' required>
+                        <option value="-" selected>
+                            Sin sector
+                        </option>
+                        <?php foreach ($todosSectores as $sector) { ?>
+                        <option value="<?php echo $sector["id"]; ?>">
+                            <?php echo $sector["nombre_sector"]; ?>
+                        </option>
+                        <?php }
+                        ?>
+                    </select>
+                </p>
                 <p class="text-center"><strong>stock</strong> <br><input name="stock" type="number"></p>
                 <p class="text-center"><strong>costo</strong> <br>$<input id="costo" name="costo" type="number"></p>
                 <p class="text-center"><strong>ganancia</strong><br><input id="ganancia" name="ganancia" type="number">%

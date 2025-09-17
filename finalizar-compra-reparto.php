@@ -4,10 +4,10 @@
 //echo $_POST["DNI"];
 //echo $_POST["pago"];
 date_default_timezone_set('America/Buenos_Aires');
-use Svg\Gradient\Stop;
 
-$dni = $_POST["DNI"];
-$nombre = $_POST["nombre_y_apelido"];
+
+$dni = $_POST["DNI"] ?? 1;
+$nombre = $_POST["nombre_y_apelido"] ?? "NN";
 $fecha_date = date("Y-m-d");
 
 require_once "conecion.php";

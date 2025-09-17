@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Descargar JSON de Columna Excel</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script
+      type="text/javascript"
+      src="https://unpkg.com/xlsx/xlsx.full.min.js"
+    ></script>
+  </head>
+  <body>
+    <h1>Descargar JSON de Columna Excel</h1>
+    <input type="file" id="archivoExcel" accept=".xlsx, .xls" />
+    <button onclick="descargarJSON()">Descargar JSON</button>
+    <div id="resultado"></div>
+
+    <script>
+      function descargarJSON() {
+        const archivoInput = document.getElementById("archivoExcel");
+        const resultadoDiv = document.getElementById("resultado");
+        const archivo = archivoInput.files[0];
+
+        if (!archivo) {
+          resultadoDiv.innerText = "Por favor, selecciona un archivo Excel.";
+          return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: "array" });
+
+          const primeraHojaNombre = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[primeraHojaNombre];
+
+          const columnaFormularioLetra = prompt(
+            "Ingrese la letra de la columna 'Formulario':"
+          ).toUpperCase();
+
+          if (!columnaFormularioLetra) {
+            resultadoDiv.innerText =
+              "Por favor, ingrese la letra de la columna.";
+            return;
+          }
+
+          const datosColumna = obtenerColumna(
+            worksheet,
+            columnaFormularioLetra
+          );
+          const jsonData = JSON.stringify(
+            { Formulario: datosColumna },
+            null,
+            2
+          );
+
+          // Crear un Blob con el JSON
+          const blob = new Blob([jsonData], { type: "application/json" });
+
+          // Crear un enlace de descarga
+          const a = document.createElement("a");
+          a.href = URL.createObjectURL(blob);
+          a.download = "formulario_columna.json"; // Nombre del archivo
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a); // Limpiar el enlace
+
+          resultadoDiv.innerText = "Archivo JSON descargado.";
+        };
+
+        reader.onerror = function (error) {
+          resultadoDiv.innerText = "Error al leer el archivo: " + error;
+        };
+
+        reader.readAsArrayBuffer(archivo);
+      }
+
+      function obtenerColumna(worksheet, columnaLetra) {
+        const datos = [];
+        let fila = 1;
+        let celda = worksheet[columnaLetra + fila];
+        while (celda) {
+          const valor = celda.v ? String(celda.v).trim() : "";
+          if (valor) {
+            datos.push(valor);
+          }
+          fila++;
+          celda = worksheet[columnaLetra + fila];
+        }
+        return datos;
+      }
+    </script>
+  </body>
+</html>

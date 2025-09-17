@@ -27,6 +27,13 @@ require_once "validacion-usuario.php";
 .resultado-item:hover {
     background-color: #f0f0f0;
 }
+
+#totalP {
+    display: block;
+    width: 100% !important;
+    text-align: center;
+    font-weight: bold;
+}
 </style>
 
 <body>
@@ -48,6 +55,7 @@ require_once "validacion-usuario.php";
             <h2>Lista de Productos</h2>
             <ul id="lista"></ul>
         </div>
+        <span id="totalP"></span>
         <div class="total">
             <h3>Total: $<span id="totalVenta">0.00</span></h3>
         </div>
@@ -71,6 +79,16 @@ require_once "validacion-usuario.php";
     </div>
     <script src="./js/mivil-caja.js"></script>
     <script src="./js/coneccion_api.js"></script>
+    <script>
+    const btnlista = document.getElementById("agregarProducto");
+    btnlista.addEventListener('click', function() {
+        const totalLista = document.querySelectorAll('.itemLista');
+        let total = totalLista.length;
+        const totalVenta = document.getElementById('totalP');
+        totalVenta.textContent = total + 1;
+    })
+    </script>
+
 
 </body>
 

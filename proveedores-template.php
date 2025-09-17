@@ -238,7 +238,7 @@ tr {
                             echo "<p>No se encontraron resultados.</p>";
                         }
                     } else {
-                        require_once "funcion-estadisticas.php";
+                        require_once "funcion-estadisticas-proveedores.php";
                     }
 
                     ?>

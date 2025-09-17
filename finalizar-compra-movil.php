@@ -2,8 +2,8 @@
 // Inicializa variables
 $restar_total = 0;
 $local_reparto = "";
-$dni = $_POST["DNI"] ?? "";
-$nombre = $_POST["nombre_y_apelido"] ?? "";
+$dni = $_POST["DNI"] ?? "1";
+$nombre = $_POST["nombre_y_apelido"] ?? "NN";
 $url = $_POST["url"];
 
 
@@ -57,6 +57,34 @@ try {
     exit;
 }
 
+function sectoresProductosRepartos($codigoB, $pdoConeccion, $canV)
+{
+
+    $dateTime = date("Y-m-d");
+    $hora = date("H:i:s");
+    $consultaID = "SELECT sector_id FROM productos_index_sectores WHERE codigo_barra = :codigo_barra";
+    $stmtID = $pdoConeccion->prepare($consultaID);
+    $stmtID->bindParam(':codigo_barra', $codigoB, PDO::PARAM_STR);
+    $sectorId = $stmtID->execute();
+    $sectorId = $stmtID->fetchAll(PDO::FETCH_ASSOC);
+    if (count($sectorId) > 0) {
+        $consultaSectores = "INSERT INTO productos_sectores (id_sector ,codigo_barra ,cantidad_vendida ,fecha ,hora)  VALUES (:id ,:cod ,:cantidad_vendida, :fecha ,:hora)";
+        $stmtID = $pdoConeccion->prepare($consultaSectores);
+        $sectorId = $sectorId[0]["sector_id"];
+        $stmtID->bindParam(':id', $sectorId, PDO::PARAM_INT);
+        $stmtID->bindParam(':cod', $codigoB, PDO::PARAM_STR);
+        $stmtID->bindParam(':cantidad_vendida', $canV, PDO::PARAM_STR);
+        $stmtID->bindParam(':fecha', $dateTime, PDO::PARAM_STR);
+        $stmtID->bindParam(':hora', $hora, PDO::PARAM_STR);
+        $stmtID->execute();
+    }
+    ;
+
+
+}
+
+
+
 
 
 if ($_POST["pago"] === "entrega") {
@@ -74,20 +102,20 @@ if ($_POST["pago"] === "entrega") {
         if ($value['codigo_barra'] !== "codigo de barra") {
             $cod = $value['codigo_barra'];
             $cantidad_prod_s = $value["cantidad"];
-            $consultar_stock = "SELECT stock FROM producto WHERE codigo_barra=:codigo_barra";
+            $consultar_stock = "SELECT stock FROM producto_reparto WHERE codigo_barra=:codigo_barra";
             $stmtconsulta_s = $pdo->prepare($consultar_stock);
             $stmtconsulta_s->bindParam(':codigo_barra', $cod, PDO::PARAM_STR);
             $stmtconsulta_s->execute();
             $existente1 = ($stmtconsulta_s->fetchAll())[0]["stock"];
-            var_dump($existente1);
 
             $stock_nue = floatval($existente1) - floatval($cantidad_prod_s);
-            $update_stock = "UPDATE producto SET stock=:stock WHERE codigo_barra=:codigo_barra";
+            $update_stock = "UPDATE producto_reparto SET stock=:stock WHERE codigo_barra=:codigo_barra";
             $stmtupdate_s = $pdo->prepare($update_stock);
             $stmtupdate_s->bindParam(':codigo_barra', $cod, PDO::PARAM_STR);
             $stmtupdate_s->bindParam(':stock', $stock_nue, PDO::PARAM_STR);
             $stmtupdate_s->execute();
 
+            sectoresProductosRepartos($cod, $pdo, $cantidad_prod_s);
             tablaRepartos($cod, $cantidad_prod_s, $pdo);
 
         }
@@ -187,18 +215,19 @@ if ($_POST["pago"] === "efectivo") {
             if ($value['codigo_barra'] !== "codigo de barra") {
                 $cod = $value['codigo_barra'];
                 $cantidad_prod_s = $value["cantidad"];
-                $consultar_stock = "SELECT stock FROM producto WHERE codigo_barra=:codigo_barra";
+                $consultar_stock = "SELECT stock FROM producto_reparto WHERE codigo_barra=:codigo_barra";
                 $stmtconsulta_s = $pdo->prepare($consultar_stock);
                 $stmtconsulta_s->bindParam(':codigo_barra', $cod, PDO::PARAM_STR);
                 $stmtconsulta_s->execute();
                 $existente1 = ($stmtconsulta_s->fetchAll())[0]["stock"];
                 $stock_nue = floatval($existente1) - floatval($cantidad_prod_s);
-                $update_stock = "UPDATE producto SET stock=:stock WHERE codigo_barra=:codigo_barra";
+                $update_stock = "UPDATE producto_reparto SET stock=:stock WHERE codigo_barra=:codigo_barra";
                 $stmtupdate_s = $pdo->prepare($update_stock);
                 $stmtupdate_s->bindParam(':codigo_barra', $cod, PDO::PARAM_STR);
                 $stmtupdate_s->bindParam(':stock', $stock_nue, PDO::PARAM_STR);
                 $stmtupdate_s->execute();
 
+                sectoresProductosRepartos($cod, $pdo, $cantidad_prod_s);
                 tablaRepartos($cod, $cantidad_prod_s, $pdo);
 
             }
@@ -248,6 +277,8 @@ if ($_POST["pago"] === "efectivo") {
                 }
             }
         }
+    } else {
+        echo "no hay productos";
     }
 }
 
@@ -258,21 +289,23 @@ if ($_POST["pago"] === "trans") {
     if (isset($_COOKIE['productos_caja'])) {
         $productos_caja = $p_total;
         foreach ($productos_caja as $value) {
+
             if ($value['codigo_barra'] !== "codigo de barra") {
                 $cod = $value['codigo_barra'];
                 $cantidad_prod_s = $value["cantidad"];
-                $consultar_stock = "SELECT stock FROM producto WHERE codigo_barra=:codigo_barra";
+                $consultar_stock = "SELECT stock FROM producto_reparto WHERE codigo_barra=:codigo_barra";
                 $stmtconsulta_s = $pdo->prepare($consultar_stock);
                 $stmtconsulta_s->bindParam(':codigo_barra', $cod, PDO::PARAM_STR);
                 $stmtconsulta_s->execute();
                 $existente1 = ($stmtconsulta_s->fetchAll())[0]["stock"];
                 $stock_nue = floatval($existente1) - floatval($cantidad_prod_s);
-                $update_stock = "UPDATE producto SET stock=:stock WHERE codigo_barra=:codigo_barra";
+                $update_stock = "UPDATE producto_reparto SET stock=:stock WHERE codigo_barra=:codigo_barra";
                 $stmtupdate_s = $pdo->prepare($update_stock);
                 $stmtupdate_s->bindParam(':codigo_barra', $cod, PDO::PARAM_STR);
                 $stmtupdate_s->bindParam(':stock', $stock_nue, PDO::PARAM_STR);
                 $stmtupdate_s->execute();
 
+                sectoresProductosRepartos($cod, $pdo, $cantidad_prod_s);
                 tablaRepartos($cod, $cantidad_prod_s, $pdo);
 
             }
@@ -336,21 +369,24 @@ if ($_POST["pago"] === "fiar") {
 
         $productos_fiado_json = array();
         foreach ($productos_caja as $value) {
+            var_dump($value);
+
             if ($value['codigo_barra'] !== "codigo de barra") {
                 $cod = $value['codigo_barra'];
                 $cantidad_prod_s = floatval($value["cantidad"]);
-                $consultar_stock = "SELECT stock FROM producto WHERE codigo_barra=:codigo_barra";
+                $consultar_stock = "SELECT nonbre_producto , stock FROM producto_reparto WHERE codigo_barra=:codigo_barra";
                 $stmtconsulta_s = $pdo->prepare($consultar_stock);
                 $stmtconsulta_s->bindParam(':codigo_barra', $cod, PDO::PARAM_STR);
                 $stmtconsulta_s->execute();
                 $existente1 = ($stmtconsulta_s->fetchAll())[0]["stock"];
                 $stock_nue = floatval($existente1) - $cantidad_prod_s;
-                $update_stock = "UPDATE producto SET stock=:stock WHERE codigo_barra=:codigo_barra";
+                $update_stock = "UPDATE producto_reparto SET stock=:stock WHERE codigo_barra=:codigo_barra";
                 $stmtupdate_s = $pdo->prepare($update_stock);
                 $stmtupdate_s->bindParam(':codigo_barra', $cod, PDO::PARAM_STR);
                 $stmtupdate_s->bindParam(':stock', $stock_nue, PDO::PARAM_STR);
                 $stmtupdate_s->execute();
 
+                sectoresProductosRepartos($cod, $pdo, $cantidad_prod_s, );
                 tablaRepartos($cod, $cantidad_prod_s, $pdo);
 
             }
@@ -424,5 +460,7 @@ function tablaRepartos($codigoproducto, $cantidad_producto, $conneccion)
     $stmt->execute();
 
 }
+
+
 
 ?>
