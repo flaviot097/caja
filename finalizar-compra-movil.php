@@ -115,6 +115,7 @@ if ($_POST["pago"] === "entrega") {
             $stmtupdate_s->bindParam(':stock', $stock_nue, PDO::PARAM_STR);
             $stmtupdate_s->execute();
 
+            CrearVentasTotalizadas($cod, $cantidad_prod_s, $fecha_date, $pdo);
             sectoresProductosRepartos($cod, $pdo, $cantidad_prod_s);
             tablaRepartos($cod, $cantidad_prod_s, $pdo);
 
@@ -227,6 +228,7 @@ if ($_POST["pago"] === "efectivo") {
                 $stmtupdate_s->bindParam(':stock', $stock_nue, PDO::PARAM_STR);
                 $stmtupdate_s->execute();
 
+                CrearVentasTotalizadas($cod, $cantidad_prod_s, $fecha_date, $pdo);
                 sectoresProductosRepartos($cod, $pdo, $cantidad_prod_s);
                 tablaRepartos($cod, $cantidad_prod_s, $pdo);
 
@@ -305,6 +307,7 @@ if ($_POST["pago"] === "trans") {
                 $stmtupdate_s->bindParam(':stock', $stock_nue, PDO::PARAM_STR);
                 $stmtupdate_s->execute();
 
+                CrearVentasTotalizadas($cod, $cantidad_prod_s, $fecha_date, $pdo);
                 sectoresProductosRepartos($cod, $pdo, $cantidad_prod_s);
                 tablaRepartos($cod, $cantidad_prod_s, $pdo);
 
@@ -386,6 +389,7 @@ if ($_POST["pago"] === "fiar") {
                 $stmtupdate_s->bindParam(':stock', $stock_nue, PDO::PARAM_STR);
                 $stmtupdate_s->execute();
 
+                CrearVentasTotalizadas($cod, $cantidad_prod_s, $fecha_date, $pdo);
                 sectoresProductosRepartos($cod, $pdo, $cantidad_prod_s, );
                 tablaRepartos($cod, $cantidad_prod_s, $pdo);
 
@@ -461,6 +465,38 @@ function tablaRepartos($codigoproducto, $cantidad_producto, $conneccion)
 
 }
 
+function eliminarProductosCero($productosArray)
+{
+    return array_filter($productosArray, function ($producto) {
+        return isset($producto['cantidad']) && $producto['cantidad'] > 0;
+    });
+}
 
+function CrearVentasTotalizadas($codigoproducto, $cantidad_producto, $fechaVenT, $conneccion)
+{
+
+    $sql = "SELECT 	id_sector_top FROM sectores_top_items WHERE codigo_barra = :codigo_barra";
+    $stmt = $conneccion->prepare($sql);
+    $stmt->bindParam(":codigo_barra", $codigoproducto, PDO::PARAM_STR);
+    $stmt->execute();
+    $id_sector = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // var_dump($id_sector[0]["id_sector_top"]);
+    // exit;
+    if (count($id_sector) > 0) {
+        $id_sector = $id_sector[0]["id_sector_top"];
+    } else {
+        $id_sector = 0;
+    }
+
+    $sql = "INSERT INTO ventas_totalizadas (codigo_barra , cantidad , fecha , id_sector) VALUES (:codigo_barra, :cantidad,:fecha,:id_sector)";
+    $stmt = $conneccion->prepare($sql);
+    $stmt->bindParam(':fecha', $fechaVenT, PDO::PARAM_STR); //$fecha_date
+    $stmt->bindParam(':codigo_barra', $codigoproducto, PDO::PARAM_STR);
+    $stmt->bindParam(':cantidad', $cantidad_producto, PDO::PARAM_STR);
+    $stmt->bindParam(':id_sector', $id_sector, PDO::PARAM_INT);
+    $stmt->execute();
+
+}
 
 ?>

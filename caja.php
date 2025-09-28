@@ -584,9 +584,7 @@ if (isset($_SESSION["productos_caja"])) {
     contadorProductos.innerHTML =
         `<h3 style="text-align: center; margin-top: -1vh; color: grey;">Items: ${nuemroProductos}</h3>`;
     </script>
-    <?php
 
-    ?>
     <footer class="footer py-5" style="min-width: 1200px !important;display: flex ;justify-content: space-around;">
         <div class="container">
             <div class="row">

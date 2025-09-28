@@ -1016,8 +1016,6 @@ body.dark-mode .theme-toggle:hover {
 
     // Initialize mobile menu
     initMobileMenu();
-
-    console.log('Sistema de Inventario inicializado correctamente');
     </script>
 </body>
 

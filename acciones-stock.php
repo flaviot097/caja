@@ -14,6 +14,9 @@
     </button>
     <button class="btn btn-success"> <a class="btn-button-stock-actions" href="generar-code-bar.php"> Crear
             C.Barra </a></button>
+    <button class="btn btn-success"> <a class="btn-button-stock-actions" href="sectores-top.php"> Reportes
+            Ventas
+        </a></button>
     <button class="btn btn-success"> <a class="btn-button-stock-actions" href="cargar-masivamente-local.php"> Cargar
             Masivamente
         </a></button>

@@ -5,8 +5,8 @@ ob_start();
 session_start();
 
 require 'vendor/autoload.php';
-use Dompdf\Dompdf;
-use Dompdf\Options;
+// use Dompdf\Dompdf;
+// use Dompdf\Options;
 date_default_timezone_set('America/Buenos_Aires');
 
 require_once "conecion.php";
@@ -23,22 +23,34 @@ $sector = $_POST['id_sector'];
 $nom_sector = $_POST['nombre_sector'];
 
 $resultado = [];
-$fechaConsulta = $_POST["date_venta"];
-$esTurno = $_POST["turno"];
 
-//$consulta = "SELECT codigo_barra , cantidad_vendida , fecha ,hora  FROM productos_sectores WHERE id_sector = :id_sector AND fecha =:fechaconsulta";
-$consulta = "";
-if ($esTurno === "tarde") {
-    $consulta = "SELECT codigo_barra, SUM(cantidad_vendida) AS cantidad_vendida, fecha,hora FROM productos_sectores WHERE id_sector = :id_sector AND fecha = :fechaconsulta AND hora > '13:00:00' GROUP BY codigo_barra, fecha ORDER BY codigo_barra";
-} else {
-    $consulta = "SELECT codigo_barra, SUM(cantidad_vendida) AS cantidad_vendida, fecha,hora FROM productos_sectores WHERE id_sector = :id_sector AND `fecha` = :fechaconsulta AND hora < '13:00:00' GROUP BY codigo_barra, fecha ORDER BY codigo_barra";
+$mesCorriente = $_POST["mes"];
+$anioCorriente = date('Y');
+$fecha_inicial = $anioCorriente . '-' . $mesCorriente . '-01';
+$fecha_final = $anioCorriente . '-' . $mesCorriente . '-31';
+
+
+
+$consulta = "SELECT codigo_barra, SUM(cantidad) AS cantidad 
+             FROM ventas_totalizadas 
+             WHERE id_sector = :id_sector 
+             AND fecha BETWEEN :fechaconsulta AND :fechaconsulta2 
+             GROUP BY codigo_barra 
+             ORDER BY cantidad DESC";
+
+
+if (intval($sector) == 0) {
+    $consulta = "SELECT codigo_barra, SUM(cantidad) AS cantidad 
+             FROM ventas_totalizadas 
+             WHERE fecha BETWEEN :fechaconsulta AND :fechaconsulta2 
+             GROUP BY codigo_barra ORDER BY cantidad DESC";
 }
-
-
-
 $stmt = $pdo->prepare($consulta);
-$stmt->bindParam(':id_sector', $sector);
-$stmt->bindParam(':fechaconsulta', $fechaConsulta);
+if (intval($sector) != 0) {
+    $stmt->bindParam(':id_sector', $sector);
+}
+$stmt->bindParam(':fechaconsulta', $fecha_inicial);
+$stmt->bindParam(':fechaconsulta2', $fecha_final);
 $stmt->execute();
 if ($stmt->execute()) {
     $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -46,7 +58,7 @@ if ($stmt->execute()) {
     $resultado = "error";
 }
 
-var_dump($resultado);
+
 ?>
 
 <section class="project py-5" id="project">
@@ -197,8 +209,6 @@ var_dump($resultado);
                                     <th>Cantidad</th>
                                     <th>Procucto</th>
                                     <th>Codigo</th>
-                                    <th>fecha</th>
-                                    <th>horario</th>
                                 </tr>
                             </thead>
                             <?php
@@ -206,41 +216,30 @@ var_dump($resultado);
                                 //$producto = $producto['nombre_producto'];
                                 $codigo_barra = $producto['codigo_barra'];
                                 //$cantidad_vendida = $producto['cantidad_vendida'];
-                                $fecha_vendido = $producto['fecha'] . " " . $producto['hora'];
-                                $hora = $_POST['turno'];
                                 echo "<br>";
+
                                 //consulta nombre
-                                $consulta1 = "SELECT nombre_producto FROM producto_reparto WHERE codigo_barra = :codigo_barra";
+                                $consulta1 = "SELECT nombre_producto FROM producto_reparto WHERE codigo_barra = :codigo_barra"; //cambiar producto_reparto a producto
                                 $statement2 = $pdo->prepare($consulta1);
                                 $statement2->bindParam(":codigo_barra", $codigo_barra, PDO::PARAM_STR);
                                 $statement2->execute();
                                 $nonmbre_p_vendido = $statement2->fetchAll(PDO::FETCH_ASSOC);
                                 ///
                                 //echo $fiados["saldo"];
-                                $cantidad_productos = $producto["cantidad_vendida"];
-                                //echo $todosFiados1[0]["precio"];
-                                $turnoReparto = "";
-                                if (substr($producto["hora"], 0, 2) > 13) {
-                                    $turnoReparto = "tarde";
-                                } else {
-                                    $turnoReparto = "mañana";
-                                }
-                                if ($cantidad_productos !== 0 && $hora == $turnoReparto) { ?>
+                                $cantidad_productos = $producto["cantidad"];
+                                //echo $todosFiados1[0]["precio"]; ?>
 
                             <tbody>
                                 <tr>
                                     <td><?php echo $cantidad_productos; ?></td>
                                     <td><?php echo $nonmbre_p_vendido[0]["nombre_producto"]; ?></td>
                                     <td><?php echo $codigo_barra; ?></td>
-                                    <td><?php echo $fecha_vendido; ?></td>
-                                    <td><?php echo $hora; ?>
                                     </td>
                                 </tr>
                             </tbody>
                             <?php
-                                }
-
                             }
+
                             ; ?>
                         </table>
                     </section>

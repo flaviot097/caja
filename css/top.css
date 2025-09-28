@@ -1,0 +1,130 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  background-color: #f4f4f9;
+  justify-content: center;
+  align-items: center;
+  margin: 0px;
+}
+
+.container {
+  margin: 10px;
+  width: 90%;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.form-container input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.form-container button {
+  width: 100%;
+  padding: 10px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.form-container button:hover {
+  background-color: #218838;
+}
+
+.lista-productos {
+  margin-top: 20px;
+}
+
+.lista-productos h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.lista-productos ul {
+  list-style: none;
+}
+
+.lista-productos li {
+  background: #f9f9f9;
+  padding: 10px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.total {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 18px;
+  color: #333;
+}
+
+.acciones button {
+  width: 100%;
+  padding: 10px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.acciones button:hover {
+  background-color: #c82333;
+}
+
+#searchInput {
+  width: 100%;
+  margin-top: 2%;
+}
+
+.select {
+  height: 35px;
+}
+.atexto {
+  color: grey;
+  background-color: rgba(88, 191, 119, 0.93) !important;
+  border-radius: 10px;
+  display: inline-table;
+  width: 14vh;
+}
+
+.atexto:hover {
+  color: grey !important;
+  background-color: rgba(59, 158, 88, 0.93) !important;
+}
+
+.nombre_sector {
+  height: 40px !important;
+}
+#text-top-sale {
+  text-align: center;
+  margin-bottom: 20px;
+}
