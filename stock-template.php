@@ -221,7 +221,13 @@ $todosProveedores = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         style="cursor: pointer; margin-top: 2.3px">Cargar Masivamente</a>
                     <a href="sectores-top.php" class="btn checkout-btn" id="btnFiltrar-menor"
                         style="cursor: pointer;">Ventas</a>
+                    <a href="lista-prod-local-pdf.php" class="btn checkout-btn" id="btnFiltrar-menor"
+                        style="cursor: pointer;">Lista PDF</a>
+                    <a href="editar-por-proveedor.php" class="btn checkout-btn" id="btnFiltrar-menor"
+                        style="cursor: pointer;">Editar por Prov.</a>
                     <?php if ($_COOKIE["usuario_caja"] == "a") { ?>
+                    <a href="tipo-interes.php" class="btn checkout-btn" id="btnFiltrar-menor"
+                        style="cursor: pointer;">Crear Tipo Interes</a>
                     <a href="crear_usuario.php" class="btn checkout-btn" id="btnFiltrar-menor"
                         style="cursor: pointer; margin-top: 2.3px">Crear usuario</a>
                     <?php } ?>

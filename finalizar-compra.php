@@ -36,7 +36,6 @@ function tablaRepartos($codigoproducto, $cantidad_producto, $conneccion)
 
 
     try {
-
         $sql = "INSERT INTO reparto_reporte(fecha, codigoBarra, cantidad, hora) VALUES ('$dateTime', '$codigoproducto', '$cantidad_producto', '$hora')";
         $stmt = $conneccion->prepare($sql);
         $stmt->execute();

@@ -16,7 +16,7 @@ try {
     echo $e->getMessage();
 }
 
-
+$todosTiposInteres = trae_Porcetaje_Interes($pdo);
 $saldo = 0;
 $total = 0;
 ?>
@@ -30,111 +30,111 @@ $total = 0;
     <link rel="stylesheet" href="styles.css">
 </head>
 <style>
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-}
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+    }
 
-.invoice-container {
-    width: 210mm;
-    min-height: 297mm;
-    padding: 20mm;
-    margin: 10mm auto;
-    background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
-}
+    .invoice-container {
+        width: 210mm;
+        min-height: 297mm;
+        padding: 20mm;
+        margin: 10mm auto;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+    }
 
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
 
-header .company-details {
-    text-align: left;
-}
+    header .company-details {
+        text-align: left;
+    }
 
-header .company-details h1 {
-    margin: 0;
-    font-size: 24px;
-}
+    header .company-details h1 {
+        margin: 0;
+        font-size: 24px;
+    }
 
-header .company-details p {
-    margin: 5px 0;
-}
+    header .company-details p {
+        margin: 5px 0;
+    }
 
-header .logo img {
-    max-width: 150px;
-}
+    header .logo img {
+        max-width: 150px;
+    }
 
-.invoice-details {
-    text-align: center;
-    margin-bottom: 20px;
-}
+    .invoice-details {
+        text-align: center;
+        margin-bottom: 20px;
+    }
 
-.invoice-details h2 {
-    margin: 0;
-    font-size: 28px;
-}
+    .invoice-details h2 {
+        margin: 0;
+        font-size: 28px;
+    }
 
-.invoice-details p {
-    margin: 5px 0;
-}
+    .invoice-details p {
+        margin: 5px 0;
+    }
 
-.client-details {
-    margin-bottom: 20px;
-}
+    .client-details {
+        margin-bottom: 20px;
+    }
 
-.client-details h3 {
-    margin: 0 0 10px 0;
-    font-size: 20px;
-}
+    .client-details h3 {
+        margin: 0 0 10px 0;
+        font-size: 20px;
+    }
 
-.client-details p {
-    margin: 5px 0;
-}
+    .client-details p {
+        margin: 5px 0;
+    }
 
-.invoice-items table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-}
+    .invoice-items table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
 
-.invoice-items th,
-.invoice-items td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-}
+    .invoice-items th,
+    .invoice-items td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
 
-.invoice-items th {
-    background-color: #f4f4f4;
-}
+    .invoice-items th {
+        background-color: #f4f4f4;
+    }
 
-.invoice-items tfoot td {
-    font-weight: bold;
-}
+    .invoice-items tfoot td {
+        font-weight: bold;
+    }
 
-footer {
-    text-align: center;
-    margin-top: 20px;
-}
+    footer {
+        text-align: center;
+        margin-top: 20px;
+    }
 
-footer p {
-    margin: 0;
-    font-size: 16px;
-}
+    footer p {
+        margin: 0;
+        font-size: 16px;
+    }
 
-.invoice-items {
-    width: 70% !important;
-}
+    .invoice-items {
+        width: 70% !important;
+    }
 
-.title-detalle {
-    width: 70%;
-}
+    .title-detalle {
+        width: 70%;
+    }
 </style>
 
 <body>
@@ -219,23 +219,32 @@ footer p {
                         $nombre_producto = $resultado_productos[0]["nombre_producto"];
                         $cantidad = floatval($fiado["cantidad"]);
                         $fecha = $fiado["fecha"];
+                        $Porcentaje = analiza_Porcetaje_Interes_producto($pdo, $todosTiposInteres, $fecha);
+                        if ($Porcentaje == 0) {
+                            $Porcentaje = 1;
+                        }
                         $subtotal = $precioUnitario * $cantidad;
+                        if ($Porcentaje !== 1) {
+                            $subtotal = $subtotal + ((($precioUnitario * $cantidad) * $Porcentaje) / 100);
+                        }
                         $total_forheach = $total_forheach + $subtotal;
-
-
+                        $textPorcentaje = "";
+                        if ($Porcentaje !== 1) {
+                            $textPorcentaje = " " . "(" . $Porcentaje . "%)";
+                        }
                         ?>
-                <tbody>
-                    <tr>
-                        <td><?php echo $cantidad; ?></td>
-                        <td><?php echo $nombre_producto; ?></td>
-                        <td>$<?php echo $precioUnitario; ?></td>
-                        <td><?php echo $fecha; ?></td>
-                        <td>$<?php echo $subtotal; ?>
-                        </td>
-                    </tr>
-                </tbody>
+                        <tbody>
+                            <tr>
+                                <td><?php echo $cantidad; ?></td>
+                                <td><?php echo $nombre_producto; ?></td>
+                                <td>$<?php echo $precioUnitario; ?></td>
+                                <td><?php echo $fecha; ?></td>
+                                <td>$<?php echo $subtotal . $textPorcentaje; ?>
+                                </td>
+                            </tr>
+                        </tbody>
 
-                <?php
+                        <?php
                     }
 
                 }
@@ -260,18 +269,63 @@ footer p {
 </html>
 <?php
 
-$html = ob_get_clean();
-$options = new Options();
-$options->set('isHtml5ParserEnabled', true);
-$options->set('isRemoteEnabled', true);
+function trae_Porcetaje_Interes($pdo)
+{
+    $todosTiposInteres = [];
+    $consultaEntre = "SELECT * FROM tipo_interes WHERE habilitado = 1"; //WHERE fecha BETWEEN '2022-01-01' AND '2022-12-31' AND monto BETWEEN monto_desde = :monto_desde AND monto_hasta =:monto_hasta
+    $statement_tiposInteres = $pdo->prepare($consultaEntre);
+    if ($statement_tiposInteres->execute()) {
+        $todosTiposInteres = $statement_tiposInteres->fetchAll(PDO::FETCH_ASSOC);
+    }
+    return $todosTiposInteres;
+}
 
-$dompdf = new Dompdf($options);
 
-$dompdf->loadHtml($html);
-$dompdf->setPaper("A4", 'portrait');
+function analiza_Porcetaje_Interes_producto($pdo, $todosTiposInteres, $fechaVenta)
+{
+    $fechaAnaliza = explode(" ", $fechaVenta)[0];
+    $fechaHoy = date("Y-m-d");
+    $porcentajeAreglo = [];
+    $porcentaje = 0;
+    foreach ($todosTiposInteres as $tipo_ineteres) {
+        $esMensualSi = $tipo_ineteres["es_mensual"];
+        $fechaAplicaInteres = "";
+        if ($esMensualSi == true) {
+            $mesASumar = intval($tipo_ineteres["fecha_hasta"]);
+            $fechaAplicaInteres = date('Y-m-d', strtotime($fechaAnaliza . ' +' . $mesASumar . ' months'));
+        } else {
+            $diasASumar = intval($tipo_ineteres["fecha_hasta"]);
+            $fechaAplicaInteres = date('Y-m-d', strtotime($fechaAnaliza . ' +' . $diasASumar . ' days'));
+        }
+        if (strtotime($fechaHoy) >= strtotime($fechaAplicaInteres)) {
+            if ($tipo_ineteres["valor"] > $porcentaje) {
+                array_push($porcentajeAreglo, $tipo_ineteres["valor"]);
+            }
+        }
+    }
+    foreach ($porcentajeAreglo as $porce) {
+        if ($porce > $porcentaje) {
+            $porcentaje = $porce;
+        }
+    }
+    return $porcentaje;
+}
 
-// Renderizar el PDF
-$dompdf->render();
 
-// Mostrar el PDF en el navegador
-$dompdf->stream("detalle_pdf", array("Attachment" => false)); ?>
+
+// $html = ob_get_clean();
+// $options = new Options();
+// $options->set('isHtml5ParserEnabled', true);
+// $options->set('isRemoteEnabled', true);
+
+// $dompdf = new Dompdf($options);
+
+// $dompdf->loadHtml($html);
+// $dompdf->setPaper("A4", 'portrait');
+
+// // Renderizar el PDF
+// $dompdf->render();
+
+// // Mostrar el PDF en el navegador
+// $dompdf->stream("detalle_pdf", array("Attachment" => false)); 
+?>

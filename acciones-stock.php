@@ -20,6 +20,8 @@
     <button class="btn btn-success"> <a class="btn-button-stock-actions" href="cargar-masivamente-local.php"> Cargar
             Masivamente
         </a></button>
+    <button class="btn btn-success"> <a class="btn-button-stock-actions" href="tipo-interes.php">Tipos Interes
+        </a></button>
     <?php if ($_COOKIE["usuario_caja"] == "a") { ?>
     <button class="btn btn-success"> <a class="btn-button-stock-actions" href="crear_usuario.php"> Crear
             usuario </a></button>

@@ -38,10 +38,14 @@ foreach ($resultado as $sector) {
         </div>
     </div>
     <div class='product-actions'>
-    <form class='product-actions' method='POST' action='elimina-sector-top.php'>
+    <form class='product-actions formulario-eliminar' method='POST' action='elimina-sector-top.php'>
         <input type='hidden' name='id_sector' value='$id_sector'>
         <input type='hidden' name='nombre_sector' value='$nombre_sector'>
         <button class='btn btn-edit red'>Eliminar</button>
+    </form>
+    <form class='product-actions' method='POST' action='Actualizar-item-top.php'>
+        <input type='hidden' name='id_sector' value='$id_sector'>
+        <button class='btn btn-edit green'>Actualizar lista</button>
     </form>
     <form class='product-actions' method='POST' action='actualizar-top.php'>
         <input type='hidden' name='id_sector' value='$id_sector'>
@@ -60,7 +64,6 @@ foreach ($resultado as $sector) {
             <option value='7'>7</option>
             <option value='8'>8</option>
             <option value='9'>9</option>
-            <option value='10'>10</option>
             <option value='10'>10</option>
             <option value='11'>11</option>
             <option value='12'>12</option>

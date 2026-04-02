@@ -18,6 +18,8 @@ error_reporting(0);
 
 $nombre_cuenta_corriente = $_POST["nombre"];
 
+
+$Todos_tipos_interes = trae_Porcetaje_Interes($pdo);
 ?>
 <html lang="en">
 
@@ -71,20 +73,20 @@ $nombre_cuenta_corriente = $_POST["nombre"];
         </div>
     </nav>
     <style>
-    .button-search {
-        background-color: #28a745;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
+        .button-search {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
 
-    #input_nombre {
-        border: 1px solid #555555;
-        border-radius: 5px;
-    }
+        #input_nombre {
+            border: 1px solid #555555;
+            border-radius: 5px;
+        }
     </style>
 
     <div class="body-container">
@@ -126,10 +128,10 @@ $nombre_cuenta_corriente = $_POST["nombre"];
                 $array_persona = [];
 
                 foreach ($persona_fiado as $producto_fiado) {
-
                     $cantidad_productos = floatval($producto_fiado["cantidad"]);
                     $cb = $producto_fiado["productos"];
-                    $consultar_stock = "SELECT precio , nombre_producto FROM producto WHERE codigo_barra = :codigo_barra";
+                    $wFechaVenta = $producto_fiado["fecha"];
+                    $consultar_stock = "SELECT precio , nombre_producto  FROM producto WHERE codigo_barra = :codigo_barra";
                     $stmtconsulta_s = $pdo->prepare($consultar_stock);
                     $stmtconsulta_s->bindParam(':codigo_barra', $cb, PDO::PARAM_STR);
                     $stmtconsulta_s->execute();
@@ -137,7 +139,7 @@ $nombre_cuenta_corriente = $_POST["nombre"];
                     $precioUnitario = floatval($resultado_productos[0]["precio"]);
                     $nombre_producto = $resultado_productos[0]["nombre_producto"];
                     $total_producto = $precioUnitario * $cantidad_productos;
-                    array_push($array_persona, array("dni" => $dni_persona["dni"], "subtotal" => $total_producto, "cantidad" => $cantidad_productos, "nombre_producto" => $nombre_producto, "nombre" => $nombre_Y_apellido));
+                    array_push($array_persona, array("dni" => $dni_persona["dni"], "subtotal" => $total_producto, "cantidad" => $cantidad_productos, "nombre_producto" => $nombre_producto, "nombre" => $nombre_Y_apellido, "fecha" => $wFechaVenta));
 
                 }
 
@@ -173,6 +175,8 @@ $nombre_cuenta_corriente = $_POST["nombre"];
                 $saldo_total = 0;
                 $total = 0;
                 $person = 0;// variable para el saldo
+                $wEntro = false;
+                $porcentaje = 0;
                 foreach ($persona as $producto_items) {
                     if ($person === 0) {
                         $globalDNI = $producto_items[0]["dni"];
@@ -200,47 +204,60 @@ $nombre_cuenta_corriente = $_POST["nombre"];
                     //recorre cada producto que se compro
                     foreach ($producto_items as $item) {
                         $cliente_dni = $item["dni"];
-
-                        $total += intval($item["subtotal"]);
+                        $porcentaje = analiza_Porcetaje_Interes_producto($pdo, $Todos_tipos_interes, $item["fecha"]);
+                        $porcentaje = floatval($porcentaje);
+                        if ($porcentaje > 0) {
+                            $total += $item["subtotal"] + (($item["subtotal"] * $porcentaje) / 100);
+                        } else {
+                            $total += intval($item["subtotal"]);
+                        }
                     }
 
                     if ($cliente_dni == $dni_nombre || $item["nombre"] == $nombre_cuenta_corriente) {
 
 
                         ?>
-            <h1 class="text-fiado">Cuenta corriente</h1>
-            <div class="detalle">
-                <div class="container-title">
-                    <h2>
-                        <?php echo $item["nombre"]; ?>
-                    </h2>
-                    <form action="detalle-fiado.php" method="get" style="display: flex;
+                        <h1 class="text-fiado">Cuenta corriente</h1>
+                        <div class="detalle">
+                            <div class="container-title">
+                                <h2>
+                                    <?php echo $item["nombre"]; ?>
+                                </h2>
+                                <form action="detalle-fiado.php" method="get" style="display: flex;
                         align-content: space-around;
                         flex-wrap: wrap; margin-left: 15px;">
-                        <input type="hidden" name="dni-validate" value="<?php echo $cliente_dni; ?>">
-                        <input type="hidden" name="name-validate" value="<?php echo $item["nombre"]; ?>">
-                        <input type="submit" value="Detalle">
-                    </form>
-                </div>
+                                    <input type="hidden" name="dni-validate" value="<?php echo $cliente_dni; ?>">
+                                    <input type="hidden" name="name-validate" value="<?php echo $item["nombre"]; ?>">
+                                    <input type="submit" value="Detalle">
+                                </form>
+                            </div>
 
-                <form class="form-detalle" action="fiado-actualizar.php" method="post" class="card-fiado">
-                    <p><strong>Deuda:</strong> $<?php echo $saldo_total + $total ?></p>
-                    <input type="number" value="<?php echo $saldo_total + $total; ?>" name="pagar_total"
-                        style="display: none;">
-                    <input type="hidden" name="nombre_apellido" value="<?php echo $item["nombre"]; ?>">
-                    <input type="number" value="<?php echo $item["dni"]; ?>" name="dni" style="display: none;">
-                    <input type="text" value="<?php echo ($saldo_total + $total); ?>" name="cantidad_productos"
-                        style="display: none;">
-                    <p><strong>Entrega:</strong> $<input type="number" value="<?php echo ($saldo_total + $total); ?>"
-                            name="entrega"></p>
-                    <select name="pagar" id="pagar">
-                        <option value="liquidar_total">Liquidar total de deuda</option>
-                        <option value="entregar">Entrega</option>
-                    </select>
-                    <button class="pay-button" type="submit">Pagar</button>
-                </form>
-            </div>
-            <?php }
+                            <form class="form-detalle" action="fiado-actualizar.php" method="post" class="card-fiado">
+                                <p><strong>Deuda:</strong> $<?php echo $saldo_total + $total ?></p>
+                                <p><strong> Mayor Porcentaje mora:</strong>
+                                    <?php echo ($porcentaje . "%") ?></p>
+                                <input type="hidden" name="porcentaje" value="<?php echo $porcentaje; ?>">
+                                <input type="number" value="<?php echo $saldo_total + $total; ?>" name="pagar_total"
+                                    style="display: none;">
+                                <input type="hidden" name="nombre_apellido" value="<?php echo $item["nombre"]; ?>">
+                                <input type="number" value="<?php echo $item["dni"]; ?>" name="dni" style="display: none;">
+                                <input type="text" value="<?php echo ($saldo_total + $total); ?>" name="cantidad_productos"
+                                    style="display: none;">
+                                <p><strong>Entrega:</strong> $<input type="number" value="<?php echo (($saldo_total + $total));
+
+                                $total_deuda_clientes = $total_deuda_clientes + ($saldo_total + $total);
+
+                                ?>" name="entrega"></p>
+                                <select name="pagar" id="pagar">
+                                    <option value="liquidar_total">Liquidar total de deuda</option>
+                                    <option value="entregar">Entrega</option>
+                                </select>
+                                <button class="pay-button" type="submit">Pagar</button>
+                            </form>
+                        </div>
+                        <?php
+
+                    }
                 }
             }
 
@@ -252,41 +269,84 @@ $nombre_cuenta_corriente = $_POST["nombre"];
                         if ($datos["dni"] == $nombre_cuenta_corriente) {
                             ?>
 
-            <h1 class="text-fiado">Cuenta corriente</h1>
-            <div class="detalle">
-                <div class="container-title">
-                    <h2>
-                        <?php echo $datos["nombre_y_apellido"]; ?>
-                    </h2>
-                    <form action="detalle-fiado.php" method="get" style="display: flex;
+                            <h1 class="text-fiado">Cuenta corriente</h1>
+                            <div class="detalle">
+                                <div class="container-title">
+                                    <h2>
+                                        <?php echo $datos["nombre_y_apellido"]; ?>
+                                    </h2>
+                                    <form action="detalle-fiado.php" method="get" style="display: flex;
                         align-content: space-around;
                         flex-wrap: wrap; margin-left: 15px;">
-                        <input type="hidden" name="dni-validate" value="<?php echo $datos["dni"]; ?>">
-                        <input type="hidden" name="name-validate" value="<?php echo $datos["nombre_y_apellido"]; ?>">
-                        <input type="submit" value="Detalle">
-                    </form>
-                </div>
+                                        <input type="hidden" name="dni-validate" value="<?php echo $datos["dni"]; ?>">
+                                        <input type="hidden" name="name-validate" value="<?php echo $datos["nombre_y_apellido"]; ?>">
+                                        <input type="submit" value="Detalle">
+                                    </form>
+                                </div>
 
-                <form class="form-detalle" action="fiado-actualizar.php" method="post" class="card-fiado">
-                    <p><strong>Deuda:</strong> $<?php echo $datos["total_saldo"]; ?></p>
-                    <input type="number" value="<?php echo $datos["total_saldo"]; ?>" name="pagar_total"
-                        style="display: none;">
-                    <input type="hidden" name="nombre_apellido" value="<?php echo $datos["nombre_y_apellido"]; ?>">
-                    <input type="number" value="<?php echo $datos["dni"]; ?>" name="dni" style="display: none;">
-                    <input type="text" value="<?php echo $datos["total_saldo"]; ?>" name="cantidad_productos"
-                        style="display: none;">
-                    <p><strong>Entrega:</strong> $<input type="number" value="<?php echo $datos["total_saldo"]; ?>"
-                            name="entrega"></p>
-                    <select name="pagar" id="pagar">
-                        <option value="liquidar_total">Liquidar total de deuda</option>
-                        <option value="entregar">Entrega</option>
-                    </select>
-                    <button class="pay-button" id="button-pay" type="submit">Pagar</button>
-                </form>
-            </div>
-            <?php }
+                                <form class="form-detalle" action="fiado-actualizar.php" method="post" class="card-fiado">
+                                    <p><strong>Deuda:</strong> $<?php echo $datos["total_saldo"]; ?></p>
+                                    <input type="number" value="<?php echo $datos["total_saldo"]; ?>" name="pagar_total"
+                                        style="display: none;">
+                                    <input type="hidden" name="nombre_apellido" value="<?php echo $datos["nombre_y_apellido"]; ?>">
+                                    <input type="number" value="<?php echo $datos["dni"]; ?>" name="dni" style="display: none;">
+                                    <input type="text" value="<?php echo $datos["total_saldo"]; ?>" name="cantidad_productos"
+                                        style="display: none;">
+                                    <p><strong>Entrega:</strong> $<input type="number" value="<?php echo $datos["total_saldo"]; ?>"
+                                            name="entrega"></p>
+                                    <select name="pagar" id="pagar">
+                                        <option value="liquidar_total">Liquidar total de deuda</option>
+                                        <option value="entregar">Entrega</option>
+                                    </select>
+                                    <button class="pay-button" id="button-pay" type="submit">Pagar</button>
+                                </form>
+                            </div>
+                        <?php }
                     }
                 }
+
+            }
+
+            function trae_Porcetaje_Interes($pdo)
+            {
+                $todosTiposInteres = [];
+                $consultaEntre = "SELECT * FROM tipo_interes WHERE habilitado = 1"; //WHERE fecha BETWEEN '2022-01-01' AND '2022-12-31' AND monto BETWEEN monto_desde = :monto_desde AND monto_hasta =:monto_hasta
+                $statement_tiposInteres = $pdo->prepare($consultaEntre);
+                if ($statement_tiposInteres->execute()) {
+                    $todosTiposInteres = $statement_tiposInteres->fetchAll(PDO::FETCH_ASSOC);
+                }
+                return $todosTiposInteres;
+            }
+
+
+            function analiza_Porcetaje_Interes_producto($pdo, $todosTiposInteres, $fechaVenta)
+            {
+                $fechaAnaliza = explode(" ", $fechaVenta)[0];
+                $fechaHoy = date("Y-m-d");
+                $porcentajeAreglo = [];
+                $porcentaje = 0;
+                foreach ($todosTiposInteres as $tipo_ineteres) {
+                    $esMensualSi = $tipo_ineteres["es_mensual"];
+                    $fechaAplicaInteres = "";
+                    if ($esMensualSi == true) {
+                        $mesASumar = intval($tipo_ineteres["fecha_hasta"]);
+                        $fechaAplicaInteres = date('Y-m-d', strtotime($fechaAnaliza . ' +' . $mesASumar . ' months'));
+                    } else {
+                        $diasASumar = intval($tipo_ineteres["fecha_hasta"]);
+                        $fechaAplicaInteres = date('Y-m-d', strtotime($fechaAnaliza . ' +' . $diasASumar . ' days'));
+                    }
+                    if (strtotime($fechaHoy) >= strtotime($fechaAplicaInteres)) {
+                        if ($tipo_ineteres["valor"] > $porcentaje) {
+                            array_push($porcentajeAreglo, $tipo_ineteres["valor"]);
+                        }
+                    }
+                }
+                foreach ($porcentajeAreglo as $porce) {
+                    if ($porce > $porcentaje) {
+                        $porcentaje = $porce;
+                    }
+                }
+                return $porcentaje;
             }
             ?>
         </div>
@@ -315,51 +375,51 @@ $nombre_cuenta_corriente = $_POST["nombre"];
         </div>
     </footer>
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Captura todos los elementos <p> con la clase 'eliminar'
-        const eliminarElements = document.querySelectorAll('#button-pay');
-        eliminarElements.forEach((e) => console.log(e));
+        document.addEventListener('DOMContentLoaded', function () {
+            // Captura todos los elementos <p> con la clase 'eliminar'
+            const eliminarElements = document.querySelectorAll('#button-pay');
+            eliminarElements.forEach((e) => console.log(e));
 
-        eliminarElements.forEach(function(eliminarElement) {
-            eliminarElement.addEventListener('submit', function(e) {
-                e.preventDefault();
-                // Obtén el id del elemento clickeado
-                const codigoBarra = this.id;
-                var modal = document.getElementById("myModal");
-                var span = document.getElementsByClassName("close")[0];
+            eliminarElements.forEach(function (eliminarElement) {
+                eliminarElement.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    // Obtén el id del elemento clickeado
+                    const codigoBarra = this.id;
+                    var modal = document.getElementById("myModal");
+                    var span = document.getElementsByClassName("close")[0];
 
-                modal.style.display = "block";
-                // Cuando se hace clic en <span> (x), se cierra el modal
-                span.onclick = function() {
-                    modal.style.display = "none";
-                }
-                // Cuando se hace clic fuera del modal, se cierra
-                window.onclick = function(event) {
-                    if (event.target == modal) {
+                    modal.style.display = "block";
+                    // Cuando se hace clic en <span> (x), se cierra el modal
+                    span.onclick = function () {
                         modal.style.display = "none";
                     }
-                }
+                    // Cuando se hace clic fuera del modal, se cierra
+                    window.onclick = function (event) {
+                        if (event.target == modal) {
+                            modal.style.display = "none";
+                        }
+                    }
 
-                Escucharbtneliminar(this)
-                // Redirige a eliminar-producto.php con el parámetro codigo_eliminar
-                // window.location.href = 'eliminar-producto-reparto.php?codigo_eliminar=' +
-                //     encodeURIComponent(codigoBarra);
+                    Escucharbtneliminar(this)
+                    // Redirige a eliminar-producto.php con el parámetro codigo_eliminar
+                    // window.location.href = 'eliminar-producto-reparto.php?codigo_eliminar=' +
+                    //     encodeURIComponent(codigoBarra);
+                });
             });
         });
-    });
 
 
 
 
-    function Escucharbtneliminar(evento) {
-        const btn_eliminar = document.getElementById("button-modal")
-        btn_eliminar.addEventListener("click", function() {
-            if (btn_eliminar) {
-                evento.submit();
-            }
-        })
+        function Escucharbtneliminar(evento) {
+            const btn_eliminar = document.getElementById("button-modal")
+            btn_eliminar.addEventListener("click", function () {
+                if (btn_eliminar) {
+                    evento.submit();
+                }
+            })
 
-    }
+        }
     </script>
 
     <script src="js/jquery-3.3.1.min.js"></script>

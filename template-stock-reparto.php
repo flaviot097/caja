@@ -27,71 +27,71 @@ if (empty($_SESSION["usuario"])) {
     <link rel="stylesheet" href="css/tooplate-style.css" />
 </head>
 <style>
-.contador-container {
-    font-weight: bold;
-    font-size: 1rem;
-    margin-left: 5vh;
-    color: gray;
-    text-decoration: underline;
-}
+    .contador-container {
+        font-weight: bold;
+        font-size: 1rem;
+        margin-left: 5vh;
+        color: gray;
+        text-decoration: underline;
+    }
 
 
-.modal {
-    display: none;
+    .modal {
+        display: none;
 
-    position: fixed;
+        position: fixed;
 
-    z-index: 1;
+        z-index: 1;
 
-    left: 0;
-    top: 0;
-    width: 100%;
+        left: 0;
+        top: 0;
+        width: 100%;
 
-    height: 100%;
+        height: 100%;
 
-    overflow: auto;
+        overflow: auto;
 
-    background-color: rgba(0, 0, 0, 0.4);
+        background-color: rgba(0, 0, 0, 0.4);
 
-    background-color: rgba(0, 0, 0, 0.4);
+        background-color: rgba(0, 0, 0, 0.4);
 
-}
-
-
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    /
-}
+    }
 
 
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
 
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        /
+    }
 
-#button-modal {
-    background-color: #4CAF50;
-}
 
-.sector {
-    background-color: #3c6d3dff !important;
-    border-radius: 3px;
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
 
-}
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    #button-modal {
+        background-color: #4CAF50;
+    }
+
+    .sector {
+        background-color: #3c6d3dff !important;
+        border-radius: 3px;
+
+    }
 </style>
 
 <body>
@@ -196,6 +196,8 @@ if (empty($_SESSION["usuario"])) {
                         style="cursor: pointer;">Crear C.Barra</a>
                     <a href="pasar-stock-reparto.php" class="btn checkout-btn" id="btnFiltrar-menor"
                         style="cursor: pointer; margin-top: 2.3px;">Cargar de Locar a Reparto</a>
+                    <a href="lista-prod-reparto-pdf.php" class="btn checkout-btn" id="btnFiltrar-menor"
+                        style="cursor: pointer; margin-top: 2.3px;">Lista PDF</a>
                     <a href="bajar_de_reparto_a_local.php" class="btn checkout-btn" id="btnFiltrar-menor"
                         style="cursor: pointer; margin-top: 2.3px">Devolver a local</a>
                 </div>
@@ -356,66 +358,66 @@ if (empty($_SESSION["usuario"])) {
     </footer>
 
     <script>
-    $(document).ready(function() {
-        if ($(window).width() <= 768) {
-            $('#sidebar').addClass('collapse');
-        }
-
-        $(window).resize(function() {
+        $(document).ready(function () {
             if ($(window).width() <= 768) {
                 $('#sidebar').addClass('collapse');
-            } else {
-                $('#sidebar').removeClass('collapse');
             }
-        });
-    });
-    </script>
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Captura todos los elementos <p> con la clase 'eliminar'
-        const eliminarElements = document.querySelectorAll('.eliminate-prod');
 
-
-        eliminarElements.forEach(function(eliminarElement) {
-            eliminarElement.addEventListener('submit', function(e) {
-                e.preventDefault();
-                // Obtén el id del elemento clickeado
-                const codigoBarra = this.id;
-                var modal = document.getElementById("myModal");
-                var span = document.getElementsByClassName("close")[0];
-
-                modal.style.display = "block";
-                // Cuando se hace clic en <span> (x), se cierra el modal
-                span.onclick = function() {
-                    modal.style.display = "none";
+            $(window).resize(function () {
+                if ($(window).width() <= 768) {
+                    $('#sidebar').addClass('collapse');
+                } else {
+                    $('#sidebar').removeClass('collapse');
                 }
-                // Cuando se hace clic fuera del modal, se cierra
-                window.onclick = function(event) {
-                    if (event.target == modal) {
-                        modal.style.display = "none";
-                    }
-                }
-
-                Escucharbtneliminar(this)
-                // Redirige a eliminar-producto.php con el parámetro codigo_eliminar
-                // window.location.href = 'eliminar-producto-reparto.php?codigo_eliminar=' +
-                //     encodeURIComponent(codigoBarra);
             });
         });
-    });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Captura todos los elementos <p> con la clase 'eliminar'
+            const eliminarElements = document.querySelectorAll('.eliminate-prod');
+
+
+            eliminarElements.forEach(function (eliminarElement) {
+                eliminarElement.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    // Obtén el id del elemento clickeado
+                    const codigoBarra = this.id;
+                    var modal = document.getElementById("myModal");
+                    var span = document.getElementsByClassName("close")[0];
+
+                    modal.style.display = "block";
+                    // Cuando se hace clic en <span> (x), se cierra el modal
+                    span.onclick = function () {
+                        modal.style.display = "none";
+                    }
+                    // Cuando se hace clic fuera del modal, se cierra
+                    window.onclick = function (event) {
+                        if (event.target == modal) {
+                            modal.style.display = "none";
+                        }
+                    }
+
+                    Escucharbtneliminar(this)
+                    // Redirige a eliminar-producto.php con el parámetro codigo_eliminar
+                    // window.location.href = 'eliminar-producto-reparto.php?codigo_eliminar=' +
+                    //     encodeURIComponent(codigoBarra);
+                });
+            });
+        });
 
 
 
 
-    function Escucharbtneliminar(evento) {
-        const btn_eliminar = document.getElementById("button-modal")
-        btn_eliminar.addEventListener("click", function() {
-            if (btn_eliminar) {
-                evento.submit();
-            }
-        })
+        function Escucharbtneliminar(evento) {
+            const btn_eliminar = document.getElementById("button-modal")
+            btn_eliminar.addEventListener("click", function () {
+                if (btn_eliminar) {
+                    evento.submit();
+                }
+            })
 
-    }
+        }
     </script>
     <script src="js/jquery-3.3.1.min.js"></script>
     <script src="js/popper.min.js"></script>

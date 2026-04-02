@@ -377,7 +377,7 @@ if ($_POST["pago"] === "fiar") {
             if ($value['codigo_barra'] !== "codigo de barra") {
                 $cod = $value['codigo_barra'];
                 $cantidad_prod_s = floatval($value["cantidad"]);
-                $consultar_stock = "SELECT nonbre_producto , stock FROM producto_reparto WHERE codigo_barra=:codigo_barra";
+                $consultar_stock = "SELECT nombre_producto , stock FROM producto_reparto WHERE codigo_barra=:codigo_barra";
                 $stmtconsulta_s = $pdo->prepare($consultar_stock);
                 $stmtconsulta_s->bindParam(':codigo_barra', $cod, PDO::PARAM_STR);
                 $stmtconsulta_s->execute();

@@ -17,6 +17,15 @@ date_default_timezone_set('America/Buenos_Aires');
 $fecha_date = date("Y-m-d H:i:s");
 $nombre_apellido = $_POST["nombre_apellido"];
 $total_dueda = $_POST["cantidad_productos"];
+if (intval($total_dueda) == intval($_POST["entrega"])) {
+    $metodo = "entregar";
+}
+if (intval($total_dueda) + 1 == intval($_POST["entrega"])) {
+    $metodo = "entregar";
+}
+if (intval($total_dueda) - 1 == intval($_POST["entrega"])) {
+    $metodo = "entregar";
+}
 
 if ($metodo == "liquidar_total") {
     $consultadelete = "DELETE FROM fiado WHERE dni=:dni";
@@ -29,8 +38,11 @@ if ($metodo == "liquidar_total") {
     $stmts->execute();
 
     echo "se elimina el producto";
+    grabaEntrega_TablaInteres(true, $dni, $pdo);
+
     header("location:cuenta-corriente.php");
 } else {
+    //grabaEntrega_TablaInteres(false, $dni, $pdo);
 
     if ($total_dueda !== $entrega_total) {
         $select = "SELECT * FROM fiado WHERE dni=:dni";
@@ -192,7 +204,22 @@ if ($metodo == "liquidar_total") {
     }
 
 }
+function grabaEntrega_TablaInteres($es_total, $dni, $pdo)
+{
+    $fecha_entrega = date("Y-m-d");
+    $consulta = "INSERT INTO ult_pago_fiado (dni, fecha, es_total) VALUES (:dni, :fecha, :es_total)";
+    $stmt = $pdo->prepare($consulta);
+    $stmt->bindParam(':dni', $dni, PDO::PARAM_STR);
+    $stmt->bindParam(':es_total', $es_total, PDO::PARAM_BOOL);
+    $stmt->bindParam(':fecha', $fecha_entrega, PDO::PARAM_STR);
+    if ($stmt->execute()) {
+        header("location: cuenta-corriente.php");
 
+    } else {
+        header("location: error_500.html");
+    }
+    ;
+}
 
 header("location: cuenta-corriente.php");
 //     echo "- queda saldo- ";

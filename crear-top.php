@@ -78,7 +78,7 @@ require_once "validacion-usuario.php";
                     name="nombre_sector_top">
                 <?php
                 require_once "traeSectorestop.php"; ?>
-                <select name="id" id="searchInput">
+                <select name="id" id="searchInput" class="idsectortop">
                     <option value="noone" class="option-efectivo" selected>Ninguno</option>
                     <?php foreach ($todosSectores as $i) { ?>
                     <option value=<?php echo $i["id"]; ?> class="option-efectivo"><?php echo $i["nombre_sector_top"]; ?>
@@ -86,7 +86,8 @@ require_once "validacion-usuario.php";
                     <?php }
                     ; ?>
                 </select>
-                <button type="submit" id="finalizarVenta">Crear sector o actualizar sector</button>
+                <button type="submit" id="finalizarVenta">Crear sector o actualizar
+                    sector</button>
             </form>
         </div>
     </div>
